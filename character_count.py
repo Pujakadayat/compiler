@@ -22,6 +22,6 @@ try:
         # Produces length of each word and appends to sum
         num_chars += sum(len(word) for word in word_list)
 
-        print(str(num_chars) + " Characters")
+    print(str(num_chars) + " Characters")
 except FileNotFoundError:
     print(f"The file {f_name} cannot be opened.")
