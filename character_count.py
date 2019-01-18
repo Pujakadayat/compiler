@@ -7,4 +7,4 @@ for line in file_in:
     word_list = line.split()
     num_chars += sum(len(word) for word in word_list) #produces length of each word and appends to sum
 
-print(num_chars)
+print(str(num_chars) + " Characters")
