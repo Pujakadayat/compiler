@@ -1,8 +1,10 @@
 import sys
 
+
 def usage():
     print("\n  Usage:")
     print("    python character_count.py [filename]\n")
+
 
 # Ensure filename is passed as command line argument
 if len(sys.argv) < 2:
@@ -13,7 +15,7 @@ if len(sys.argv) < 2:
 f_name = sys.argv[1]
 
 try:
-    file_in = open(f_name, 'r')
+    file_in = open(f_name, "r")
     num_chars = 0
 
     for line in file_in:
