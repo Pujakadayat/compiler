@@ -68,32 +68,33 @@ Extremely extra features.
 
 ### Proposed Grammar
 
-- PROGRAM ::= STATEMENT; | PROGRAM STATEMENT;
-- STATEMENT ::= ASSIGN | IF | WHILE | PRINT
+- program ::= statement; | program statement;
+- statement ::= assign | if | while | print | function
 ---
-- ASSIGN ::= NUMERICAL_VARIABLE = NUMERICAL_EXPRESSION | BOOLEAN_VARIABLE = BOOLEAN_EXPRESSION
-- IF ::= if BOOLEAN_EXPRESSION then PROGRAM endif | if BOOLEAN_EXPRESSION then PROGRAM else PROGRAM endif
-- WHILE ::= while BOOLEAN_EXPRESSION do PROGRAM endwhile
-- PRINT ::= print NUM | print BOOL | print NUMERICAL_VARIABLE | print BOOLEAN_VARIABLE | print STRING
+- assign ::= intVariable = numericalExpression | boolVariable = boolExpression
+- if ::= if boolExpression then program endif | if boolExpression then program else program endif
+- while ::= while boolExpression do program endwhile
+- print ::= print int | print bool | print char | print string | print intVariable | print boolVariable | 
+- function ::= 
 ---
-- NUMERICAL_VARIABLE ::= CHAR STRING
-- BOOLEAN_VARIABLE ::= CHAR STRING
+- intVariable ::= char string
+- boolVariable ::= char string
 ---
-- NUMERICAL_EXPRESSION ::= NUM | NUMERICAL_VARIABLE | S
-- S ::= T | S+T | S-T
-- T ::= E | TxE | T/E
-- E ::= P | P^E
-- P ::= NUM | (S)
+- numericalExpression ::= int | intVariable | s
+- s ::= t | s+t | s-t
+- t ::= e | txe | t/e
+- e ::= p | p^e
+- p ::= int | (s)
 ---
-- BOOLEAN_EXPRESSION ::= M | BOOLEAN_EXPRESSION & M | BOOLEAN_EXPRESSION || M
-- M ::= O | !M
-- O ::= GRB | (BOOLEAN_EXPRESSION)
-- GRB ::= BOOL | BOOLEAN_VARIABLE | NUMERICAL_EXPRESSION == NUMERICAL_EXPRESSION | NUMERICAL_EXPRESSION > NUMERICAL_EXPRESSION | NUMERICAL_EXPRESSION < NUMERICAL_EXPRESSION 
+- boolExpression ::= m | boolExpression & m | boolExpression || m
+- m ::= o | !m
+- o ::= grb | (boolExpression)
+- grb ::= bool | boolVariable | numericalExpression == numericalExpression | numericalExpression > numericalExpression | numericalExpression < numericalExpression 
 ---
-- STRING ::= CHAR | NUM | STRING CHAR | STRING NUM
-- CHAR ::= [a - z][A - Z]
-- NUM ::= [0 - 9] | [0 - 9] NUM
-- BOOL ::= True | False
+- string ::= char | int | string char | string int
+- char ::= [a - z][A - Z]
+- int ::= [0 - 9] | [0 - 9] int
+- bool ::= True | False
 
 ## Code Style
 
