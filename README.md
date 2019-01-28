@@ -66,6 +66,34 @@ Extremely extra features.
 - Strings
 - Type Specs
 
+### Proposed Grammar
+
+- PROGRAM ::= STATEMENT; | PROGRAM STATEMENT;
+- STATEMENT ::= ASSIGN | IF | WHILE | PRINT
+
+- ASSIGN ::= NUMERICALVARIABLE = NUMERICALEXPRESSION | BOOLEANVARIABLE = BOOLEANEXPRESSION
+- IF ::= if BOOLEANEXPRESSION then PROGRAM endif | if BOOLEANEXPRESSION then PROGRAM else PROGRAM endif
+- WHILE ::= while BOOLEANEXPRESSION do PROGRAM endwhile
+- PRINT ::= print num | print bool | print NUMERICALVARIABLE | print BOOLEANVARIABLE | print STRING
+
+- NV ::= char STRING
+- BV ::= char STRING
+
+- NE ::= num | NV | S
+- S ::= T | S+T | S-T
+- T ::= E | TxE | T/E
+- E ::= P | P^E
+- P ::= num | (S)
+
+- BE ::= M | BE & M | BE || M
+- M ::= O | !M
+- O ::= GRB | (BE)
+- GRB ::= bool | BV | NE == NE | NE > NE | NE < NE 
+
+- STRING ::= char | num | STRING char | STRING num
+- char ::= [a - z][A - Z]
+- num ::= [0 - 9] | [0 - 9] num
+
 ## Code Style
 
 Using [Black](https://github.com/ambv/black).
