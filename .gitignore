@@ -1,5 +1,5 @@
 .DS_Store
-.vs_code
+.vscode
 __pycache__
 *.dSYM
 a.out
