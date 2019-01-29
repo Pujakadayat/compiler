@@ -1,6 +1,6 @@
 import sys
 import getopt
-import scanner
+import lexer
 
 
 def main():
@@ -12,7 +12,7 @@ def main():
 
     # If scanner flag, tokenize the file
     if "-s" in flags:
-        scanner.tokenize(code)
+        lexer.tokenize(code)
 
 
 def printUsage():

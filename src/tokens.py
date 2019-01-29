@@ -9,7 +9,13 @@ class Token:
 
     def __init__(self, type, text=""):
         self.type = type
-        self.text = text
+
+        if text:
+            # You can pass a text value along with the token
+            self.text = text
+        else:
+            # Otherwise we just use the standard string representation for this kind
+            self.text = str(self.type)
 
     def __str__(self):
         return self.text
@@ -27,6 +33,10 @@ class TokenType:
     def __init__(self, text="", type=[]):
         self.text = text
         type.append(self)
+
+        # Sort the list of this TokenType
+        # NOTE: This is because we want to match longest matching tokens first.
+        type.sort(key=lambda t: -len(t.text))
 
     def __str__(self):
         return self.text
