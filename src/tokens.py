@@ -1,5 +1,36 @@
-symbols = []
-keywords = []
+class Token:
+    """
+    A single token.
+
+    Atrributes:
+        type: TokenType that this token is an instance of
+        content: Literal C string representation of this token
+    """
+
+    def __init__(self, type, text=""):
+        self.type = type
+        self.text = text
+
+    def __str__(self):
+        return self.text
+
+
+class TokenType:
+    """
+    A known token type (return, int, sizeof, etc...)
+
+    Attributes:
+        text: Literal C string representation of this token type
+        type: Classification (symbols or keywords) of the token type
+    """
+
+    def __init__(self, text="", type=[]):
+        self.text = text
+        type.append(self)
+
+    def __str__(self):
+        return self.text
+
 
 # Have to avoid the following Python keywords...
 # False     class       finally     is          return
@@ -10,13 +41,17 @@ keywords = []
 # assert    else        import      pass
 # break     except      in          raise
 
+symbols = []
+keywords = []
+
 # ========
 # Variable
 # ========
 
-identifier = TokenType()
+identifiers = []
 number = TokenType()
 string = TokenType()
+character = TokenType()
 
 # =======
 # Symbols
@@ -124,37 +159,3 @@ typedef = TokenType("typedef", keywords)
 const = TokenType("const", keywords)
 extern = TokenType("extern", keywords)
 auto = TokenType("auto", keywords)
-
-
-class Token:
-    """
-    A single token.
-
-    Atrributes:
-        type: TokenType that this token is an instance of
-        content: Literal C string representation of this token
-    """
-
-    def __init__(self, type, content=""):
-        self.type = type
-        self.content = content
-
-    def __str__(self):
-        return self.content
-
-
-class TokenType:
-    """
-    A known token type (return, int, sizeof, etc...)
-
-    Attributes:
-        text: Literal C string representation of this token type
-        type: Classification (symbols or keywords) of the token type
-    """
-
-    def __init__(self, text="", type=[]):
-        self.text = text
-        type.append(self)
-
-    def __str__(self):
-        return self.text
