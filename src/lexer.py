@@ -1,4 +1,4 @@
-import tokens
+import tokens as tokens
 import sys
 from tokens import Token, TokenType, symbols, keywords, identifiers
 
@@ -24,7 +24,7 @@ def tokenize(code):
 
 def tokenizeLine(line):
     """Parse a line into tokens"""
-    tokens = []
+    lineTokens = []
 
     isInclude = False
     isComment = False
@@ -63,7 +63,7 @@ def tokenizeLine(line):
             # Tokenize whatever we found up to this point
             isComment = True
             previousTokens = tokenizeChunk(line[start:end])
-            tokens.append(previousTokens)
+            lineTokens.append(previousTokens)
             continue
 
         # If next two tokens are //, skip this line and return
@@ -74,7 +74,7 @@ def tokenizeLine(line):
         if line[end].isSpace():
             # Tokenize whatever we found up to this point, and skip whitespace
             previousTokens = tokenizeChunk(line[start:end])
-            tokens.append(previousTokens)
+            lineTokens.append(previousTokens)
             start = end + 1
             end = start
 
@@ -89,7 +89,7 @@ def tokenizeLine(line):
 
             # Get the token between the quotes and update our chunk end
             token, end = parseQuote(line, start, kind)
-            tokens.append(token)
+            lineTokens.append(token)
 
             start = end + 1
             end = start
@@ -99,10 +99,10 @@ def tokenizeLine(line):
         if symbol is not None:
             # Tokenize whatever we found up to this point
             previousTokens = tokenizeChunk(line[start:end])
-            tokens.append(previousTokens)
+            lineTokens.append(previousTokens)
 
             # Append the next token
-            tokens.append(Token(symbol.kind))
+            lineTokens.append(Token(symbol.kind))
             continue
 
         # If none of the above cases have hit, we must increase our search
@@ -112,14 +112,15 @@ def tokenizeLine(line):
     # At this point we have parsed the entire line
     # Flush anything left in the chunk
     previousTokens = tokenizeChunk(line[start:end])
-    tokens.append(previousTokens)
+    lineTokens.append(previousTokens)
 
     # Finally return the list of tokens for this line
     return tokens
 
 
 # def tokenizeChunk(text, start):
-    # I will do this later...
+# I will do this later...
+
 
 def matchSymbol(text, start):
     """Check if a string matches a symbol"""
