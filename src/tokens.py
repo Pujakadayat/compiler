@@ -59,6 +59,7 @@ keywords = []
 # ========
 
 identifiers = []
+identifier = TokenType()
 number = TokenType()
 string = TokenType()
 character = TokenType()
