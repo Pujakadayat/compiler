@@ -3,6 +3,7 @@ import sys
 import tokens as tokens
 from tokens import Token, TokenType, symbols, keywords, identifiers
 
+
 def tokenize(code):
     # Big array of parsed Tokens
     # NOTE: this is a list of Token instances, not just strings
@@ -51,8 +52,13 @@ def tokenizeLine(line):
         # 3. Identifiers
         # 4. Numbers
 
-        # TODO: check if we are in an include statement #include
-        # if isInclude:
+        # Check if we are on an include line, if so, then go to the next line
+        # NOTE: our subset of C specifies that includes must be on their own line
+        if symbol == tokens.pound:
+            if line[(start + 1) : (start + 8)] == "include":
+                previousTokens = parseInclude(line, start + 1)
+                lineTokens.append(previousTokens)
+                break
 
         # If we are in a multi-line /* */ comment
         if isComment:
@@ -141,6 +147,11 @@ def tokenizeLine(line):
 # TODO: parse a quote: return the value between quotations and the new index
 # must handle hex, octal, escaped characters, etc...
 # def parseQuote(text, start, kind, delimeter):
+
+
+def parseInclude(text, start):
+    file = re.split("[<>]", text[(start + 9) :])[0]
+    return Token(tokens.filename, file)
 
 
 def tokenizeChunk(text):

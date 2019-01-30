@@ -63,6 +63,7 @@ identifier = TokenType()
 number = TokenType()
 string = TokenType()
 character = TokenType()
+filename = TokenType()
 
 # =======
 # Symbols
@@ -125,6 +126,7 @@ period = TokenType(".", symbols)
 semicolon = TokenType(";", symbols)
 backSlash = TokenType("\\", symbols)
 arrow = TokenType("->", symbols)
+pound = TokenType("#", symbols)
 
 # ========
 # Keywords
