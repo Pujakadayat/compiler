@@ -9,6 +9,7 @@ class Token:
 
     def __init__(self, type, text=""):
         self.type = type
+        self.name = type.name
 
         if text:
             # You can pass a text value along with the token
@@ -30,8 +31,10 @@ class TokenType:
         type: Classification (symbols or keywords) of the token type
     """
 
-    def __init__(self, text="", type=[]):
+    def __init__(self, name="", text="", type=[]):
+        self.name = name
         self.text = text
+        # self.name = name
         type.append(self)
 
         # Sort the list of this TokenType
@@ -40,6 +43,9 @@ class TokenType:
 
     def __str__(self):
         return self.text
+
+    # def name(self):
+    #     return self.name
 
 
 # Have to avoid the following Python keywords...
@@ -54,64 +60,64 @@ class TokenType:
 symbols = []
 operators = []
 keywords = []
+identifiers = []
 
 # ========
 # Variable
 # ========
 
-identifiers = []
-identifier = TokenType()
-number = TokenType()
-string = TokenType()
-character = TokenType()
-filename = TokenType()
+identifier = TokenType("IDENTIFIER", identifiers)
+number = TokenType("NUMBER")
+string = TokenType("STRING")
+character = TokenType("CHARACTER")
+filename = TokenType("FILENAME")
 
 # =======
 # Symbols
 # =======
 
 # Blocks
-openParen = TokenType("(", symbols)
-closeParen = TokenType(")", symbols)
-openCurly = TokenType("{", symbols)
-closeCurly = TokenType("}", symbols)
-openSquare = TokenType("[", symbols)
-closeSquare = TokenType("]", symbols)
+openParen = TokenType("symbol", "(", symbols)
+closeParen = TokenType("symbol", ")", symbols)
+openCurly = TokenType("symbol", "{", symbols)
+closeCurly = TokenType("symbol", "}", symbols)
+openSquare = TokenType("symbol", "[", symbols)
+closeSquare = TokenType("symbol", "]", symbols)
 
 # Unary operations
-ampersand = TokenType("&", symbols)
-pipe = TokenType("|", symbols)
-xor = TokenType("^", symbols)
-complement = TokenType("~", symbols)
+ampersand = TokenType("symbol", "&", symbols)
+pipe = TokenType("symbol", "|", symbols)
+xor = TokenType("symbol", "^", symbols)
+complement = TokenType("symbol", "~", symbols)
 
 # Equality
-lt = TokenType("<", symbols)
-gt = TokenType(">", symbols)
-ltoe = TokenType("<=", symbols)
-gtoe = TokenType(">=", symbols)
-doubleEquals = TokenType("==", symbols)
-notEquals = TokenType("!=", symbols)
+lt = TokenType("symbol", "<", symbols)
+gt = TokenType("symbol", ">", symbols)
+ltoe = TokenType("symbol", "<=", symbols)
+gtoe = TokenType("symbol", ">=", symbols)
+doubleEquals = TokenType("symbol", "==", symbols)
+notEquals = TokenType("symbol", "!=", symbols)
 
 # Assignment
-equals = TokenType("=", symbols)
-plusEquals = TokenType("+=", symbols)
-minusEquals = TokenType("-=", symbols)
-starEquals = TokenType("*=", symbols)
-slashEquals = TokenType("/=", symbols)
-plusPlus = TokenType("++", symbols)
-minusMinus = TokenType("--", symbols)
+equals = TokenType("symbol", "=", symbols)
+plusEquals = TokenType("symbol", "+=", symbols)
+minusEquals = TokenType("symbol", "-=", symbols)
+starEquals = TokenType("symbol", "*=", symbols)
+slashEquals = TokenType("symbol", "/=", symbols)
+plusPlus = TokenType("symbol", "++", symbols)
+minusMinus = TokenType("symbol", "--", symbols)
 
 # Strings
-doubleQuote = TokenType('"', symbols)
-singleQuote = TokenType("'", symbols)
+doubleQuote = TokenType("symbol", '"', symbols)
+singleQuote = TokenType("symbol", "'", symbols)
 
 # Misc
-comma = TokenType(",", symbols)
-period = TokenType(".", symbols)
-semicolon = TokenType(";", symbols)
-backSlash = TokenType("\\", symbols)
-arrow = TokenType("->", symbols)
-pound = TokenType("#", symbols)
+comma = TokenType("symbol", ",", symbols)
+period = TokenType("symbol", ".", symbols)
+semicolon = TokenType("symbol", ";", symbols)
+backSlash = TokenType("symbol", "\\", symbols)
+arrow = TokenType("symbol", "->", symbols)
+pound = TokenType("symbol", "#", symbols)
 
 
 # =========
@@ -119,20 +125,20 @@ pound = TokenType("#", symbols)
 # =========
 
 # Sum operations
-plus = TokenType("+", operators)
-minus = TokenType("-", operators)
+plus = TokenType("operator", "+", operators)
+minus = TokenType("operator", "-", operators)
 
 # Multiplication operations
-star = TokenType("*", operators)
-slash = TokenType("/", operators)
-mod = TokenType("%", operators)
+star = TokenType("operator", "*", operators)
+slash = TokenType("operator", "/", operators)
+mod = TokenType("operator", "%", operators)
 
 # Boolean operations
-boolAnd = TokenType("&&", operators)
-boolOr = TokenType("||", operators)
-boolNot = TokenType("!", operators)
-leftShift = TokenType("<<", operators)
-rightShift = TokenType(">>", operators)
+boolAnd = TokenType("operator", "&&", operators)
+boolOr = TokenType("operator", "||", operators)
+boolNot = TokenType("operator", "!", operators)
+leftShift = TokenType("operator", "<<", operators)
+rightShift = TokenType("operator", ">>", operators)
 
 # ========
 # Keywords
@@ -140,41 +146,41 @@ rightShift = TokenType(">>", operators)
 
 # Numbers
 
-int = TokenType("int", keywords)
-long = TokenType("int", keywords)
-double = TokenType("int", keywords)
-char = TokenType("char", keywords)
-short = TokenType("short", keywords)
-signed = TokenType("signed", keywords)
-unsigned = TokenType("unsigned", keywords)
-float = TokenType("float", keywords)
+int = TokenType("keyword", "int", keywords)
+long = TokenType("keyword", "int", keywords)
+double = TokenType("keyword", "int", keywords)
+char = TokenType("keyword", "char", keywords)
+short = TokenType("keyword", "short", keywords)
+signed = TokenType("keyword", "signed", keywords)
+unsigned = TokenType("keyword", "unsigned", keywords)
+float = TokenType("keyword", "float", keywords)
 
 # Data types
 
-struct = TokenType("struct", keywords)
-enum = TokenType("enum", keywords)
-union = TokenType("union", keywords)
-record = TokenType("record", keywords)
+struct = TokenType("keyword", "struct", keywords)
+enum = TokenType("keyword", "enum", keywords)
+union = TokenType("keyword", "union", keywords)
+record = TokenType("keyword", "record", keywords)
 
 # Flow control
 
-ifKeyword = TokenType("if", keywords)
-elseKeyword = TokenType("else", keywords)
-whileKeyword = TokenType("while", keywords)
-forKeyword = TokenType("for", keywords)
-breakKeyword = TokenType("break", keywords)
-continueKeyword = TokenType("continue", keywords)
+ifKeyword = TokenType("keyword", "if", keywords)
+elseKeyword = TokenType("keyword", "else", keywords)
+whileKeyword = TokenType("keyword", "while", keywords)
+forKeyword = TokenType("keyword", "for", keywords)
+breakKeyword = TokenType("keyword", "break", keywords)
+continueKeyword = TokenType("keyword", "continue", keywords)
 
 # Boolean
 
-true = TokenType("true", keywords)
-false = TokenType("false", keywords)
+true = TokenType("keyword", "true", keywords)
+false = TokenType("keyword", "false", keywords)
 
 # Misc
 
-static = TokenType("static", keywords)
-sizeof = TokenType("sizeof", keywords)
-typedef = TokenType("typedef", keywords)
-const = TokenType("const", keywords)
-extern = TokenType("extern", keywords)
-auto = TokenType("auto", keywords)
+static = TokenType("keyword", "static", keywords)
+sizeof = TokenType("keyword", "sizeof", keywords)
+typedef = TokenType("keyword", "typedef", keywords)
+const = TokenType("keyword", "const", keywords)
+extern = TokenType("keyword", "extern", keywords)
+auto = TokenType("keyword", "auto", keywords)

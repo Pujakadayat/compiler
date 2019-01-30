@@ -1,7 +1,7 @@
 import re
 import sys
 import tokens as tokens
-from tokens import Token, TokenType, symbols, keywords, identifiers
+from tokens import Token, TokenType, symbols, keywords, identifiers, operators
 
 
 def tokenize(code):
@@ -172,17 +172,10 @@ def tokenizeChunk(text):
     if identifier is not None:
         return Token(tokens.identifier, text)
 
-<<<<<<< HEAD
-    symbol = matchSymbol(text)
-    if symbol is not None:
-        return Token(symbol)
-
     operator = matchOperator(text)
     if operator is not None:
         return Token(operator)
 
-=======
->>>>>>> refs/remotes/origin/master
     # TODO: collect compiler errors like this
     # If it is none of the above, we do not recognize this type
     raise ValueError(f"Unrecognized token: '{text}'")
@@ -222,5 +215,5 @@ def matchNumber(text):
 def printTokens(tokens):
     texts = []
     for token in tokens:
-        texts.append(token.text)
+        texts.append((token.name, token.text))
     print(texts)
