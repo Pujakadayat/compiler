@@ -3,9 +3,6 @@ import sys
 import tokens as tokens
 from tokens import Token, TokenType, symbols, keywords, identifiers
 
-import time
-import traceback
-
 
 def tokenize(code):
     # Big array of parsed Tokens
@@ -55,7 +52,7 @@ def tokenizeLine(line):
         # 3. Identifiers
         # 4. Numbers
 
-        # TODO: check if we are in an include statement
+        # TODO: check if we are in an include statement #include
         # if isInclude:
 
         # If we are in a multi-line /* */ comment
@@ -143,6 +140,7 @@ def tokenizeLine(line):
 
 
 # TODO: parse a quote: return the value between quotations and the new index
+# must handle hex, octal, escaped characters, etc...
 # def parseQuote(text, start, kind, delimeter):
 
 
@@ -167,6 +165,7 @@ def tokenizeChunk(text):
     if symbol is not None:
         return Token(symbol)
 
+    # TODO: collect compiler errors like this
     # If it is none of the above, we do not recognize this type
     raise ValueError(f"Unrecognized token: '{text}'")
 
@@ -187,7 +186,7 @@ def matchKeyword(text):
 
 def matchIdentifier(text):
     """Check if string matches an identifier"""
-    if re.match(r"[a-zA-Z][_a-zA-Z0-9]*$", text):
+    if re.match(r"[_a-zA-Z][_a-zA-Z0-9]*$", text):
         return text
 
 

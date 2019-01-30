@@ -10,6 +10,11 @@ def main():
     # Read in the file
     code = readFile(filename)
 
+    # If neither of the flags passed, show usage and exit
+    if "-s" not in flags and "-p" not in flags:
+        printUsage()
+        sys.exit()
+
     # If scanner flag, tokenize the file
     if "-s" in flags:
         lexer.tokenize(code)
