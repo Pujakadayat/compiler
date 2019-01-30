@@ -11,6 +11,7 @@ def tokenize(code):
     # Big array of parsed Tokens
     # NOTE: this is a list of Token instances, not just strings
     codeTokens = []
+    isComment = False
 
     lines = code.splitlines()
     # TODO: handle multiple escaped lines using \
@@ -19,7 +20,7 @@ def tokenize(code):
     for line in lines:
         try:
             # Get the tokens of the current line and add to the big list
-            lineTokens = tokenizeLine(line)
+            lineTokens, isComment = tokenizeLine(line, isComment)
             codeTokens += lineTokens
         except Exception as err:
             print(err)
@@ -29,12 +30,11 @@ def tokenize(code):
     printTokens(codeTokens)
 
 
-def tokenizeLine(line):
+def tokenizeLine(line, isComment):
     """Parse a line into tokens"""
     lineTokens = []
 
     isInclude = False
-    isComment = False
 
     # We parse characters in a "chunk" with a start and an end
     # Start both counters at 0 to catch whitespace at beginning of a line
@@ -50,9 +50,11 @@ def tokenizeLine(line):
 
         try:
             nextSymbol = matchSymbol(line[end + 1])
+
         except IndexError:
             nextSymbol = None
-
+        print(f"{symbol}:{nextSymbol}")
+        print(f"isComment? {isComment}")
         # Order of searching:
         # 1. Symbols
         # 2. Operators
@@ -70,8 +72,10 @@ def tokenizeLine(line):
 
         # If we are in a multi-line /* */ comment
         if isComment:
+            print("We are in a multi line comment...")
             # If the comment is ending
-            if symbol == tokens.star and next == tokens.slash:
+            if symbol == tokens.star and nextSymbol == tokens.slash:
+                print("Found the end of the multi line comment...")
                 isComment = False
                 start = end + 2
                 end = start
@@ -81,13 +85,17 @@ def tokenizeLine(line):
             continue
 
         # If next two symbols begin a multi-line /* */ comment
-        if symbol == tokens.star and next == tokens.slash:
+        if symbol == tokens.slash and nextSymbol == tokens.star:
             # Tokenize whatever we found up to this point
+            print("we made it")
             isComment = True
             if start != end:
+                # int main() { printf();/* hello */
                 previousTokens = tokenizeChunk(line[start:end])
                 lineTokens.append(previousTokens)
 
+            start += 1
+            end = start
             continue
 
         # If next two tokens are //, skip this line, break from while loop, and return
@@ -156,7 +164,7 @@ def tokenizeLine(line):
         lineTokens.append(previousTokens)
 
     # Finally return the list of tokens for this line
-    return lineTokens
+    return lineTokens, isComment
 
 
 # TODO: parse a quote: return the value between quotations and the new index
