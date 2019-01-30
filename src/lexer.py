@@ -1,7 +1,8 @@
 import re
 import sys
 import tokens as tokens
-from tokens import Token, TokenType, symbols, keywords, identifiers
+from tokens import Token, TokenType, symbols, keywords, identifiers, operators
+
 
 def tokenize(code):
     # Big array of parsed Tokens
@@ -52,8 +53,13 @@ def tokenizeLine(line):
         # 4. Identifiers
         # 5. Numbers
 
-        # TODO: check if we are in an include statement #include
-        # if isInclude:
+        # Check if we are on an include line, if so, then go to the next line
+        # NOTE: our subset of C specifies that includes must be on their own line
+        if symbol == tokens.pound:
+            if line[(start + 1) : (start + 8)] == "include":
+                previousTokens = parseInclude(line, start + 1)
+                lineTokens.append(previousTokens)
+                break
 
         # If we are in a multi-line /* */ comment
         if isComment:
@@ -144,6 +150,11 @@ def tokenizeLine(line):
 # def parseQuote(text, start, kind, delimeter):
 
 
+def parseInclude(text, start):
+    file = re.split("[<>]", text[(start + 9) :])[0]
+    return Token(tokens.filename, file)
+
+
 def tokenizeChunk(text):
     """Check if the given text is a keyword, number, or identifier"""
     # Check if it a keyword first
@@ -161,17 +172,10 @@ def tokenizeChunk(text):
     if identifier is not None:
         return Token(tokens.identifier, text)
 
-<<<<<<< HEAD
-    symbol = matchSymbol(text)
-    if symbol is not None:
-        return Token(symbol)
-
     operator = matchOperator(text)
     if operator is not None:
         return Token(operator)
 
-=======
->>>>>>> refs/remotes/origin/master
     # TODO: collect compiler errors like this
     # If it is none of the above, we do not recognize this type
     raise ValueError(f"Unrecognized token: '{text}'")
@@ -211,5 +215,5 @@ def matchNumber(text):
 def printTokens(tokens):
     texts = []
     for token in tokens:
-        texts.append(token.text)
+        texts.append((token.name, token.text))
     print(texts)
