@@ -1,8 +1,11 @@
 import re
 import sys
 import tokens as tokens
-from tokens import Token, TokenType, symbols, keywords, identifiers, operators
+from tokens import Token, TokenType, symbols, keywords, identifiers
 
+import time
+
+debug = True
 
 def tokenize(code):
     # Big array of parsed Tokens
@@ -39,6 +42,10 @@ def tokenizeLine(line):
     end = 0
 
     while end < len(line):
+        if debug is True:
+            time.sleep(0.2)
+            print(f"{start}:{end} = {line[start:end]}")
+
         symbol = matchSymbol(line[end])
 
         try:
@@ -85,10 +92,15 @@ def tokenizeLine(line):
 
         # If next two tokens are //, skip this line, break from while loop, and return
         if symbol == tokens.slash and nextSymbol == tokens.slash:
+            if debug is True:
+                print("Found single line comment, skipping line!")
             break
 
         # If ending character of chunk is whitespace
         if line[end].isspace():
+            if debug is True:
+                print("Found whitespace")
+
             # Tokenize whatever we found up to this point, and skip whitespace
             if start != end:
                 previousTokens = tokenizeChunk(line[start:end])
@@ -123,6 +135,8 @@ def tokenizeLine(line):
                 lineTokens.append(previousTokens)
 
             # Append the next token
+            if debug is True:
+                print(f"Found token {symbol}")
             lineTokens.append(Token(symbol))
 
             # Move the chunk forward
@@ -160,20 +174,28 @@ def tokenizeChunk(text):
     # Check if it a keyword first
     keyword = matchKeyword(text)
     if keyword is not None:
+        if debug is True:
+            print(f"Found keyword: {text}")
         return Token(keyword, text)
 
     # Check if it a number second
     number = matchNumber(text)
     if number is not None:
+        if debug is True:
+            print(f"Found number: {text}")
         return Token(tokens.number, text)
 
     # Check if it an identifier third
     identifier = matchIdentifier(text)
     if identifier is not None:
+        if debug is True:
+            print(f"Found identifier: {text}")
         return Token(tokens.identifier, text)
 
     operator = matchOperator(text)
     if operator is not None:
+        if debug is True:
+            print(f"Found operator: {text}")
         return Token(operator)
 
     # TODO: collect compiler errors like this

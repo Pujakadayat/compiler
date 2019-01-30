@@ -58,7 +58,6 @@ class TokenType:
 # break     except      in          raise
 
 symbols = []
-operators = []
 keywords = []
 identifiers = []
 
@@ -125,20 +124,20 @@ pound = TokenType("symbol", "#", symbols)
 # =========
 
 # Sum operations
-plus = TokenType("operator", "+", operators)
-minus = TokenType("operator", "-", operators)
+plus = TokenType("operator", "+", symbols)
+minus = TokenType("operator", "-", symbols)
 
 # Multiplication operations
-star = TokenType("operator", "*", operators)
-slash = TokenType("operator", "/", operators)
-mod = TokenType("operator", "%", operators)
+star = TokenType("operator", "*", symbols)
+slash = TokenType("operator", "/", symbols)
+mod = TokenType("operator", "%", symbols)
 
 # Boolean operations
-boolAnd = TokenType("operator", "&&", operators)
-boolOr = TokenType("operator", "||", operators)
-boolNot = TokenType("operator", "!", operators)
-leftShift = TokenType("operator", "<<", operators)
-rightShift = TokenType("operator", ">>", operators)
+boolAnd = TokenType("operator", "&&", symbols)
+boolOr = TokenType("operator", "||", symbols)
+boolNot = TokenType("operator", "!", symbols)
+leftShift = TokenType("operator", "<<", symbols)
+rightShift = TokenType("operator", ">>", symbols)
 
 # ========
 # Keywords
