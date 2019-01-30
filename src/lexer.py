@@ -3,6 +3,9 @@ import sys
 import tokens as tokens
 from tokens import Token, TokenType, symbols, keywords, identifiers
 
+import time
+import traceback
+
 
 def tokenize(code):
     # Big array of parsed Tokens
@@ -22,6 +25,9 @@ def tokenize(code):
             print(err)
             sys.exit(2)
 
+    print("✨ Success!")
+    printTokens(codeTokens)
+
 
 def tokenizeLine(line):
     """Parse a line into tokens"""
@@ -31,12 +37,17 @@ def tokenizeLine(line):
     isComment = False
 
     # We parse characters in a "chunk" with a start and an end
+    # Start both counters at 0 to catch whitespace at beginning of a line
     start = 0
-    end = 1
+    end = 0
 
     while end < len(line):
         symbol = matchSymbol(line[end])
-        nextSymbol = matchSymbol(line[end + 1])
+
+        try:
+            nextSymbol = matchSymbol(line[end + 1])
+        except IndexError:
+            nextSymbol = None
 
         # Order of searching:
         # 1. Symbols
@@ -82,7 +93,6 @@ def tokenizeLine(line):
 
             start = end + 1
             end = start + 1
-            print()
             continue
 
         # If we see a quote, tokenize the entire quoted value as one token
@@ -124,8 +134,9 @@ def tokenizeLine(line):
 
     # At this point we have parsed the entire line
     # Flush anything left in the chunk
-    previousTokens = tokenizeChunk(line[start:end])
-    lineTokens.append(previousTokens)
+    if start != end:
+        previousTokens = tokenizeChunk(line[start:end])
+        lineTokens.append(previousTokens)
 
     # Finally return the list of tokens for this line
     return lineTokens
@@ -140,17 +151,17 @@ def tokenizeChunk(text):
     # Check if it a keyword first
     keyword = matchKeyword(text)
     if keyword is not None:
-        return Token(keyword)
+        return Token(keyword, text)
 
     # Check if it a number second
     number = matchNumber(text)
     if number is not None:
-        return Token(tokens.number)
+        return Token(tokens.number, text)
 
     # Check if it an identifier third
     identifier = matchIdentifier(text)
     if identifier is not None:
-        return Token(tokens.identifier)
+        return Token(tokens.identifier, text)
 
     symbol = matchSymbol(text)
     if symbol is not None:
@@ -184,3 +195,10 @@ def matchNumber(text):
     """Check if string matches a number"""
     if text.isdigit():
         return text
+
+
+def printTokens(tokens):
+    texts = []
+    for token in tokens:
+        texts.append(token.text)
+    print(texts)
