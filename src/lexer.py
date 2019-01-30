@@ -3,7 +3,6 @@ import sys
 import tokens as tokens
 from tokens import Token, TokenType, symbols, keywords, identifiers
 
-
 def tokenize(code):
     # Big array of parsed Tokens
     # NOTE: this is a list of Token instances, not just strings
@@ -89,7 +88,7 @@ def tokenizeLine(line):
                 lineTokens.append(previousTokens)
 
             start = end + 1
-            end = start + 1
+            end = start
             continue
 
         # If we see a quote, tokenize the entire quoted value as one token
@@ -160,10 +159,6 @@ def tokenizeChunk(text):
     identifier = matchIdentifier(text)
     if identifier is not None:
         return Token(tokens.identifier, text)
-
-    symbol = matchSymbol(text)
-    if symbol is not None:
-        return Token(symbol)
 
     # TODO: collect compiler errors like this
     # If it is none of the above, we do not recognize this type
