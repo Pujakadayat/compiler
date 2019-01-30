@@ -48,9 +48,10 @@ def tokenizeLine(line):
 
         # Order of searching:
         # 1. Symbols
-        # 2. Keywords
-        # 3. Identifiers
-        # 4. Numbers
+        # 2. Operators
+        # 3. Keywords
+        # 4. Identifiers
+        # 5. Numbers
 
         # Check if we are on an include line, if so, then go to the next line
         # NOTE: our subset of C specifies that includes must be on their own line
@@ -171,6 +172,17 @@ def tokenizeChunk(text):
     if identifier is not None:
         return Token(tokens.identifier, text)
 
+<<<<<<< HEAD
+    symbol = matchSymbol(text)
+    if symbol is not None:
+        return Token(symbol)
+
+    operator = matchOperator(text)
+    if operator is not None:
+        return Token(operator)
+
+=======
+>>>>>>> refs/remotes/origin/master
     # TODO: collect compiler errors like this
     # If it is none of the above, we do not recognize this type
     raise ValueError(f"Unrecognized token: '{text}'")
@@ -182,6 +194,11 @@ def matchSymbol(text):
         if symbol.text == text:
             return symbol
 
+def matchOperator(text):
+    """Check if a string matches an operator"""
+    for operator in operators:
+        if operator.text == text:
+            return operator
 
 def matchKeyword(text):
     """Check if string matches a keyword"""
