@@ -1,12 +1,13 @@
-import tokens as tokens
+import re
 import sys
+import tokens as tokens
 from tokens import Token, TokenType, symbols, keywords, identifiers
 
 
 def tokenize(code):
     # Big array of parsed Tokens
     # NOTE: this is a list of Token instances, not just strings
-    tokens = []
+    codeTokens = []
 
     lines = code.splitlines()
     # TODO: handle multiple escaped lines using \
@@ -16,7 +17,7 @@ def tokenize(code):
         try:
             # Get the tokens of the current line and add to the big list
             lineTokens = tokenizeLine(line)
-            tokens += lineTokens
+            codeTokens += lineTokens
         except Exception as err:
             print(err)
             sys.exit(2)
@@ -31,11 +32,11 @@ def tokenizeLine(line):
 
     # We parse characters in a "chunk" with a start and an end
     start = 0
-    end = 0
+    end = 1
 
     while end < len(line):
-        symbol = matchSymbol(line, end)
-        nextSymbol = matchSymbol(line, end + 1)
+        symbol = matchSymbol(line[end])
+        nextSymbol = matchSymbol(line[end + 1])
 
         # Order of searching:
         # 1. Symbols
@@ -62,21 +63,27 @@ def tokenizeLine(line):
         if symbol == tokens.star and next == tokens.slash:
             # Tokenize whatever we found up to this point
             isComment = True
-            previousTokens = tokenizeChunk(line[start:end])
-            lineTokens.append(previousTokens)
+            if start != end:
+                previousTokens = tokenizeChunk(line[start:end])
+                lineTokens.append(previousTokens)
+
             continue
 
-        # If next two tokens are //, skip this line and return
+        # If next two tokens are //, skip this line, break from while loop, and return
         if symbol == tokens.slash and nextSymbol == tokens.slash:
             break
 
         # If ending character of chunk is whitespace
-        if line[end].isSpace():
+        if line[end].isspace():
             # Tokenize whatever we found up to this point, and skip whitespace
-            previousTokens = tokenizeChunk(line[start:end])
-            lineTokens.append(previousTokens)
+            if start != end:
+                previousTokens = tokenizeChunk(line[start:end])
+                lineTokens.append(previousTokens)
+
             start = end + 1
-            end = start
+            end = start + 1
+            print()
+            continue
 
         # If we see a quote, tokenize the entire quoted value as one token
         if symbol in {tokens.doubleQuote, tokens.singleQuote}:
@@ -88,21 +95,27 @@ def tokenizeLine(line):
                 kind = tokens.character
 
             # Get the token between the quotes and update our chunk end
-            token, end = parseQuote(line, start, kind)
+            token, end = parseQuote(line, start, kind, delimeter)
             lineTokens.append(token)
 
             start = end + 1
-            end = start
+            end = start + 1
             continue
 
-        # If current symbol is another symbol
+        # If next character is a symbol
         if symbol is not None:
             # Tokenize whatever we found up to this point
-            previousTokens = tokenizeChunk(line[start:end])
-            lineTokens.append(previousTokens)
+            if start != end:
+                previousTokens = tokenizeChunk(line[start:end])
+                lineTokens.append(previousTokens)
 
             # Append the next token
-            lineTokens.append(Token(symbol.kind))
+            lineTokens.append(Token(symbol))
+
+            # Move the chunk forward
+            start = end + len(symbol.text)
+            end = start
+
             continue
 
         # If none of the above cases have hit, we must increase our search
@@ -115,24 +128,43 @@ def tokenizeLine(line):
     lineTokens.append(previousTokens)
 
     # Finally return the list of tokens for this line
-    return tokens
+    return lineTokens
 
 
-# def tokenizeChunk(text, start):
-# I will do this later...
+# TODO: parse a quote: return the value between quotations and the new index
+# def parseQuote(text, start, kind, delimeter):
 
 
-def matchSymbol(text, start):
+def tokenizeChunk(text):
+    """Check if the given text is a keyword, number, or identifier"""
+    # Check if it a keyword first
+    keyword = matchKeyword(text)
+    if keyword is not None:
+        return Token(keyword)
+
+    # Check if it a number second
+    number = matchNumber(text)
+    if number is not None:
+        return Token(tokens.number)
+
+    # Check if it an identifier third
+    identifier = matchIdentifier(text)
+    if identifier is not None:
+        return Token(tokens.identifier)
+
+    symbol = matchSymbol(text)
+    if symbol is not None:
+        return Token(symbol)
+
+    # If it is none of the above, we do not recognize this type
+    raise ValueError(f"Unrecognized token: '{text}'")
+
+
+def matchSymbol(text):
     """Check if a string matches a symbol"""
     for symbol in symbols:
-        try:
-            for i, c in enumerate(symbol.text):
-                if text[start + i] != c:
-                    break
-                else:
-                    return symbol
-        except IndexError:
-            pass
+        if symbol.text == text:
+            return symbol
 
 
 def matchKeyword(text):
@@ -150,5 +182,5 @@ def matchIdentifier(text):
 
 def matchNumber(text):
     """Check if string matches a number"""
-    if text.isDigit():
+    if text.isdigit():
         return text
