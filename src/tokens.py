@@ -52,6 +52,7 @@ class TokenType:
 # break     except      in          raise
 
 symbols = []
+operators = []
 keywords = []
 
 # ========
@@ -76,27 +77,11 @@ closeCurly = TokenType("}", symbols)
 openSquare = TokenType("[", symbols)
 closeSquare = TokenType("]", symbols)
 
-# Sum operations
-plus = TokenType("+", symbols)
-minus = TokenType("-", symbols)
-
-# Multiplication operations
-star = TokenType("*", symbols)
-slash = TokenType("/", symbols)
-mod = TokenType("%", symbols)
-
 # Unary operations
 ampersand = TokenType("&", symbols)
 pipe = TokenType("|", symbols)
 xor = TokenType("^", symbols)
 complement = TokenType("~", symbols)
-
-# Boolean operations
-boolAnd = TokenType("&&", symbols)
-boolOr = TokenType("||", symbols)
-boolNot = TokenType("!", symbols)
-leftShift = TokenType("<<", symbols)
-rightShift = TokenType(">>", symbols)
 
 # Equality
 lt = TokenType("<", symbols)
@@ -125,6 +110,27 @@ period = TokenType(".", symbols)
 semicolon = TokenType(";", symbols)
 backSlash = TokenType("\\", symbols)
 arrow = TokenType("->", symbols)
+
+
+# =========
+# Operators
+# =========
+
+# Sum operations
+plus = TokenType("+", operators)
+minus = TokenType("-", operators)
+
+# Multiplication operations
+star = TokenType("*", operators)
+slash = TokenType("/", operators)
+mod = TokenType("%", operators)
+
+# Boolean operations
+boolAnd = TokenType("&&", operators)
+boolOr = TokenType("||", operators)
+boolNot = TokenType("!", operators)
+leftShift = TokenType("<<", operators)
+rightShift = TokenType(">>", operators)
 
 # ========
 # Keywords
