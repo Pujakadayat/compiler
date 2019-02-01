@@ -1,11 +1,12 @@
 import re
 import sys
+import time
 import tokens as tokens
 from tokens import Token, TokenType, symbols, keywords, identifiers
 
-import time
 
-debug = True
+debug = False
+
 
 def tokenize(code):
     # Big array of parsed Tokens
@@ -33,7 +34,6 @@ def tokenize(code):
 def tokenizeLine(line, isComment):
     """Parse a line into tokens"""
     lineTokens = []
-
     isInclude = False
 
     # We parse characters in a "chunk" with a start and an end
@@ -44,17 +44,15 @@ def tokenizeLine(line, isComment):
     while end < len(line):
         if debug is True:
             time.sleep(0.2)
-            print(f"{start}:{end} = {line[start:end]}")
+            print(f"{start}:{end} = '{line[start:end]}'")
 
         symbol = matchSymbol(line[end])
 
         try:
             nextSymbol = matchSymbol(line[end + 1])
-
         except IndexError:
             nextSymbol = None
-        print(f"{symbol}:{nextSymbol}")
-        print(f"isComment? {isComment}")
+
         # Order of searching:
         # 1. Symbols
         # 2. Operators
@@ -65,6 +63,9 @@ def tokenizeLine(line, isComment):
         # Check if we are on an include line, if so, then go to the next line
         # NOTE: our subset of C specifies that includes must be on their own line
         if symbol == tokens.pound:
+            if debug is True:
+                print("Found include statement.")
+
             if line[(start + 1) : (start + 8)] == "include":
                 previousTokens = parseInclude(line, start + 1)
                 lineTokens.append(previousTokens)
@@ -72,10 +73,11 @@ def tokenizeLine(line, isComment):
 
         # If we are in a multi-line /* */ comment
         if isComment:
-            print("We are in a multi line comment...")
             # If the comment is ending
             if symbol == tokens.star and nextSymbol == tokens.slash:
-                print("Found the end of the multi line comment...")
+                if debug is True:
+                    print("Found end of multi-line comment.")
+
                 isComment = False
                 start = end + 2
                 end = start
@@ -86,11 +88,12 @@ def tokenizeLine(line, isComment):
 
         # If next two symbols begin a multi-line /* */ comment
         if symbol == tokens.slash and nextSymbol == tokens.star:
+            if debug is True:
+                print("Found beginning of multi-line comment.")
+
             # Tokenize whatever we found up to this point
-            print("we made it")
             isComment = True
             if start != end:
-                # int main() { printf();/* hello */
                 previousTokens = tokenizeChunk(line[start:end])
                 lineTokens.append(previousTokens)
 
@@ -107,7 +110,7 @@ def tokenizeLine(line, isComment):
         # If ending character of chunk is whitespace
         if line[end].isspace():
             if debug is True:
-                print("Found whitespace")
+                print("Found whitespace.")
 
             # Tokenize whatever we found up to this point, and skip whitespace
             if start != end:
@@ -127,12 +130,14 @@ def tokenizeLine(line, isComment):
                 delimeter = "'"
                 kind = tokens.character
 
+            if debug is True:
+                print("Found a quoted string. Attempting to parse...")
+
             # Get the token between the quotes and update our chunk end
             token, end = parseQuote(line, start, kind, delimeter)
             lineTokens.append(token)
 
-            start = end + 1
-            end = start + 1
+            start = end
             continue
 
         # If next character is a symbol
@@ -167,9 +172,19 @@ def tokenizeLine(line, isComment):
     return lineTokens, isComment
 
 
-# TODO: parse a quote: return the value between quotations and the new index
-# must handle hex, octal, escaped characters, etc...
-# def parseQuote(text, start, kind, delimeter):
+# TODO: handle hex, octal, escaped characters, etc...
+def parseQuote(line, start, kind, delimeter):
+    characters = []
+    i = start + 1
+
+    while True:
+        if i >= len(line):
+            raise ValueError("Missing terminating quote!")
+        elif line[i] == delimeter:
+            return Token(tokens.string, "".join(characters)), i + 1
+        else:
+            characters.append(line[i])
+            i += 1
 
 
 def parseInclude(text, start):
@@ -200,12 +215,6 @@ def tokenizeChunk(text):
             print(f"Found identifier: {text}")
         return Token(tokens.identifier, text)
 
-    operator = matchOperator(text)
-    if operator is not None:
-        if debug is True:
-            print(f"Found operator: {text}")
-        return Token(operator)
-
     # TODO: collect compiler errors like this
     # If it is none of the above, we do not recognize this type
     raise ValueError(f"Unrecognized token: '{text}'")
@@ -217,11 +226,6 @@ def matchSymbol(text):
         if symbol.text == text:
             return symbol
 
-def matchOperator(text):
-    """Check if a string matches an operator"""
-    for operator in operators:
-        if operator.text == text:
-            return operator
 
 def matchKeyword(text):
     """Check if string matches a keyword"""
