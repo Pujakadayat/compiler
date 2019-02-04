@@ -10,7 +10,6 @@ debug = False
 
 def tokenize(code):
     # Big array of parsed Tokens
-    # NOTE: this is a list of Token instances, not just strings
     codeTokens = TokenList()
     isComment = False
 
@@ -244,10 +243,3 @@ def matchNumber(text):
     """Check if string matches a number"""
     if text.isdigit():
         return text
-
-
-# def printTokens(tokens):
-#     texts = []
-#     for token in tokens:
-#         texts.append((token.name, token.text))
-#     print(texts)

@@ -2,6 +2,7 @@ class TokenList:
     """
     Represents a list of Tokens.
     """
+
     def __init__(self):
         self.index = 0
         self.list = []
