@@ -1,3 +1,50 @@
+class TokenList:
+    """
+    Represents a list of Tokens.
+    """
+    def __init__(self):
+        self.index = 0
+        self.list = []
+
+    def append(self, tokens):
+        if type(tokens) is TokenList:
+            self.list += tokens.list
+        elif type(tokens) is list and len(tokens) > 1:
+            self.list += tokens
+        else:
+            self.list.append(tokens)
+
+    def get(self):
+        return self.list[index]
+
+    def peek(self):
+        return self.list[index + 1]
+
+    def next(self):
+        if self.index == len(self.list) - 1:
+            raise IndexError("Already at the end of the TokenList")
+
+        index += 1
+        return self.get()
+
+    def previous(self):
+        if self.index <= 0:
+            raise IndexError("Already at the beginning of the TokenList")
+
+        index -= 1
+        return self.get()
+
+    def print(self):
+        text = []
+        for token in self.list:
+            text.append(f"<{token.text}, {token.name}>")
+            print(f"<{token.text}, {token.name}>")
+        return str(text)
+
+    def __repr__(self):
+        return self.print()
+
+
 class Token:
     """
     A single token.
@@ -19,6 +66,9 @@ class Token:
             self.text = str(self.type)
 
     def __str__(self):
+        return self.text
+
+    def __repr__(self):
         return self.text
 
 
@@ -44,8 +94,8 @@ class TokenType:
     def __str__(self):
         return self.text
 
-    # def name(self):
-    #     return self.name
+    def __repr__(self):
+        return self.text
 
 
 # Have to avoid the following Python keywords...
@@ -169,6 +219,7 @@ whileKeyword = TokenType("keyword", "while", keywords)
 forKeyword = TokenType("keyword", "for", keywords)
 breakKeyword = TokenType("keyword", "break", keywords)
 continueKeyword = TokenType("keyword", "continue", keywords)
+returnKeyword = TokenType("keyword", "return", keywords)
 
 # Boolean
 
