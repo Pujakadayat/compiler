@@ -45,10 +45,10 @@ def tokenizeLine(line, isComment):
             time.sleep(0.2)
             print(f"{start}:{end} = '{line[start:end]}'")
 
-        symbol = matchSymbol(line[end])
+        symbol = matchSymbol(line, end)
 
         try:
-            nextSymbol = matchSymbol(line[end + 1])
+            nextSymbol = matchSymbol(line, end + 1)
         except IndexError:
             nextSymbol = None
 
@@ -219,11 +219,17 @@ def tokenizeChunk(text):
     raise ValueError(f"Unrecognized token: '{text}'")
 
 
-def matchSymbol(text):
+def matchSymbol(line, start):
     """Check if a string matches a symbol"""
     for symbol in symbols:
-        if symbol.text == text:
-            return symbol
+        try:
+            for i, c in enumerate(symbol.text):
+                if line[start + i] != c:
+                    break
+            else:
+                return symbol
+        except IndexError:
+            pass
 
 
 def matchKeyword(text):
