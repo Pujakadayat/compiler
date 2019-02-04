@@ -21,6 +21,14 @@ class TokenList:
     def peek(self):
         return self.list[index + 1]
 
+    def shift(self):
+        # Remove the first item from the list and return it
+        return self.list.pop(0)
+
+    def pop(self):
+        # Remove the last item from the list and return it
+        return self.list.pop()
+
     def next(self):
         if self.index == len(self.list) - 1:
             raise IndexError("Already at the end of the TokenList")
