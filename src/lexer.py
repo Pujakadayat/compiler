@@ -2,7 +2,7 @@ import re
 import sys
 import time
 import tokens as tokens
-from tokens import Token, TokenType, symbols, keywords, identifiers
+from tokens import TokenList, Token, TokenType, symbols, keywords, identifiers
 
 
 debug = False
@@ -11,7 +11,7 @@ debug = False
 def tokenize(code):
     # Big array of parsed Tokens
     # NOTE: this is a list of Token instances, not just strings
-    codeTokens = []
+    codeTokens = TokenList()
     isComment = False
 
     lines = code.splitlines()
@@ -22,18 +22,18 @@ def tokenize(code):
         try:
             # Get the tokens of the current line and add to the big list
             lineTokens, isComment = tokenizeLine(line, isComment)
-            codeTokens += lineTokens
+            codeTokens.append(lineTokens)
         except Exception as err:
             print(err)
             sys.exit(2)
 
     print("✨ Success!")
-    printTokens(codeTokens)
+    codeTokens.print()
 
 
 def tokenizeLine(line, isComment):
     """Parse a line into tokens"""
-    lineTokens = []
+    lineTokens = TokenList()
     isInclude = False
 
     # We parse characters in a "chunk" with a start and an end
@@ -246,8 +246,8 @@ def matchNumber(text):
         return text
 
 
-def printTokens(tokens):
-    texts = []
-    for token in tokens:
-        texts.append((token.name, token.text))
-    print(texts)
+# def printTokens(tokens):
+#     texts = []
+#     for token in tokens:
+#         texts.append((token.name, token.text))
+#     print(texts)
