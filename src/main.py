@@ -1,6 +1,7 @@
 import sys
 import getopt
 import lexer
+import parser
 
 
 def main():
@@ -19,6 +20,9 @@ def main():
     if "-s" in flags:
         lexer.tokenize(code)
 
+    ##trying to call Parser
+    parse = parser.Parser(tokens)
+    parse.parse()    
 
 def printUsage():
     bold = "\033[1m"

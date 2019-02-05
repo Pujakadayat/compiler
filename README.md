@@ -24,6 +24,14 @@ $ python3 character_count.py FILENAME
 
 ## Implementation Overview
 
+### AST Nodes to Support
+## Via: Nora Sandler
+
+- [ ] program = Program(function_declaration)
+- [ ] function_declaration = Function(string, statement) #string being the function name
+- [ ] statement = Return(exp)
+- [ ] exp = Constant(int)
+
 ### Required Features
 
 Features required in our implementation.
@@ -74,8 +82,8 @@ Extremely extra features.
 - assign ::= intVariable = numericalExpression | boolVariable = boolExpression
 - if ::= if boolExpression then program endif | if boolExpression then program else program endif
 - while ::= while boolExpression do program endwhile
-- print ::= print int | print bool | print char | print string | print intVariable | print boolVariable | 
-- function ::= 
+- print ::= print int | print bool | print char | print string | print intVariable | print boolVariable |
+- function ::=
 ---
 - intVariable ::= char string
 - boolVariable ::= char string
@@ -89,7 +97,7 @@ Extremely extra features.
 - boolExpression ::= m | boolExpression & m | boolExpression || m
 - m ::= o | !m
 - o ::= grb | (boolExpression)
-- grb ::= bool | boolVariable | numericalExpression == numericalExpression | numericalExpression > numericalExpression | numericalExpression < numericalExpression 
+- grb ::= bool | boolVariable | numericalExpression == numericalExpression | numericalExpression > numericalExpression | numericalExpression < numericalExpression
 ---
 - string ::= char | int | string char | string int
 - char ::= [a - z][A - Z]
