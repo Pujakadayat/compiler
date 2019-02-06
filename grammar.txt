@@ -1,0 +1,52 @@
+# General
+
+program -> declarationList
+declarationList -> declarationList declaration | declaration
+declaration -> variableDeclaration | functionDeclaration
+
+# Variable Declarations
+
+variableDeclaration -> typeSpecifier variableDeclarationList;
+variableDeclarationList -> variableDeclarationList, variableDeclarationInitialize | variableDeclarationInitialize
+variableDeclarationInitialize -> ID | ID = simpleExpression
+scopedTypedSpecifier -> static typeSpecifier | typeSpecifier
+typeSpecifier -> INT | BOOL | CHAR | FLOAT
+
+# Function Declarations
+
+functionDeclaration -> typeSpecifier ID ( parameters ) compoundStatement
+parameters -> parameterList | EMPTY
+parameterList -> parameterTypeList
+parameterTypeList -> typeSpecifier ID
+
+statement -> expressionStatement | compoundStatement | selectionStatement | iterationStatement | returnStatement | breakStatement
+expressionStatement -> expression; | ;
+compoundStatement -> { localDeclaration statementList }
+selectionStatement -> if ( simpleExpression ) statement | if ( simpleExpression ) statement else statement
+iterationStatement -> while ( simpleExpression ) statement
+returnStatement -> return; | return expression;
+breakStatement -> break;
+
+statementList -> statementList statement | EMPTY
+localDeclaration -> localDeclaration scopedVariableDeclaration | EMPTY
+scopedVariableDeclaration -> scopedTypedSpecifier variableDeclarationList;
+
+
+simpleExpression -> simpleExpression || andExpression | andExpression
+andExpression -> andExpression && unaryRelExpression
+unaryRelExpression -> !unaryRelExpression | relExpression
+relExpression -> sumExpression sumOp term | term
+term -> term multOp unaryExpression | unaryExpression
+unaryExpression -> unaryOp unaryExpression | factor
+
+factor -> immutable | mutable
+mutable -> ID
+immutable -> ( expression ) | functionCall | constant
+functionCall -> ID ( args )
+args -> argList | EMPTY
+argList -> argList, expression | expression
+
+constant -> NUMCONST | CHARCONST | FLOATCONST | true | false
+multOp -> * | /
+sumOp -> + | -
+unaryOp -> -
