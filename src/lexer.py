@@ -26,8 +26,7 @@ def tokenize(code):
             print(err)
             sys.exit(2)
 
-    print("✨ Success!")
-    codeTokens.print()
+    return codeTokens
 
 
 def tokenizeLine(line, isComment):
