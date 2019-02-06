@@ -3,55 +3,64 @@ class TokenList:
     Represents a list of Tokens.
     """
 
-    def __init__(self):
+    def __init__(self, tokenList=None):
         self.index = 0
-        self.list = []
+
+        if tokenList:
+            self.tokenList = tokenList
+        else:
+            self.tokenList = []
 
     def append(self, tokens):
-        if type(tokens) is TokenList:
-            self.list += tokens.list
+        if isinstance(tokens, TokenList):
+            self.tokenList += tokens.tokenList
         elif type(tokens) is list and len(tokens) > 1:
-            self.list += tokens
+            self.tokenList += tokens
         else:
-            self.list.append(tokens)
+            self.tokenList.append(tokens)
 
-    def get(self):
-        return self.list[index]
+    def get(self, index=None):
+        if index:
+            return self.tokenList[index]
+        else:
+            return self.tokenList[self.index]
 
     def peek(self):
-        return self.list[index + 1]
+        return self.tokenList[self.index + 1]
 
     def shift(self):
         # Remove the first item from the list and return it
-        return self.list.pop(0)
+        return self.tokenList.pop(0)
 
     def pop(self):
         # Remove the last item from the list and return it
-        return self.list.pop()
+        return self.tokenList.pop()
 
     def next(self):
-        if self.index == len(self.list) - 1:
+        if self.index == len(self.tokenList) - 1:
             raise IndexError("Already at the end of the TokenList")
 
-        index += 1
+        self.index += 1
         return self.get()
 
     def previous(self):
         if self.index <= 0:
             raise IndexError("Already at the beginning of the TokenList")
 
-        index -= 1
+        self.index -= 1
         return self.get()
 
     def print(self):
         text = []
-        for token in self.list:
+        for token in self.tokenList:
             text.append(f"<{token.text}, {token.name}>")
-            print(f"<{token.text}, {token.name}>")
         return str(text)
 
     def __repr__(self):
         return self.print()
+
+    def __len__(self):
+        return len(self.tokenList)
 
 
 class Token:
