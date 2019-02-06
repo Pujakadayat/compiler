@@ -1,7 +1,6 @@
 import parser.classes as classes
 import parser.grammar as grammar
-import tokens as tokens
-from tokens import TokenList
+import tokens as WAKA
 
 
 def parse(tokens):
@@ -27,7 +26,7 @@ class Parser:
 
     def shift(self):
         print(f"Before shift: {self.stack}")
-        self.stack.append(self.tokens.shift())
+        self.stack.append(self.tokens.pop(0))
         print(f"After shift: {self.stack}")
 
     def reduce(self):

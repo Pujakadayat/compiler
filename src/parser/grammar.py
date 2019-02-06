@@ -54,9 +54,9 @@ def TypeSpecifier(tokens):
 
     token = tokens[0]
     if isinstance(token, tokenTypes.Token):
-        if token.text == "int":
+        if token.rep == "int":
             return classes.TypeSpecifier(tokenTypes.int)
-        elif token.text == "float":
+        elif token.rep == "float":
             return classes.TypeSpecifier(tokenTypes.float)
 
     return None
@@ -90,7 +90,7 @@ def NUMCONST(tokens):
 
     token = tokens[0]
     if isinstance(token, tokenTypes.Token):
-        if tokens[0].text.isdigit():
+        if tokens[0].rep.isdigit():
             return classes.NUMCONST(tokens[0])
 
 

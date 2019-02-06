@@ -1,93 +1,87 @@
-class TokenList:
-    """
-    Represents a list of Tokens.
-    """
+# class TokenList:
+#     """
+#     Represents a list of Tokens.
+#     """
 
-    def __init__(self, tokenList=None):
-        self.index = 0
+#     def __init__(self, tokenList=None):
+#         self.index = 0
 
-        if tokenList:
-            self.tokenList = tokenList
-        else:
-            self.tokenList = []
+#         if tokenList:
+#             self.tokenList = tokenList
+#         else:
+#             self.tokenList = []
 
-    def append(self, tokens):
-        if isinstance(tokens, TokenList):
-            self.tokenList += tokens.tokenList
-        elif type(tokens) is list and len(tokens) > 1:
-            self.tokenList += tokens
-        else:
-            self.tokenList.append(tokens)
+#     def append(self, tokens):
+#         if isinstance(tokens, TokenList):
+#             self.tokenList += tokens.tokenList
+#         elif type(tokens) is list and len(tokens) > 1:
+#             self.tokenList += tokens
+#         else:
+#             self.tokenList.append(tokens)
 
-    def get(self, index=None):
-        if index:
-            return self.tokenList[index]
-        else:
-            return self.tokenList[self.index]
+#     def get(self, index=None):
+#         if index:
+#             return self.tokenList[index]
+#         else:
+#             return self.tokenList[self.index]
 
-    def peek(self):
-        return self.tokenList[self.index + 1]
+#     def peek(self):
+#         return self.tokenList[self.index + 1]
 
-    def shift(self):
-        # Remove the first item from the list and return it
-        return self.tokenList.pop(0)
+#     def shift(self):
+#         # Remove the first item from the list and return it
+#         return self.tokenList.pop(0)
 
-    def pop(self):
-        # Remove the last item from the list and return it
-        return self.tokenList.pop()
+#     def pop(self):
+#         # Remove the last item from the list and return it
+#         return self.tokenList.pop()
 
-    def next(self):
-        if self.index == len(self.tokenList) - 1:
-            raise IndexError("Already at the end of the TokenList")
+#     def next(self):
+#         if self.index == len(self.tokenList) - 1:
+#             raise IndexError("Already at the end of the TokenList")
 
-        self.index += 1
-        return self.get()
+#         self.index += 1
+#         return self.get()
 
-    def previous(self):
-        if self.index <= 0:
-            raise IndexError("Already at the beginning of the TokenList")
+#     def previous(self):
+#         if self.index <= 0:
+#             raise IndexError("Already at the beginning of the TokenList")
 
-        self.index -= 1
-        return self.get()
+#         self.index -= 1
+#         return self.get()
 
-    def print(self):
-        text = []
-        for token in self.tokenList:
-            text.append(f"<{token.text}, {token.name}>")
-        return str(text)
+#     def print(self):
+#         text = []
+#         for token in self.tokenList:
+#             text.append(f"<{token.text}, {token.name}>")
+#         return str(text)
 
-    def __repr__(self):
-        return self.print()
+#     def __repr__(self):
+#         return self.print()
 
-    def __len__(self):
-        return len(self.tokenList)
+#     def __len__(self):
+#         return len(self.tokenList)
 
 
 class Token:
     """
     A single token.
 
-    Atrributes:
-        type: TokenType that this token is an instance of
-        content: Literal C string representation of this token
+    Attributes:
+        content: stores additional information if number/identifier/string
+        rep: string representation of this token
     """
 
-    def __init__(self, type, text=""):
-        self.type = type
-        self.name = type.name
-
-        if text:
-            # You can pass a text value along with the token
-            self.text = text
-        else:
-            # Otherwise we just use the standard string representation for this kind
-            self.text = str(self.type)
-
-    def __str__(self):
-        return self.text
+    def __init__(self, kind, content="", rep=""):
+        self.kind = kind
+        self.content = content if content else str(self.kind)
+        self.rep = rep
 
     def __repr__(self):
-        return self.text
+        return self.content
+
+    def __str__(self):
+        return self.rep if self.rep else self.content
 
 
 class TokenType:
@@ -95,25 +89,20 @@ class TokenType:
     A known token type (return, int, sizeof, etc...)
 
     Attributes:
-        text: Literal C string representation of this token type
-        type: Classification (symbols or keywords) of the token type
+        rep: The representation of this token in text, if it exists (i.e. 'int')
+        type: The list to add this TokenType to (i.e. 'symbols')
     """
 
-    def __init__(self, name="", text="", type=[]):
-        self.name = name
-        self.text = text
-        # self.name = name
+    def __init__(self, rep="", type=[]):
+        self.rep = rep
         type.append(self)
 
         # Sort the list of this TokenType
         # NOTE: This is because we want to match longest matching tokens first.
-        type.sort(key=lambda t: -len(t.text))
+        type.sort(key=lambda t: -len(t.rep))
 
     def __str__(self):
-        return self.text
-
-    def __repr__(self):
-        return self.text
+        return self.rep
 
 
 # Have to avoid the following Python keywords...
@@ -127,64 +116,63 @@ class TokenType:
 
 symbols = []
 keywords = []
-identifiers = []
 
 # ========
 # Variable
 # ========
 
-identifier = TokenType("IDENTIFIER", identifiers)
-number = TokenType("NUMBER")
-string = TokenType("STRING")
-character = TokenType("CHARACTER")
-filename = TokenType("FILENAME")
+identifier = TokenType()
+number = TokenType()
+string = TokenType()
+character = TokenType()
+filename = TokenType()
 
 # =======
 # Symbols
 # =======
 
 # Blocks
-openParen = TokenType("symbol", "(", symbols)
-closeParen = TokenType("symbol", ")", symbols)
-openCurly = TokenType("symbol", "{", symbols)
-closeCurly = TokenType("symbol", "}", symbols)
-openSquare = TokenType("symbol", "[", symbols)
-closeSquare = TokenType("symbol", "]", symbols)
+openParen = TokenType("(", symbols)
+closeParen = TokenType(")", symbols)
+openCurly = TokenType("{", symbols)
+closeCurly = TokenType("}", symbols)
+openSquare = TokenType("[", symbols)
+closeSquare = TokenType("]", symbols)
 
 # Unary operations
-ampersand = TokenType("symbol", "&", symbols)
-pipe = TokenType("symbol", "|", symbols)
-xor = TokenType("symbol", "^", symbols)
-complement = TokenType("symbol", "~", symbols)
+ampersand = TokenType("&", symbols)
+pipe = TokenType("|", symbols)
+xor = TokenType("^", symbols)
+complement = TokenType("~", symbols)
 
 # Equality
-lt = TokenType("symbol", "<", symbols)
-gt = TokenType("symbol", ">", symbols)
-ltoe = TokenType("symbol", "<=", symbols)
-gtoe = TokenType("symbol", ">=", symbols)
-doubleEquals = TokenType("symbol", "==", symbols)
-notEquals = TokenType("symbol", "!=", symbols)
+lt = TokenType("<", symbols)
+gt = TokenType(">", symbols)
+ltoe = TokenType("<=", symbols)
+gtoe = TokenType(">=", symbols)
+doubleEquals = TokenType("==", symbols)
+notEquals = TokenType("!=", symbols)
 
 # Assignment
-equals = TokenType("symbol", "=", symbols)
-plusEquals = TokenType("symbol", "+=", symbols)
-minusEquals = TokenType("symbol", "-=", symbols)
-starEquals = TokenType("symbol", "*=", symbols)
-slashEquals = TokenType("symbol", "/=", symbols)
-plusPlus = TokenType("symbol", "++", symbols)
-minusMinus = TokenType("symbol", "--", symbols)
+equals = TokenType("=", symbols)
+plusEquals = TokenType("+=", symbols)
+minusEquals = TokenType("-=", symbols)
+starEquals = TokenType("*=", symbols)
+slashEquals = TokenType("/=", symbols)
+plusPlus = TokenType("++", symbols)
+minusMinus = TokenType("--", symbols)
 
 # Strings
-doubleQuote = TokenType("symbol", '"', symbols)
-singleQuote = TokenType("symbol", "'", symbols)
+doubleQuote = TokenType('"', symbols)
+singleQuote = TokenType("'", symbols)
 
 # Misc
-comma = TokenType("symbol", ",", symbols)
-period = TokenType("symbol", ".", symbols)
-semicolon = TokenType("symbol", ";", symbols)
-backSlash = TokenType("symbol", "\\", symbols)
-arrow = TokenType("symbol", "->", symbols)
-pound = TokenType("symbol", "#", symbols)
+comma = TokenType(",", symbols)
+period = TokenType(".", symbols)
+semicolon = TokenType(";", symbols)
+backSlash = TokenType("\\", symbols)
+arrow = TokenType("->", symbols)
+pound = TokenType("#", symbols)
 
 
 # =========
@@ -192,20 +180,20 @@ pound = TokenType("symbol", "#", symbols)
 # =========
 
 # Sum operations
-plus = TokenType("operator", "+", symbols)
-minus = TokenType("operator", "-", symbols)
+plus = TokenType("+", symbols)
+minus = TokenType("-", symbols)
 
 # Multiplication operations
-star = TokenType("operator", "*", symbols)
-slash = TokenType("operator", "/", symbols)
-mod = TokenType("operator", "%", symbols)
+star = TokenType("*", symbols)
+slash = TokenType("/", symbols)
+mod = TokenType("%", symbols)
 
 # Boolean operations
-boolAnd = TokenType("operator", "&&", symbols)
-boolOr = TokenType("operator", "||", symbols)
-boolNot = TokenType("operator", "!", symbols)
-leftShift = TokenType("operator", "<<", symbols)
-rightShift = TokenType("operator", ">>", symbols)
+boolAnd = TokenType("&&", symbols)
+boolOr = TokenType("||", symbols)
+boolNot = TokenType("!", symbols)
+leftShift = TokenType("<<", symbols)
+rightShift = TokenType(">>", symbols)
 
 # ========
 # Keywords
@@ -213,42 +201,42 @@ rightShift = TokenType("operator", ">>", symbols)
 
 # Numbers
 
-int = TokenType("keyword", "int", keywords)
-long = TokenType("keyword", "int", keywords)
-double = TokenType("keyword", "int", keywords)
-char = TokenType("keyword", "char", keywords)
-short = TokenType("keyword", "short", keywords)
-signed = TokenType("keyword", "signed", keywords)
-unsigned = TokenType("keyword", "unsigned", keywords)
-float = TokenType("keyword", "float", keywords)
+int = TokenType("int", keywords)
+long = TokenType("int", keywords)
+double = TokenType("int", keywords)
+char = TokenType("char", keywords)
+short = TokenType("short", keywords)
+signed = TokenType("signed", keywords)
+unsigned = TokenType("unsigned", keywords)
+float = TokenType("float", keywords)
 
 # Data types
 
-struct = TokenType("keyword", "struct", keywords)
-enum = TokenType("keyword", "enum", keywords)
-union = TokenType("keyword", "union", keywords)
-record = TokenType("keyword", "record", keywords)
+struct = TokenType("struct", keywords)
+enum = TokenType("enum", keywords)
+union = TokenType("union", keywords)
+record = TokenType("record", keywords)
 
 # Flow control
 
-ifKeyword = TokenType("keyword", "if", keywords)
-elseKeyword = TokenType("keyword", "else", keywords)
-whileKeyword = TokenType("keyword", "while", keywords)
-forKeyword = TokenType("keyword", "for", keywords)
-breakKeyword = TokenType("keyword", "break", keywords)
-continueKeyword = TokenType("keyword", "continue", keywords)
-returnKeyword = TokenType("keyword", "return", keywords)
+ifKeyword = TokenType("if", keywords)
+elseKeyword = TokenType("else", keywords)
+whileKeyword = TokenType("while", keywords)
+forKeyword = TokenType("for", keywords)
+breakKeyword = TokenType("break", keywords)
+continueKeyword = TokenType("continue", keywords)
+returnKeyword = TokenType("return", keywords)
 
 # Boolean
 
-true = TokenType("keyword", "true", keywords)
-false = TokenType("keyword", "false", keywords)
+true = TokenType("true", keywords)
+false = TokenType("false", keywords)
 
 # Misc
 
-static = TokenType("keyword", "static", keywords)
-sizeof = TokenType("keyword", "sizeof", keywords)
-typedef = TokenType("keyword", "typedef", keywords)
-const = TokenType("keyword", "const", keywords)
-extern = TokenType("keyword", "extern", keywords)
-auto = TokenType("keyword", "auto", keywords)
+static = TokenType("static", keywords)
+sizeof = TokenType("sizeof", keywords)
+typedef = TokenType("typedef", keywords)
+const = TokenType("const", keywords)
+extern = TokenType("extern", keywords)
+auto = TokenType("auto", keywords)

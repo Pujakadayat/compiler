@@ -2,7 +2,7 @@ import re
 import sys
 import time
 import tokens as tokens
-from tokens import TokenList, Token, TokenType, symbols, keywords, identifiers
+from tokens import Token, TokenType, symbols, keywords
 
 
 debug = False
@@ -10,7 +10,7 @@ debug = False
 
 def tokenize(code):
     # Big array of parsed Tokens
-    codeTokens = TokenList()
+    codeTokens = []
     isComment = False
 
     lines = code.splitlines()
@@ -21,7 +21,7 @@ def tokenize(code):
         try:
             # Get the tokens of the current line and add to the big list
             lineTokens, isComment = tokenizeLine(line, isComment)
-            codeTokens.append(lineTokens)
+            codeTokens.extend(lineTokens)
         except Exception as err:
             print(err)
             sys.exit(2)
@@ -31,7 +31,7 @@ def tokenize(code):
 
 def tokenizeLine(line, isComment):
     """Parse a line into tokens"""
-    lineTokens = TokenList()
+    lineTokens = []
     isInclude = False
 
     # We parse characters in a "chunk" with a start and an end
@@ -151,7 +151,7 @@ def tokenizeLine(line, isComment):
             lineTokens.append(Token(symbol))
 
             # Move the chunk forward
-            start = end + len(symbol.text)
+            start = end + len(symbol.rep)
             end = start
 
             continue
@@ -222,7 +222,7 @@ def matchSymbol(line, start):
     """Check if a string matches a symbol"""
     for symbol in symbols:
         try:
-            for i, c in enumerate(symbol.text):
+            for i, c in enumerate(symbol.rep):
                 if line[start + i] != c:
                     break
             else:
@@ -234,7 +234,7 @@ def matchSymbol(line, start):
 def matchKeyword(text):
     """Check if string matches a keyword"""
     for keyword in keywords:
-        if keyword.text == text:
+        if keyword.rep == text:
             return keyword
 
 
