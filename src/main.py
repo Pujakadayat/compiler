@@ -1,7 +1,7 @@
 import sys
 import getopt
 import lexer
-import parser
+import parser.parser as parser
 
 
 def main():
@@ -16,13 +16,17 @@ def main():
         printUsage()
         sys.exit()
 
+    if "-p" in flags and "-s" not in flags:
+        print("Cannot parse without scanning first!")
+        sys.exit()
+
     # If scanner flag, tokenize the file
     if "-s" in flags:
-        lexer.tokenize(code)
+        tokens = lexer.tokenize(code)
 
-    ##trying to call Parser
-    parse = parser.Parser(tokens)
-    parse.parse()    
+        if "-p" in flags:
+            parser.parse(tokens)
+
 
 def printUsage():
     bold = "\033[1m"
