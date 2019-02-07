@@ -1,0 +1,94 @@
+Title: Python Compiler - Part 1: Character Count, Lexer & Parser
+
+Authors: Charles Hermann, Izeah Olguin, Paco Coursey
+
+Design Document last update: 07/02/19
+
+Overview:
+  Our Python compiler currently meets the standards expected of the first
+  deliverable. Our scanner reads in a file as a string of characters and produc
+  es a list of labeled tokens. These tokens become acquired by the parser and
+  produce an abstract representation.
+
+  As a group, we have met numerous times to discuss our design,
+  implementation and overall expectations of our compiler.
+
+  As mentioned during the code review in class, our Python code is a bit extensive,
+  however this contributes to the readability and allows our software to be more
+  dynamic.
+
+Usage:
+  We are currently using Python3, however our software is suitable for Python2.
+
+    [] 'character_count`
+        Ensure that a `.txt` file is within working directory.
+        Run using:
+        python3 character_count.py FILENAME
+
+    [] 'scanner'
+        Ensure you are currently within the compiler directory.
+        Run using:
+        python3 src/main.py -s samples/plain.c
+
+    [] 'parse tree'
+        Ensure you are currently within the compiler directory.
+        Run using:
+        make main
+
+        ~or~
+
+        python3 src/main.py -p samples/plain.c
+
+Design Discussion:
+  scanner implementation:
+    Our scanner parses characters in a 'chunk', with a start an and end counter.
+    We then iterate through to match our tokens; in the following order: Symbols,
+    Operators, Keywords, Identifiers and Numbers.
+
+    We are not concerned with speed, which is why we were more concerned with being
+    efficient and careful with our scanning and labeling of tokens.
+
+  parsing implementation:
+    Currently, we have implemented seven classes, which are within their own file
+    titled 'classes.py'. These classes are then defined within 'grammar.py'.
+    'grammar.py', also contains our list of rules, which we currently recognize.
+    In the near future (by the next deliverable), we will utilize the parse method
+    and only have one file, rather than separating the 'classes.py' file from the
+    'grammar.py' file.
+
+    The 'paser.py' file design is familiar to that of Nora Sandler's design.
+    We employ a recursive descent parsing algorithm, which pushes elements
+    onto a stack from right to left. Finally, we then shift, reduce and parse.
+
+    Within 'grammar.py', you will notice we did not immediately reduce a token,
+    but instead checked against the odds first. Before we verify, we check and
+    if something does not seem to match, then we return None. This makes up for
+    our lack of speed in our scanner implementation, and allows us to peek at the
+    next token being pushed onto the stack.
+
+  Limitations:
+    [] Large code base, which can be overwhelming.
+    [] Limited function implementation.
+    [] Propagating our project scope is slow going.
+    [] Plenty of statement checks.
+
+  Tradeoffs:
+    [] Everything is dynamic and can be modified quickly.
+    [] Immediate attention to errors & other effects within program.
+    [] Design & creation is well-thought, well-defined and we will not run into
+       scope creep.
+    [] Speed increase & return rate.
+
+Language Specification:
+  Currently Recognizing:
+    [] Program
+    [] Function Declaration
+    [] Type Specifier: int
+    [] Return Statement
+    [] Number Constant: int
+    [] Identifiers
+
+  Future Implementation:
+    [] Variable Declaration
+    [] Type Specifier: BOOL, CHAR, FLOAT
+    [] Statement: expression, compound, selection, iteration, break, list, scope
