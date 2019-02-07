@@ -1,10 +1,15 @@
-class Program:
+class Node:
+    def __init__(self):
+        pass
+
+
+class Program(Node):
     def __init__(self, declarationList):
         # Declarations is a DeclarationList instance
         self.declarations = declarationList
 
 
-class FunctionDeclaration:
+class FunctionDeclaration(Node):
     def __init__(self, type, ID, parameters, statement):
         self.type = type
         self.ID = ID
@@ -12,20 +17,26 @@ class FunctionDeclaration:
         self.statement = statement
 
 
-class TypeSpecifier:
+class TypeSpecifier(Node):
     def __init__(self, type):
         self.type = type
 
 
-class ReturnStatement:
+class ReturnStatement(Node):
     def __init__(self, value):
         self.value = value
 
 
-class NUMCONST:
+class Parameters(Node):
+    def __init__(self):
+        pass
+
+
+class NUMCONST(Node):
     def __init__(self, value):
         self.value = value
 
-class IDENTIFIER:
+
+class IDENTIFIER(Node):
     def __init__(self, value):
         self.value = value

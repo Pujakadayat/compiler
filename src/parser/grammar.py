@@ -11,7 +11,7 @@ def Program(tokens):
         return None
 
     if isinstance(tokens[0], classes.FunctionDeclaration):
-        return Program(tokens[0])
+        return classes.Program(tokens[0])
 
 
 def FunctionDeclaration(tokens):
@@ -20,7 +20,7 @@ def FunctionDeclaration(tokens):
         FunctionDeclaration -> TypeSpecifier ID () ReturnStatement
     """
 
-    if len(tokens) != 6:
+    if len(tokens) != 7:
         return None
 
     returnType = tokens[0]
@@ -31,21 +31,23 @@ def FunctionDeclaration(tokens):
     if not isinstance(id, classes.IDENTIFIER):
         return None
 
-    if tokens[2] != tokenTypes.openParen:
+    if tokens[2].kind != tokenTypes.openParen:
         return None
 
-    if tokens[3] != tokenTypes.closeParen:
+    if tokens[3].kind != tokenTypes.closeParen:
         return None
 
-    parameters = tokens[4]
-    if not isinstance(parameters, classes.Parameters):
+    if tokens[4].kind != tokenTypes.openCurly:
         return None
 
     returnStatement = tokens[5]
     if not isinstance(returnStatement, classes.ReturnStatement):
         return None
 
-    return classes.FunctionDeclaration(returnType, id, parameters, returnStatement)
+    if tokens[6].kind != tokenTypes.closeCurly:
+        return None
+
+    return classes.FunctionDeclaration(returnType, id, None, returnStatement)
 
 
 def TypeSpecifier(tokens):
@@ -53,11 +55,12 @@ def TypeSpecifier(tokens):
         return None
 
     token = tokens[0]
-    if isinstance(token, tokenTypes.Token):
-        if token.rep == "int":
-            return classes.TypeSpecifier(tokenTypes.int)
-        elif token.rep == "float":
-            return classes.TypeSpecifier(tokenTypes.float)
+
+    if isinstance(token, classes.Node):
+        return None
+
+    if token.kind == tokenTypes.int:
+        return classes.TypeSpecifier(tokenTypes.int)
 
     return None
 
@@ -71,17 +74,28 @@ def ReturnStatement(tokens):
     if len(tokens) != 3:
         return None
 
-    if tokens[0] != tokenTypes.returnKeyword:
+    if (
+        isinstance(tokens[0], tokenTypes.Token)
+        and tokens[0].kind != tokenTypes.returnKeyword
+    ):
         return None
 
-    value = tokens[1]
-    if value != tokenTypes.number:
+    # found 'return'
+
+    if not isinstance(tokens[1], classes.NUMCONST):
         return None
 
-    if tokens[2] != tokenTypes.semicolon:
+    # found 'return 0'
+
+    if not isinstance(tokens[2], tokenTypes.Token):
         return None
 
-    return classes.ReturnStatement(value)
+    if tokens[2].kind != tokenTypes.semicolon:
+        return None
+
+    # found 'return 0;'
+
+    return classes.ReturnStatement(999999)
 
 
 def NUMCONST(tokens):
@@ -89,9 +103,35 @@ def NUMCONST(tokens):
         return None
 
     token = tokens[0]
-    if isinstance(token, tokenTypes.Token):
-        if tokens[0].rep.isdigit():
-            return classes.NUMCONST(tokens[0])
+    if isinstance(token, classes.Node):
+        return None
+
+    if token.kind != tokenTypes.number:
+        return None
+
+    return classes.NUMCONST(token.content)
 
 
-rules = [Program, FunctionDeclaration, TypeSpecifier, ReturnStatement, NUMCONST]
+def IDENTIFIER(tokens):
+    if len(tokens) != 1:
+        return None
+
+    token = tokens[0]
+
+    if isinstance(token, classes.Node):
+        return None
+
+    if token.kind != tokenTypes.identifier:
+        return None
+
+    return classes.IDENTIFIER(token.content)
+
+
+rules = [
+    Program,
+    FunctionDeclaration,
+    TypeSpecifier,
+    ReturnStatement,
+    NUMCONST,
+    IDENTIFIER,
+]

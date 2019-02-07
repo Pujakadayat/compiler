@@ -1,6 +1,9 @@
 import parser.classes as classes
 import parser.grammar as grammar
-import tokens as WAKA
+import tokens as TokenTypes
+
+
+import time
 
 
 def parse(tokens):
@@ -14,10 +17,13 @@ class Parser:
         self.tokens = tokens
 
     def parse(self):
-        # Check if we can't reduce anymore (accept state)
-        if len(self.stack) == 1 and isinstance(self.stack[0], classes.Program):
-            print("✨ Completed parsing!")
-            return
+        if len(self.stack) == 1:
+            self.reduce()
+
+            # Check if we can't reduce anymore (accept state)
+            if isinstance(self.stack[0], classes.Program):
+                print("✨ Completed parsing!")
+                return
 
         # Recursively parse until accept state
         self.shift()
@@ -31,9 +37,9 @@ class Parser:
 
     def reduce(self):
         # Check [int], then [int, main], then [int, main, (] etc...
-        for index in range(0, len(self.stack)):
+        for index in range(len(self.stack), 0, -1):
             # Current stack contains subset of stack increasing from L -> R
-            currentStack = self.stack[: index + 1]
+            currentStack = self.stack[index - 1 : len(self.stack)]
 
             print(f"Current stack: {currentStack}")
 
@@ -47,7 +53,7 @@ class Parser:
                 if token:
                     print("\n FOUND A MATCHING RULE \n")
                     # Replace the actual stack
-                    self.stack[: index + 1] = [token]
+                    self.stack[index - 1 : len(self.stack)] = [token]
 
                     break
                 else:
