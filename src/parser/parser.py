@@ -23,6 +23,8 @@ class Parser:
             # Check if we can't reduce anymore (accept state)
             if isinstance(self.stack[0], classes.Program):
                 print("✨ Completed parsing!")
+                print(self.stack)
+                print(self.stack[0].declarations)
                 return
 
         # Recursively parse until accept state
@@ -38,7 +40,7 @@ class Parser:
     def reduce(self):
         # Check [int], then [int, main], then [int, main, (] etc...
         for index in range(len(self.stack), 0, -1):
-            # Current stack contains subset of stack increasing from L -> R
+            # Current stack contains subset of stack increasing from R -> L
             currentStack = self.stack[index - 1 : len(self.stack)]
 
             print(f"Current stack: {currentStack}")
