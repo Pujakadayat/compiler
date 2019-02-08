@@ -2,6 +2,7 @@ import parser.grammar as grammar
 import tokens as TokenTypes
 import time
 import logging
+import textwrap
 
 debug = True
 
@@ -10,6 +11,13 @@ def parse(tokens):
     parser = Parser(tokens)
     parser.parse()
 
+def print(self):
+    for token in self.stack:
+        token.print()
+        # indent...
+        s = token
+        s1 = textwrap.indent(s1, '| -- ')
+        print(s1)
 
 class Parser:
     def __init__(self, tokens):
@@ -70,7 +78,8 @@ class Parser:
                 else:
                     continue
 
-    def print(self):
-        for token in self.stack:
-            token.print()
-            # indent...
+    #def print(self):
+    #    for token in self.stack:
+    ##        s = token
+        #    s1 = textwrap.indent(s1, '| -- ')
+        #    print(s1)
