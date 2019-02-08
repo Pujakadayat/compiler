@@ -19,7 +19,6 @@ class Parser:
     def parse(self):
         # If we only have 1 token, avoid shifting
         if len(self.stack) == 1:
-            logging.debug("Only one token left on stack!")
             self.reduce()
 
             # Check if we can't reduce anymore (accept state)
@@ -70,3 +69,8 @@ class Parser:
                     break
                 else:
                     continue
+
+    def print(self):
+        for token in self.stack:
+            token.print()
+            # indent...

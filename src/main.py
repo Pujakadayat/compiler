@@ -27,7 +27,7 @@ def main():
     print("✨ Completed parsing!")
 
     if "-p" in flags:
-        print("parse tree")
+        parser.print()
 
 
 def printUsage():
