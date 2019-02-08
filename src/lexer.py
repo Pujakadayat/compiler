@@ -7,6 +7,7 @@ import logging
 
 debug = True
 
+
 def tokenize(code):
     # Big array of parsed Tokens
     codeTokens = []

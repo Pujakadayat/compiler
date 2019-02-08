@@ -4,11 +4,12 @@ import lexer
 import parser.parser as parser
 import logging
 
+
 def main():
     # Get command line arguments
     filename, flags = parseArguments()
 
-    logging.basicConfig(filename='compiler.log', level=logging.DEBUG)
+    logging.basicConfig(filename="compiler.log", level=logging.DEBUG)
 
     # Read in the program file
     code = readFile(filename)
@@ -27,6 +28,7 @@ def main():
 
     if "-p" in flags:
         print("parse tree")
+
 
 def printUsage():
     bold = "\033[1m"
