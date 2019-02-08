@@ -2,31 +2,31 @@ import sys
 import getopt
 import lexer
 import parser.parser as parser
-
+import logging
 
 def main():
     # Get command line arguments
     filename, flags = parseArguments()
 
-    # Read in the file
+    logging.basicConfig(filename='compiler.log', level=logging.DEBUG)
+
+    # Read in the program file
     code = readFile(filename)
 
-    # If neither of the flags passed, show usage and exit
-    if "-s" not in flags and "-p" not in flags:
-        printUsage()
-        sys.exit()
+    # Tokenize the input file
+    tokens = lexer.tokenize(code)
+    print("✨ Completed scanning!")
 
-    if "-p" in flags and "-s" not in flags:
-        print("Cannot parse without scanning first!")
-        sys.exit()
-
-    # If scanner flag, tokenize the file
+    # Handle printing flags
     if "-s" in flags:
-        tokens = lexer.tokenize(code)
+        print(tokens)
 
-        if "-p" in flags:
-            parser.parse(tokens)
+    # Parse the tokens
+    parser.parse(tokens)
+    print("✨ Completed parsing!")
 
+    if "-p" in flags:
+        print("parse tree")
 
 def printUsage():
     bold = "\033[1m"

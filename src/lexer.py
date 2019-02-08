@@ -3,10 +3,9 @@ import sys
 import time
 import tokens as tokens
 from tokens import Token, TokenType, symbols, keywords
+import logging
 
-
-debug = False
-
+debug = True
 
 def tokenize(code):
     # Big array of parsed Tokens
@@ -23,7 +22,7 @@ def tokenize(code):
             lineTokens, isComment = tokenizeLine(line, isComment)
             codeTokens.extend(lineTokens)
         except Exception as err:
-            print(err)
+            logging.error(err)
             sys.exit(2)
 
     return codeTokens
@@ -41,8 +40,7 @@ def tokenizeLine(line, isComment):
 
     while end < len(line):
         if debug is True:
-            time.sleep(0.2)
-            print(f"{start}:{end} = '{line[start:end]}'")
+            logging.debug(f"{start}:{end} = '{line[start:end]}'")
 
         symbol = matchSymbol(line, end)
 
@@ -62,7 +60,7 @@ def tokenizeLine(line, isComment):
         # NOTE: our subset of C specifies that includes must be on their own line
         if symbol == tokens.pound:
             if debug is True:
-                print("Found include statement.")
+                logging.debug("Found include statement.")
 
             if line[(start + 1) : (start + 8)] == "include":
                 previousTokens = parseInclude(line, start + 1)
@@ -74,7 +72,7 @@ def tokenizeLine(line, isComment):
             # If the comment is ending
             if symbol == tokens.star and nextSymbol == tokens.slash:
                 if debug is True:
-                    print("Found end of multi-line comment.")
+                    logging.debug("Found end of multi-line comment.")
 
                 isComment = False
                 start = end + 2
@@ -87,7 +85,7 @@ def tokenizeLine(line, isComment):
         # If next two symbols begin a multi-line /* */ comment
         if symbol == tokens.slash and nextSymbol == tokens.star:
             if debug is True:
-                print("Found beginning of multi-line comment.")
+                logging.debug("Found beginning of multi-line comment.")
 
             # Tokenize whatever we found up to this point
             isComment = True
@@ -102,13 +100,13 @@ def tokenizeLine(line, isComment):
         # If next two tokens are //, skip this line, break from while loop, and return
         if symbol == tokens.slash and nextSymbol == tokens.slash:
             if debug is True:
-                print("Found single line comment, skipping line!")
+                logging.debug("Found single line comment, skipping line!")
             break
 
         # If ending character of chunk is whitespace
         if line[end].isspace():
             if debug is True:
-                print("Found whitespace.")
+                logging.debug("Found whitespace.")
 
             # Tokenize whatever we found up to this point, and skip whitespace
             if start != end:
@@ -129,7 +127,7 @@ def tokenizeLine(line, isComment):
                 kind = tokens.character
 
             if debug is True:
-                print("Found a quoted string. Attempting to parse...")
+                logging.debug("Found a quoted string. Attempting to parse...")
 
             # Get the token between the quotes and update our chunk end
             token, end = parseQuote(line, start, kind, delimeter)
@@ -147,7 +145,7 @@ def tokenizeLine(line, isComment):
 
             # Append the next token
             if debug is True:
-                print(f"Found token {symbol}")
+                logging.debug(f"Found token {symbol}")
             lineTokens.append(Token(symbol))
 
             # Move the chunk forward
@@ -196,21 +194,21 @@ def tokenizeChunk(text):
     keyword = matchKeyword(text)
     if keyword is not None:
         if debug is True:
-            print(f"Found keyword: {text}")
+            logging.debug(f"Found keyword: {text}")
         return Token(keyword, text)
 
     # Check if it a number second
     number = matchNumber(text)
     if number is not None:
         if debug is True:
-            print(f"Found number: {text}")
+            logging.debug(f"Found number: {text}")
         return Token(tokens.number, text)
 
     # Check if it an identifier third
     identifier = matchIdentifier(text)
     if identifier is not None:
         if debug is True:
-            print(f"Found identifier: {text}")
+            logging.debug(f"Found identifier: {text}")
         return Token(tokens.identifier, text)
 
     # TODO: collect compiler errors like this
