@@ -3,7 +3,7 @@ import getopt
 import lexer
 from parser.parser import Parser
 import logging
-import textwrap
+import pprint
 
 
 def main():
@@ -29,7 +29,7 @@ def main():
     print("✨ Completed parsing!")
 
     if "-p" in flags:
-        parser.print(token)
+        parser.print()
 
 
 def printUsage():

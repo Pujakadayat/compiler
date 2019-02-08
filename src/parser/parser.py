@@ -2,26 +2,10 @@ import parser.grammar as grammar
 import tokens as TokenTypes
 import time
 import logging
-import textwrap
+import pprint
 
 debug = True
 
-<<<<<<< HEAD
-
-def parse(tokens):
-    parser = Parser(tokens)
-    parser.parse()
-
-def print(self):
-    for token in self.stack:
-        token.print()
-        # indent...
-        s = token
-        s1 = textwrap.indent(s1, '| -- ')
-        print(s1)
-
-=======
->>>>>>> d9c1d1e59c387a7cadf5cee488348e42161406c1
 class Parser:
     def __init__(self, tokens):
         self.stack = []
@@ -81,8 +65,9 @@ class Parser:
                 else:
                     continue
 
-    #def print(self):
-    #    for token in self.stack:
-    ##        s = token
-        #    s1 = textwrap.indent(s1, '| -- ')
-        #    print(s1)
+    def print(self):
+        for token in self.stack:
+            #token.print()
+            pp = pprint.PrettyPrinter(indent=8)
+            pp.pprint(token)
+            print("are you getting here??")
