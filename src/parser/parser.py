@@ -5,12 +5,6 @@ import logging
 
 debug = True
 
-
-def parse(tokens):
-    parser = Parser(tokens)
-    parser.parse()
-
-
 class Parser:
     def __init__(self, tokens):
         self.stack = []
@@ -19,7 +13,7 @@ class Parser:
     def parse(self):
         # If we only have 1 token, avoid shifting
         if len(self.stack) == 1:
-            self.reduce()
+            self.reduceToken()
 
             # Check if we can't reduce anymore (accept state)
             if isinstance(self.stack[0], grammar.Program):
@@ -30,18 +24,18 @@ class Parser:
                 return
 
         # Recursively parse until accept state
-        self.shift()
-        self.reduce()
+        self.shiftToken()
+        self.reduceToken()
         self.parse()
 
-    def shift(self):
+    def shiftToken(self):
         if debug is True:
             logging.debug(f"Before shift: {self.stack}")
         self.stack.append(self.tokens.pop(0))
         if debug is True:
             logging.debug(f"After shift: {self.stack}")
 
-    def reduce(self):
+    def reduceToken(self):
         # Check [int], then [int, main], then [int, main, (] etc...
         for index in range(len(self.stack), 0, -1):
             # Current stack contains subset of stack increasing from R -> L

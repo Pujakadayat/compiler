@@ -1,7 +1,7 @@
 import sys
 import getopt
 import lexer
-import parser.parser as parser
+from parser.parser import Parser
 import logging
 
 
@@ -23,7 +23,8 @@ def main():
         print(tokens)
 
     # Parse the tokens
-    parser.parse(tokens)
+    parser = Parser(tokens)
+    parser.parse()
     print("✨ Completed parsing!")
 
     if "-p" in flags:
