@@ -2,7 +2,7 @@
 
 Group Members: Charles Hermann, Izeah Olguin, Paco Coursey
 
-Last Updated: 02/7/2019
+Last Updated: 02/8/2019
 
 ## Quickstart
 
@@ -61,8 +61,7 @@ We are not focused on speed, which is why we opted not to use regular expression
 
 ### Parser Implementation
 
-Currently, we have implemented seven classes, which are within their own file titled `classes.py`. These classes are then defined within `grammar.py`. 'grammar.py', which also contains our list of rules, which we currently recognize. In the near future (by the next deliverable), we will utilize the parse method
-and only have one file, rather than separating the 'classes.py' file from the 'grammar.py' file.
+Currently, we have implemented seven classes. Each of which is a static parse method. These classes are defined within `grammar.py`. 'grammar.py', also contains our list of rules, which we currently recognize.
 
 The `paser.py` file design is similar to that of Nora Sandler's design. We employ a recursive descent parsing algorithm, which pushes elements onto a stack from right to left. Finally, we then shift, reduce and repeat.
 
