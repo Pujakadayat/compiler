@@ -4,13 +4,15 @@ import lexer
 from parser.parser import Parser
 import logging
 import pprint
+import os
 
 
 def main():
     # Get command line arguments
     filename, flags = parseArguments()
 
-    logging.basicConfig(filename="compiler.log", level=logging.DEBUG)
+    # Start logging file
+    startLog()
 
     # Read in the program file
     code = readFile(filename)
@@ -80,6 +82,16 @@ def readFile(filename):
     except IOError as err:
         print(f"Could not read the file: {filename}")
         sys.exit(2)
+
+
+def startLog():
+    logs = os.listdir("logs/")
+    biggestLog = 0
+    for log in logs:
+        if len(log.split(".")) == 3:
+            if int(log.split(".")[2]) > biggestLog:
+                biggestLog = int(log.split(".")[2]) + 1
+    logging.basicConfig(filename="logs/compiler.log.%s" % (biggestLog), filemode="w", level=logging.DEBUG)
 
 
 if __name__ == "__main__":

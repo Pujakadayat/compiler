@@ -11,4 +11,4 @@ lint:
 	black ./
 
 clean:
-	rm *.o
+	rm -f *.o logs/*

@@ -11,6 +11,9 @@ class Program(Node):
         # Declarations is a DeclarationList instance
         self.declarations = declarationList
 
+    def __str__(self):
+        return "member of Test"
+
     def parse(tokens):
         if len(tokens) != 1:
             return None

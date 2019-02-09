@@ -67,7 +67,7 @@ class Parser:
 
     def print(self):
         for token in self.stack:
-            #token.print()
-            pp = pprint.PrettyPrinter(indent=8)
-            pp.pprint(token)
-            print("are you getting here??")
+            print(token)
+            #pp = pprint.PrettyPrinter(indent=8)
+            #pp.pprint(token)
+            #print("are you getting here??")
