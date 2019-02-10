@@ -120,20 +120,20 @@ pound = TokenType("#", symbols, description="pound")
 # =========
 
 # Sum operations
-plus = TokenType("+", symbols, description="")
-minus = TokenType("-", symbols, description="")
+plus = TokenType("+", symbols, description="addOp")
+minus = TokenType("-", symbols, description="subtractOp")
 
 # Multiplication operations
-star = TokenType("*", symbols, description="")
-slash = TokenType("/", symbols, description="")
-mod = TokenType("%", symbols, description="")
+star = TokenType("*", symbols, description="multiplyOp")
+slash = TokenType("/", symbols, description="divisionOp")
+mod = TokenType("%", symbols, description="modOp")
 
 # Boolean operations
-boolAnd = TokenType("&&", symbols, description="")
-boolOr = TokenType("||", symbols, description="")
-boolNot = TokenType("!", symbols, description="")
-leftShift = TokenType("<<", symbols, description="")
-rightShift = TokenType(">>", symbols, description="")
+boolAnd = TokenType("&&", symbols, description="logicalAnd")
+boolOr = TokenType("||", symbols, description="logicalOr")
+boolNot = TokenType("!", symbols, description="logicalNot")
+leftShift = TokenType("<<", symbols, description="bitShiftLeft")
+rightShift = TokenType(">>", symbols, description="bitShiftRight")
 
 # ========
 # Keywords
@@ -141,42 +141,42 @@ rightShift = TokenType(">>", symbols, description="")
 
 # Numbers
 
-int = TokenType("int", keywords, description="")
-long = TokenType("int", keywords, description="")
-double = TokenType("int", keywords, description="")
-char = TokenType("char", keywords, description="")
-short = TokenType("short", keywords, description="")
-signed = TokenType("signed", keywords, description="")
-unsigned = TokenType("unsigned", keywords, description="")
-float = TokenType("float", keywords, description="")
+int = TokenType("int", keywords, description="typeSpecifier")
+long = TokenType("int", keywords, description="typeSpecifier")
+double = TokenType("int", keywords, description="typeSpecifier")
+char = TokenType("char", keywords, description="typeSpecifier")
+short = TokenType("short", keywords, description="typeSpecifier")
+signed = TokenType("signed", keywords, description="typeSpecifier")
+unsigned = TokenType("unsigned", keywords, description="typeSpecifier")
+float = TokenType("float", keywords, description="typeSpecifier")
 
 # Data types
 
-struct = TokenType("struct", keywords, description="")
-enum = TokenType("enum", keywords, description="")
-union = TokenType("union", keywords, description="")
-record = TokenType("record", keywords, description="")
+struct = TokenType("struct", keywords, description="specialTypeSpecifier")
+enum = TokenType("enum", keywords, description="specialTypeSpecifier")
+union = TokenType("union", keywords, description="specialTypeSpecifier")
+record = TokenType("record", keywords, description="specialTypeSpecifier")
 
 # Flow control
 
-ifKeyword = TokenType("if", keywords, description="")
-elseKeyword = TokenType("else", keywords, description="")
-whileKeyword = TokenType("while", keywords, description="")
-forKeyword = TokenType("for", keywords, description="")
-breakKeyword = TokenType("break", keywords, description="")
-continueKeyword = TokenType("continue", keywords, description="")
-returnKeyword = TokenType("return", keywords, description="")
+ifKeyword = TokenType("if", keywords, description="ifKeyword")
+elseKeyword = TokenType("else", keywords, description="elseKeyword")
+whileKeyword = TokenType("while", keywords, description="whileKeyword")
+forKeyword = TokenType("for", keywords, description="forKeyword")
+breakKeyword = TokenType("break", keywords, description="breakKeyword")
+continueKeyword = TokenType("continue", keywords, description="continueKeyword")
+returnKeyword = TokenType("return", keywords, description="returnKeyword")
 
 # Boolean
 
-true = TokenType("true", keywords, description="")
-false = TokenType("false", keywords, description="")
+true = TokenType("true", keywords, description="trueKeyword")
+false = TokenType("false", keywords, description="falseKeyword")
 
 # Misc
 
-static = TokenType("static", keywords, description="")
-sizeof = TokenType("sizeof", keywords, description="")
-typedef = TokenType("typedef", keywords, description="")
-const = TokenType("const", keywords, description="")
-extern = TokenType("extern", keywords, description="")
-auto = TokenType("auto", keywords, description="")
+static = TokenType("static", keywords, description="staticKeyword")
+sizeof = TokenType("sizeof", keywords, description="sizeofKeyword")
+typedef = TokenType("typedef", keywords, description="typedefKeyword")
+const = TokenType("const", keywords, description="constKeyword")
+extern = TokenType("extern", keywords, description="externKeyword")
+auto = TokenType("auto", keywords, description="autoKeyword")
