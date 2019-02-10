@@ -4,7 +4,7 @@ import tokens as tokenTypes
 class Node:
     def __init__(self):
         pass
-    
+
     def prettyPrint(self, level):
         for i in range(level):
             print("| -- ", end=" ")
@@ -158,6 +158,23 @@ class IDENTIFIER(Node):
             return None
 
         return IDENTIFIER(token.content)
+
+## TODO: implement statement, expression, unaryop
+class SIMPLEEXPRESSION(Node):
+    def __init__(self, value):
+        self.value = value
+
+    def parse(tokens):
+        #parse as regular int
+        if len(tokens) != 1:
+            return None
+        #else convert to unaryop
+        token = tokens[0]
+
+        #return
+        return SIMPLEEXPRESSION(token.content)
+
+
 
 
 rules = [
