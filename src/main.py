@@ -90,8 +90,9 @@ def startLog():
     biggestLog = 0
     for log in logs:
         if len(log.split(".")) == 3:
-            if int(log.split(".")[2]) > biggestLog:
+            if int(log.split(".")[2]) >= biggestLog:
                 biggestLog = int(log.split(".")[2]) + 1
+    print(biggestLog)
     logging.basicConfig(filename="logs/compiler.log.%s" % (biggestLog), filemode="w", level=logging.DEBUG)
 
 
