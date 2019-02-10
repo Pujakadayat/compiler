@@ -1,0 +1,3 @@
+P -> F
+F -> typeSpecifier ID ( ) { S } ;
+S -> return constNum ;
