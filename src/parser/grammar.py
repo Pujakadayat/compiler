@@ -4,6 +4,15 @@ import tokens as tokenTypes
 class Node:
     def __init__(self):
         pass
+    
+    def prettyPrint(self, level):
+        for i in range(level):
+            print("| -- ", end=" ")
+        print(self.__class__.__name__)
+        self.next(level+1)
+
+    def next(self, level):
+        return None
 
 
 class Program(Node):
@@ -11,8 +20,8 @@ class Program(Node):
         # Declarations is a DeclarationList instance
         self.declarations = declarationList
 
-    def __str__(self):
-        return "member of Test"
+    def next(self, level):
+        self.declarations.prettyPrint(level)
 
     def parse(tokens):
         if len(tokens) != 1:
@@ -28,6 +37,9 @@ class FunctionDeclaration(Node):
         self.ID = ID
         self.parameters = parameters
         self.statement = statement
+
+    def next(self, level):
+        self.statement.prettyPrint(level)
 
     def parse(tokens):
         if len(tokens) != 7:
@@ -83,6 +95,9 @@ class ReturnStatement(Node):
     def __init__(self, value):
         self.value = value
 
+    def next(self, level):
+        self.value.prettyPrint(level)
+
     def parse(tokens):
         if len(tokens) != 3:
             return None
@@ -102,12 +117,15 @@ class ReturnStatement(Node):
         if tokens[2].kind != tokenTypes.semicolon:
             return None
 
-        return ReturnStatement(999999)
+        return ReturnStatement(tokens[1])
 
 
 class NUMCONST(Node):
     def __init__(self, value):
         self.value = value
+
+    def next(self, level):
+        return None
 
     def parse(tokens):
         if len(tokens) != 1:
