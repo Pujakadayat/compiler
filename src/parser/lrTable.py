@@ -1,32 +1,45 @@
+# http://www.orcca.on.ca/~watt/home/courses/2007-08/cs447a/notes/LR1%20Parsing%20Tables%20Example.pdf
+# used this to write this file
+
 #import tokens as TokenTypes
 import logging
 import sys
 
 debug = True
 
+# This main function is just for testing
 def main():
     lrt = LRTable(None)
     lrt.buildTable()
 
+# This class will generate the action and goto tables
 class LRTable:
-    def __init__(self, tokens):
+    def __init__(self):
+        # Rules parsed from grammar
         self.rules = {}
+
+        # Nessisary variables to generate acion and goto tables
         self.itemSets = {}
         self.transitions = {}
         self.setNum = 0
         self.terminals = []
         self.nonTerminals = []
+
+        # Action and goto tables
         self.actions = {}
         self.goto = {}
 
     def buildTable(self):
-        # Augment rules
+        # Augment rules with accepting state
         self.rules["ACC"] = ["S"]
 
+        # Parse the input grammar
         self.parseGrammar()
 
+        # Add the accepting state to grammar
         self.itemSets[0] = [item("ACC", "S", 0, "$")]
 
+        # close Itemsets and create new sets until no more
         i = 0
         while self.hasItemSet(i):
             self.closure(i)
@@ -34,6 +47,7 @@ class LRTable:
             self.cleanItemSets()
             i = i + 1
 
+        # build tables
         self.buildActionGoto()
 
         self.printRules()
@@ -64,6 +78,7 @@ class LRTable:
                         self.terminals.append(token)
 
 
+    # close out an itemset
     def closure(self, setNum):
         newSet = self.itemSets[setNum]
         done = False
