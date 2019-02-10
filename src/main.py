@@ -23,7 +23,8 @@ def main():
 
     # Handle printing flags
     if "-s" in flags:
-        print(tokens)
+        for token in tokens:
+            print(token)
 
     # Parse the tokens
     parser = Parser(tokens)
