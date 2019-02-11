@@ -31,14 +31,13 @@ def main():
     lrTable = LRTable()
     lrTable.buildTable()
     abstractSyntaxTree = lrTable.parse(tokens)
-    
 
     # Parse the tokens
-    #parser = Parser(tokens)
-    #parser.parse()
+    # parser = Parser(tokens)
+    # parser.parse()
     print("✨ Completed parsing!")
 
-    #if "-p" in flags:
+    # if "-p" in flags:
     #   parser.print()
 
 
@@ -99,7 +98,11 @@ def startLog():
         if len(log.split(".")) == 3:
             if int(log.split(".")[2]) >= biggestLog:
                 biggestLog = int(log.split(".")[2]) + 1
-    logging.basicConfig(filename="logs/compiler.log.%s" % (biggestLog), filemode="w", level=logging.DEBUG)
+    logging.basicConfig(
+        filename="logs/compiler.log.%s" % (biggestLog),
+        filemode="w",
+        level=logging.DEBUG,
+    )
 
 
 if __name__ == "__main__":
