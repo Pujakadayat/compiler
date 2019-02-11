@@ -1,7 +1,8 @@
 # http://www.orcca.on.ca/~watt/home/courses/2007-08/cs447a/notes/LR1%20Parsing%20Tables%20Example.pdf
 # used this to write this file
 
-#import tokens as TokenTypes
+import tokens as tokens
+from tokens import Token, TokenType
 import logging
 import sys
 
@@ -9,7 +10,7 @@ debug = True
 
 # This main function is just for testing
 def main():
-    lrt = LRTable(None)
+    lrt = LRTable()
     lrt.buildTable()
 
 # This class will generate the action and goto tables
@@ -31,13 +32,13 @@ class LRTable:
 
     def buildTable(self):
         # Augment rules with accepting state
-        self.rules["ACC"] = ["S"]
+        self.rules["ACC"] = [["program"]]
 
         # Parse the input grammar
         self.parseGrammar()
 
         # Add the accepting state to grammar
-        self.itemSets[0] = [item("ACC", "S", 0, "$")]
+        self.itemSets[0] = [item("ACC", "program", 0, "$")]
 
         # close Itemsets and create new sets until no more
         i = 0
@@ -64,10 +65,19 @@ class LRTable:
         for line in file:
             rule = line[:-1].split(" ")
             if rule[1] == "->":
+                # seperate | in the rule
+                last = 2
+                for i in range(len(rule)):
+                    if rule[i] == "|":
+                        if rule[0] in self.rules.keys():
+                            self.rules[rule[0]].append(rule[last:i])
+                        else:
+                            self.rules[rule[0]] = [rule[last:i]]
+                        last = i+1
                 if rule[0] in self.rules.keys():
-                    self.rules[rule[0]].append(rule[2:])
+                    self.rules[rule[0]].append(rule[last:])
                 else:
-                    self.rules[rule[0]] = [rule[2:]]
+                    self.rules[rule[0]] = [rule[last:]]
         for k in self.rules.keys():
             if k not in self.nonTerminals:
                 self.nonTerminals.append(k)
@@ -165,9 +175,9 @@ class LRTable:
                                         self.actions[itemSetNum] = {}
                                     self.actions[itemSetNum][item.following] = "r %s %i"%(k, i)
         for k1,v1 in self.transitions.items():
-            print(k1)
+            #print(k1)
             for k2,v2 in v1.items():
-                print(k2, v2)
+                #print(k2, v2)
                 if k2 in self.nonTerminals:
                     if k1 not in self.goto.keys():
                         self.goto[k1] = {}
@@ -176,7 +186,54 @@ class LRTable:
                     if k1 not in self.actions.keys():
                         self.actions[k1] = {}
                     self.actions[k1][k2] = "s %i"%(v2)
-                    
+
+
+    def parse(self, scannedTokens):
+        scannedTokens.append(Token(tokens.eof, "$"))
+        output = []
+        stack = []
+        states = [0]
+        done = False
+        lookahead = 0
+
+        while not done:
+            state = states[len(states)-1]
+            token = scannedTokens[lookahead] 
+            if token.kind.desc() in self.terminals:
+                token = token.kind.desc()
+            else:
+                token = token.content
+                
+            print("---\nState:", state, "\nStates:", states, "\nlookahead Token:", token, "\nstack:", stack, "\noutput:", output)
+            if token in self.actions[state].keys():
+                result = self.actions[state][token]
+                output.append(result)
+                result = result.split(" ")
+                if result[0] == "s":
+                    states.append(int(result[1]))
+                    stack.append(token)
+                    lookahead = lookahead + 1
+                if result[0] == "r":
+                    rule = self.rules[result[1]][int(result[2])]
+                    #print("rule:", rule)
+                    match = True
+                    for i in range(len(rule)):
+                        if rule[i] != stack[len(stack)-len(rule)+i]:
+                            match = False
+                    if match:
+                        del stack[len(stack)-len(rule):len(stack)]
+                        stack.append(result[1])
+                        del states[len(states)-len(rule):len(states)]
+                        topState = states[len(states)-1]
+                        topStack = stack[len(stack)-1]
+                        if topStack in self.goto[topState].keys():
+                            states.append(self.goto[topState][topStack])
+            else:
+                print("\terror")
+            if len(stack) == 1 and stack[0] == "ACC":
+                done = True
+        print(output)
+
 
     def updateSetNum(self):
         i = 0

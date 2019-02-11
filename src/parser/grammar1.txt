@@ -1,3 +1,6 @@
-P -> F
-F -> typeSpecifier ID ( ) { S } ;
-S -> return constNum ;
+S -> S ; A
+S -> A
+A -> E
+A -> id := E
+E -> E + id
+E -> id

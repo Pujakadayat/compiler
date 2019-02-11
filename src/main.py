@@ -28,8 +28,10 @@ def main():
             print(token)
 
     # Build LR(1) table
-    lrTable = LRTable(tokens)
+    lrTable = LRTable()
     lrTable.buildTable()
+    abstractSyntaxTree = lrTable.parse(tokens)
+    
 
     # Parse the tokens
     #parser = Parser(tokens)

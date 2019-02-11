@@ -1,0 +1,3 @@
+Program -> FunDec
+FunDec -> typeSpecifier ID ( ) { Stmt }
+Stmt -> return constNum ;
