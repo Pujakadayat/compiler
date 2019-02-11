@@ -9,7 +9,7 @@ class Node:
         for i in range(level):
             print("| -- ", end=" ")
         print(self.__class__.__name__)
-        self.next(level+1)
+        self.next(level + 1)
 
     def next(self, level):
         return None
@@ -159,22 +159,21 @@ class IDENTIFIER(Node):
 
         return IDENTIFIER(token.content)
 
+
 ## TODO: implement statement, expression, unaryop
 class SIMPLEEXPRESSION(Node):
     def __init__(self, value):
         self.value = value
 
     def parse(tokens):
-        #parse as regular int
+        # parse as regular int
         if len(tokens) != 1:
             return None
-        #else convert to unaryop
+        # else convert to unaryop
         token = tokens[0]
 
-        #return
+        # return
         return SIMPLEEXPRESSION(token.content)
-
-
 
 
 rules = [

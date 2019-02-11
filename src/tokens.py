@@ -16,8 +16,8 @@ class Token:
         return self.content
 
     def __str__(self):
-        #return self.rep if self.rep else self.content
-        return "<%s, %s>"%(self.content, self.kind.desc())
+        # return self.rep if self.rep else self.content
+        return "<%s, %s>" % (self.content, self.kind.desc())
 
 
 class TokenType:
