@@ -44,7 +44,8 @@ class LRTable:
         i = 0
         while self.hasItemSet(i):
             self.closure(i)
-            self.createSets(i)
+            self.cleanItemSet(i)
+            self.createItemSets(i)
             self.cleanItemSets()
             i = i + 1
 
@@ -52,14 +53,14 @@ class LRTable:
         self.buildActionGoto()
 
         self.printRules()
-        self.printItems()
+        self.printItemSets()
         self.printTransitions()
         self.printTable()
 
 
     def parseGrammar(self):
         # Open file with grammar
-        file = open("src/parser/grammar.txt", "r")
+        file = open("src/parser/grammar3.txt", "r")
 
         # parse grammar file into rules
         for line in file:
@@ -118,7 +119,14 @@ class LRTable:
                     done = True
         return newSet
 
-    def createSets(self, setNum):
+    
+    def cleanItemSet(self, setNum):
+        for currItem in self.itemSets[setNum]:
+            if currItem.following in self.nonTerminals:
+                print(setNum, currItem.following)
+                currItem.following = self.rules[currItem.following][0][0]
+
+    def createItemSets(self, setNum):
         for currItem in self.itemSets[setNum]:
             newItem = currItem.incSeperator()
             delimeter = newItem.getRightBefore()
@@ -205,6 +213,7 @@ class LRTable:
                 token = token.content
                 
             print("---\nState:", state, "\nStates:", states, "\nlookahead Token:", token, "\nstack:", stack, "\noutput:", output)
+            #print(stack, "\n")
             if token in self.actions[state].keys():
                 result = self.actions[state][token]
                 output.append(result)
@@ -213,6 +222,7 @@ class LRTable:
                     states.append(int(result[1]))
                     stack.append(token)
                     lookahead = lookahead + 1
+                    print("Shifting")
                 if result[0] == "r":
                     rule = self.rules[result[1]][int(result[2])]
                     #print("rule:", rule)
@@ -224,12 +234,14 @@ class LRTable:
                         del stack[len(stack)-len(rule):len(stack)]
                         stack.append(result[1])
                         del states[len(states)-len(rule):len(states)]
+                        print("Reducing rule", result[1], "->", rule)
                         topState = states[len(states)-1]
                         topStack = stack[len(stack)-1]
                         if topStack in self.goto[topState].keys():
                             states.append(self.goto[topState][topStack])
             else:
-                print("\terror")
+                print("ERROR: State", state, "Token", token)
+                break
             if len(stack) == 1 and stack[0] == "ACC":
                 done = True
         print(output)
@@ -265,7 +277,7 @@ class LRTable:
             print(t)
         
 
-    def printItems(self):
+    def printItemSets(self):
         print("--- Items ---")
         for itemSetNum, itemSet in self.itemSets.items():
             print("Item Set %i: "%(itemSetNum))

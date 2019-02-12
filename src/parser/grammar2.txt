@@ -1,3 +1,4 @@
-Program -> FunDec
-FunDec -> typeSpecifier ID ( ) { Stmt }
-Stmt -> return constNum ;
+program -> program statement | statement
+statement -> functionStatement | returnStatement
+functionStatement -> typeSpecifier ID ( ) { statement }
+returnStatement -> return constNum ;

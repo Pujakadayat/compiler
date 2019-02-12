@@ -1,0 +1,3 @@
+program -> program funDec | funDec
+funDec -> typeSpecifier ID ( ) { statement }
+statement -> return constNum ;
