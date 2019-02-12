@@ -1,10 +1,4 @@
-<<<<<<< HEAD
 program -> program statement | statement
 statement -> functionStatement | returnStatement
 functionStatement -> typeSpecifier ID ( ) { statement }
 returnStatement -> return constNum ;
-=======
-Program -> funDec
-funDec -> typeSpecifier ID ( ) { statement }
-statement -> return constNum ;
->>>>>>> c52813b5a6e45e6167e2ee3fa6fccd0d497e3a6b

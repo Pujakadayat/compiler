@@ -33,13 +33,13 @@ class LRTable:
 
     def buildTable(self):
         # Augment rules with accepting state
-        self.rules["ACC"] = [["Program"]]
+        self.rules["ACC"] = [["program"]]
 
         # Parse the input grammar
         self.parseGrammar()
 
         # Add the accepting state to grammar
-        self.itemSets[0] = [item("ACC", "Program", 0, "$")]
+        self.itemSets[0] = [item("ACC", "program", 0, "$")]
 
         # close Itemsets and create new sets until no more
         i = 0
@@ -60,11 +60,7 @@ class LRTable:
 
     def parseGrammar(self):
         # Open file with grammar
-<<<<<<< HEAD
         file = open("src/parser/grammar3.txt", "r")
-=======
-        file = open("src/parser/grammar2.txt", "r")
->>>>>>> c52813b5a6e45e6167e2ee3fa6fccd0d497e3a6b
 
         # parse grammar file into rules
         for line in file:
@@ -214,25 +210,8 @@ class LRTable:
                 token = token.kind.desc()
             else:
                 token = token.content
-<<<<<<< HEAD
-                
             print("---\nState:", state, "\nStates:", states, "\nlookahead Token:", token, "\nstack:", stack, "\noutput:", output)
             #print(stack, "\n")
-=======
-
-            print(
-                "---\nState:",
-                state,
-                "\nStates:",
-                states,
-                "\nlookahead Token:",
-                token,
-                "\nstack:",
-                stack,
-                "\noutput:",
-                output,
-            )
->>>>>>> c52813b5a6e45e6167e2ee3fa6fccd0d497e3a6b
             if token in self.actions[state].keys():
                 result = self.actions[state][token]
                 output.append(result)
@@ -252,16 +231,10 @@ class LRTable:
                     if match:
                         del stack[len(stack) - len(rule) : len(stack)]
                         stack.append(result[1])
-<<<<<<< HEAD
                         del states[len(states)-len(rule):len(states)]
                         print("Reducing rule", result[1], "->", rule)
                         topState = states[len(states)-1]
                         topStack = stack[len(stack)-1]
-=======
-                        del states[len(states) - len(rule) : len(states)]
-                        topState = states[len(states) - 1]
-                        topStack = stack[len(stack) - 1]
->>>>>>> c52813b5a6e45e6167e2ee3fa6fccd0d497e3a6b
                         if topStack in self.goto[topState].keys():
                             states.append(self.goto[topState][topStack])
             else:
