@@ -13,6 +13,7 @@ def main():
     lrt = LRTable()
     lrt.buildTable()
 
+
 # This class will generate the action and goto tables
 class LRTable:
     def __init__(self):
@@ -32,13 +33,13 @@ class LRTable:
 
     def buildTable(self):
         # Augment rules with accepting state
-        self.rules["ACC"] = [["program"]]
+        self.rules["ACC"] = [["Program"]]
 
         # Parse the input grammar
         self.parseGrammar()
 
         # Add the accepting state to grammar
-        self.itemSets[0] = [item("ACC", "program", 0, "$")]
+        self.itemSets[0] = [item("ACC", "Program", 0, "$")]
 
         # close Itemsets and create new sets until no more
         i = 0
@@ -57,10 +58,13 @@ class LRTable:
         self.printTransitions()
         self.printTable()
 
-
     def parseGrammar(self):
         # Open file with grammar
+<<<<<<< HEAD
         file = open("src/parser/grammar3.txt", "r")
+=======
+        file = open("src/parser/grammar2.txt", "r")
+>>>>>>> c52813b5a6e45e6167e2ee3fa6fccd0d497e3a6b
 
         # parse grammar file into rules
         for line in file:
@@ -74,7 +78,7 @@ class LRTable:
                             self.rules[rule[0]].append(rule[last:i])
                         else:
                             self.rules[rule[0]] = [rule[last:i]]
-                        last = i+1
+                        last = i + 1
                 if rule[0] in self.rules.keys():
                     self.rules[rule[0]].append(rule[last:])
                 else:
@@ -88,14 +92,13 @@ class LRTable:
                     if token not in self.nonTerminals and token not in self.terminals:
                         self.terminals.append(token)
 
-
     # close out an itemset
     def closure(self, setNum):
         newSet = self.itemSets[setNum]
         done = False
         while not done:
             for i in newSet:
-                #print(i)
+                # print(i)
                 new = False
                 a = i.getRightAfter()
                 b = i.getAfter()
@@ -114,7 +117,7 @@ class LRTable:
                         if isNew:
                             newSet.append(newItem)
                             new = True
-                            #print("\t", newItem)
+                            # print("\t", newItem)
                 if not new:
                     done = True
         return newSet
@@ -136,56 +139,57 @@ class LRTable:
                 if delimeter not in self.transitions[setNum].keys():
                     self.setNum = self.setNum + 1
                     self.transitions[setNum][delimeter] = self.setNum
-                #self.printTransitions()
+                # self.printTransitions()
                 if self.transitions[setNum][delimeter] not in self.itemSets.keys():
                     self.itemSets[self.transitions[setNum][delimeter]] = []
                 self.itemSets[self.transitions[setNum][delimeter]].append(newItem)
 
-
     def cleanItemSets(self):
         for i in range(self.setNum, -1, -1):
-            for j in range(i-1, -1, -1):
+            for j in range(i - 1, -1, -1):
                 same = True
                 for itemSet in self.itemSets[j]:
                     inThere = False
-                    for itemSetCheck in self.itemSets[i]: 
+                    for itemSetCheck in self.itemSets[i]:
                         if itemSetCheck.isSame(itemSet):
                             inThere = True
                     if not inThere:
                         same = False
                         break
                 if same:
-                    #print(i, " is the same as ", j)
+                    # print(i, " is the same as ", j)
                     del self.itemSets[i]
-                    #self.printItems()
+                    # self.printItems()
                     self.updateSetNum()
-                    #print("u ", self.setNum)
+                    # print("u ", self.setNum)
                     for k1, v1 in self.transitions.items():
                         for k2, v2 in v1.items():
                             if self.transitions[k1][k2] == i:
                                 self.transitions[k1][k2] = j
-                                #print(k1, k2)
+                                # print(k1, k2)
                     break
 
     def buildActionGoto(self):
         for itemSetNum, itemSet in self.itemSets.items():
             for item in itemSet:
                 if self.seperatorAtEnd(item):
-                    #print("[", itemSetNum, item, "]")
+                    # print("[", itemSetNum, item, "]")
                     for k, v in self.rules.items():
                         if item.lhs == k:
-                            #print("found rules", k, v, "for item")
+                            # print("found rules", k, v, "for item")
                             for i in range(len(v)):
-                                #print("maybe: ", item.rhs, " == ", v[i], "?")
+                                # print("maybe: ", item.rhs, " == ", v[i], "?")
                                 if item.rhs == " ".join(v[i]):
-                                    #print("This rule: ", self.rules[k][i])
+                                    # print("This rule: ", self.rules[k][i])
                                     if itemSetNum not in self.actions.keys():
                                         self.actions[itemSetNum] = {}
-                                    self.actions[itemSetNum][item.following] = "r %s %i"%(k, i)
-        for k1,v1 in self.transitions.items():
-            #print(k1)
-            for k2,v2 in v1.items():
-                #print(k2, v2)
+                                    self.actions[itemSetNum][
+                                        item.following
+                                    ] = "r %s %i" % (k, i)
+        for k1, v1 in self.transitions.items():
+            # print(k1)
+            for k2, v2 in v1.items():
+                # print(k2, v2)
                 if k2 in self.nonTerminals:
                     if k1 not in self.goto.keys():
                         self.goto[k1] = {}
@@ -193,8 +197,7 @@ class LRTable:
                 else:
                     if k1 not in self.actions.keys():
                         self.actions[k1] = {}
-                    self.actions[k1][k2] = "s %i"%(v2)
-
+                    self.actions[k1][k2] = "s %i" % (v2)
 
     def parse(self, scannedTokens):
         scannedTokens.append(Token(tokens.eof, "$"))
@@ -205,15 +208,31 @@ class LRTable:
         lookahead = 0
 
         while not done:
-            state = states[len(states)-1]
-            token = scannedTokens[lookahead] 
+            state = states[len(states) - 1]
+            token = scannedTokens[lookahead]
             if token.kind.desc() in self.terminals:
                 token = token.kind.desc()
             else:
                 token = token.content
+<<<<<<< HEAD
                 
             print("---\nState:", state, "\nStates:", states, "\nlookahead Token:", token, "\nstack:", stack, "\noutput:", output)
             #print(stack, "\n")
+=======
+
+            print(
+                "---\nState:",
+                state,
+                "\nStates:",
+                states,
+                "\nlookahead Token:",
+                token,
+                "\nstack:",
+                stack,
+                "\noutput:",
+                output,
+            )
+>>>>>>> c52813b5a6e45e6167e2ee3fa6fccd0d497e3a6b
             if token in self.actions[state].keys():
                 result = self.actions[state][token]
                 output.append(result)
@@ -225,18 +244,24 @@ class LRTable:
                     print("Shifting")
                 if result[0] == "r":
                     rule = self.rules[result[1]][int(result[2])]
-                    #print("rule:", rule)
+                    # print("rule:", rule)
                     match = True
                     for i in range(len(rule)):
-                        if rule[i] != stack[len(stack)-len(rule)+i]:
+                        if rule[i] != stack[len(stack) - len(rule) + i]:
                             match = False
                     if match:
-                        del stack[len(stack)-len(rule):len(stack)]
+                        del stack[len(stack) - len(rule) : len(stack)]
                         stack.append(result[1])
+<<<<<<< HEAD
                         del states[len(states)-len(rule):len(states)]
                         print("Reducing rule", result[1], "->", rule)
                         topState = states[len(states)-1]
                         topStack = stack[len(stack)-1]
+=======
+                        del states[len(states) - len(rule) : len(states)]
+                        topState = states[len(states) - 1]
+                        topStack = stack[len(stack) - 1]
+>>>>>>> c52813b5a6e45e6167e2ee3fa6fccd0d497e3a6b
                         if topStack in self.goto[topState].keys():
                             states.append(self.goto[topState][topStack])
             else:
@@ -245,7 +270,6 @@ class LRTable:
             if len(stack) == 1 and stack[0] == "ACC":
                 done = True
         print(output)
-
 
     def updateSetNum(self):
         i = 0
@@ -267,7 +291,7 @@ class LRTable:
 
     def printRules(self):
         print("--- Rules ---")
-        for k,v in self.rules.items():
+        for k, v in self.rules.items():
             print(k, ": ", v)
         print("--- NonTerminals ---")
         for nt in self.nonTerminals:
@@ -275,29 +299,29 @@ class LRTable:
         print("--- Terminals ---")
         for t in self.terminals:
             print(t)
-        
 
     def printItemSets(self):
         print("--- Items ---")
         for itemSetNum, itemSet in self.itemSets.items():
-            print("Item Set %i: "%(itemSetNum))
+            print("Item Set %i: " % (itemSetNum))
             for item in itemSet:
                 print("\t", item)
 
     def printTransitions(self):
         print("--- Transitions ---")
-        for k,v in self.transitions.items():
+        for k, v in self.transitions.items():
             print(k, v)
-            #for tokenK,tokenV in v.items():
+            # for tokenK,tokenV in v.items():
             #    print ("\n%s:%i"%(tokenK, tokenV))
 
     def printTable(self):
         print("--- Actions ---")
-        for k,v in self.actions.items():
+        for k, v in self.actions.items():
             print(k, v)
         print("--- Goto ---")
-        for k,v in self.goto.items():
+        for k, v in self.goto.items():
             print(k, v)
+
 
 class item:
     def __init__(self, lhs, rhs, seperator, following):
@@ -308,20 +332,29 @@ class item:
 
     def __str__(self):
         rhs = self.rhs.split(" ")
-        return "[%s -> %s.%s, %s]"%(self.lhs, " ".join(rhs[0:self.seperator]), " ".join(rhs[self.seperator:len(self.rhs)]), self.following)
+        return "[%s -> %s.%s, %s]" % (
+            self.lhs,
+            " ".join(rhs[0 : self.seperator]),
+            " ".join(rhs[self.seperator : len(self.rhs)]),
+            self.following,
+        )
 
     def isSame(self, tempItem):
-        if tempItem.lhs == self.lhs and tempItem.rhs == self.rhs and tempItem.seperator == self.seperator and tempItem.following == self.following:
+        if (
+            tempItem.lhs == self.lhs
+            and tempItem.rhs == self.rhs
+            and tempItem.seperator == self.seperator
+            and tempItem.following == self.following
+        ):
             return True
         else:
             return False
-        
 
     def getRightBefore(self):
         rhs = self.rhs.split(" ")
-        if self.seperator-1 < 0 or self.seperator-1 >= len(rhs):
+        if self.seperator - 1 < 0 or self.seperator - 1 >= len(rhs):
             return ""
-        return rhs[self.seperator-1]
+        return rhs[self.seperator - 1]
 
     def getRightAfter(self):
         rhs = self.rhs.split(" ")
@@ -331,10 +364,11 @@ class item:
 
     def getAfter(self):
         rhs = self.rhs.split(" ")
-        return rhs[self.seperator+1:len(self.rhs)]
+        return rhs[self.seperator + 1 : len(self.rhs)]
 
     def incSeperator(self):
-        return item(self.lhs, self.rhs, self.seperator+1, self.following)
+        return item(self.lhs, self.rhs, self.seperator + 1, self.following)
+
 
 if __name__ == "__main__":
     sys.exit(main())
