@@ -1,6 +1,3 @@
-all:
-	main
-
 main:
 	python3 src/main.py -s -p samples/plain.c
 
