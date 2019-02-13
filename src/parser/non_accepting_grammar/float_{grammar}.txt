@@ -1,0 +1,51 @@
+##obviously a function declaration error
+##but it also doesn't like float i.e.: "float"
+##it reads up to state 8, i.e.: "typeSpecifier" but fails there. 
+
+ACC -> .program
+program -> .program funDec
+program -> .funDec
+program -> .program funDec, typeSpecifier
+program -> .funDec, typeSpecifier
+funDec -> .typeSpecifier ID ( ) { statement }
+funDec -> .typeSpecifier ID ( ) { statement }, typeSpecifier
+
+ACC -> program.
+program -> program.funDec
+program -> program.funDec, typeSpecifier
+funDec -> .typeSpecifier ID ( ) { statement }
+funDec -> .typeSpecifier ID ( ) { statement }, typeSpecifier
+
+program -> funDec.
+program -> funDec., typeSpecifier
+
+funDec -> typeSpecifier.ID ( ) { statement }
+funDec -> typeSpecifier.ID ( ) { statement }, typeSpecifier
+
+program -> program funDec.
+program -> program funDec., typeSpecifier
+
+funDec -> typeSpecifier ID.( ) { statement }
+funDec -> typeSpecifier ID.( ) { statement }, typeSpecifier
+
+funDec -> typeSpecifier ID (.) { statement }
+funDec -> typeSpecifier ID (.) { statement }, typeSpecifier
+
+funDec -> typeSpecifier ID ( ).{ statement }
+funDec -> typeSpecifier ID ( ).{ statement }, typeSpecifier
+
+funDec -> typeSpecifier ID ( ) {.statement }
+funDec -> typeSpecifier ID ( ) {.statement }, typeSpecifier
+statement -> .return constNum ;, }]
+
+funDec -> typeSpecifier ID ( ) { statement.}
+funDec -> typeSpecifier ID ( ) { statement.}, typeSpecifier
+
+statement -> return.constNum ;, }
+
+funDec -> typeSpecifier ID ( ) { statement }.
+funDec -> typeSpecifier ID ( ) { statement }., typeSpecifier
+
+statement -> return constNum.;, }
+
+statement -> return constNum ;., }

@@ -2,6 +2,7 @@ import sys
 import getopt
 import lexer
 from parser.parser import Parser
+from parser.lrTable import LRTable
 import logging
 import pprint
 import os
@@ -26,13 +27,18 @@ def main():
         for token in tokens:
             print(token)
 
+    # Build LR(1) table
+    lrTable = LRTable()
+    lrTable.buildTable()
+    abstractSyntaxTree = lrTable.parse(tokens)
+
     # Parse the tokens
-    parser = Parser(tokens)
-    parser.parse()
+    # parser = Parser(tokens)
+    # parser.parse()
     print("✨ Completed parsing!")
 
-    if "-p" in flags:
-        parser.print()
+    # if "-p" in flags:
+    #   parser.print()
 
 
 def printUsage():

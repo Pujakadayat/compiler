@@ -66,6 +66,7 @@ number = TokenType(description="constNum")
 string = TokenType(description="str")
 character = TokenType(description="char")
 filename = TokenType(description="fileName")
+eof = TokenType(description="endOfFile")
 
 # =======
 # Symbols
