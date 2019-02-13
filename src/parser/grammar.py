@@ -1,186 +1,68 @@
-import tokens as tokenTypes
+from .. import tokens as tokenTypes
+
+
+def printPrefix(level):
+    for i in range(level):
+        print("  ", end=" ")
+    print("| - ", end=" ")
 
 
 class Node:
     def __init__(self):
         pass
 
-    def prettyPrint(self, level):
-        for i in range(level):
-            print("| -- ", end=" ")
-        print(self.__class__.__name__)
-        self.next(level + 1)
+    def print(self, level=0):
+        """
+        General node print method.
+        First, print the class name, then print all it's children.
 
-    def next(self, level):
-        return None
+        This method is overriden at lower level nodes like NUMCONST.
+        """
+
+        printPrefix(level)
+        print(self.__class__.__name__)
+
+        for child in self.children:
+            child.print(level + 1)
 
 
 class Program(Node):
-    def __init__(self, declarationList):
-        # Declarations is a DeclarationList instance
-        self.declarations = declarationList
-
-    def next(self, level):
-        self.declarations.prettyPrint(level)
-
-    def parse(tokens):
-        if len(tokens) != 1:
-            return None
-
-        if isinstance(tokens[0], FunctionDeclaration):
-            return Program(tokens[0])
+    def __init__(self, *children):
+        self.children = children
 
 
 class FunctionDeclaration(Node):
-    def __init__(self, type, ID, parameters, statement):
-        self.type = type
-        self.ID = ID
-        self.parameters = parameters
-        self.statement = statement
-
-    def next(self, level):
-        self.statement.prettyPrint(level)
-
-    def parse(tokens):
-        if len(tokens) != 7:
-            return None
-
-        returnType = tokens[0]
-        if not isinstance(returnType, TypeSpecifier):
-            return None
-
-        id = tokens[1]
-        if not isinstance(id, IDENTIFIER):
-            return None
-
-        if tokens[2].kind != tokenTypes.openParen:
-            return None
-
-        if tokens[3].kind != tokenTypes.closeParen:
-            return None
-
-        if tokens[4].kind != tokenTypes.openCurly:
-            return None
-
-        returnStatement = tokens[5]
-        if not isinstance(returnStatement, ReturnStatement):
-            return None
-
-        if tokens[6].kind != tokenTypes.closeCurly:
-            return None
-
-        return FunctionDeclaration(returnType, id, None, returnStatement)
+    def __init__(self, *children):
+        self.children = children
 
 
 class TypeSpecifier(Node):
-    def __init__(self, type):
-        self.type = type
-
-    def parse(tokens):
-        if len(tokens) != 1:
-            return None
-
-        token = tokens[0]
-
-        if isinstance(token, Node):
-            return None
-
-        if token.kind == tokenTypes.int:
-            return TypeSpecifier(tokenTypes.int)
-
-        return None
-
-
-class ReturnStatement(Node):
     def __init__(self, value):
         self.value = value
 
-    def next(self, level):
-        self.value.prettyPrint(level)
+    def print(self, level):
+        printPrefix(level)
+        print(f"{self.__class__.__name__}: {self.value}")
 
-    def parse(tokens):
-        if len(tokens) != 3:
-            return None
 
-        if (
-            isinstance(tokens[0], tokenTypes.Token)
-            and tokens[0].kind != tokenTypes.returnKeyword
-        ):
-            return None
-
-        if not isinstance(tokens[1], NUMCONST):
-            return None
-
-        if not isinstance(tokens[2], tokenTypes.Token):
-            return None
-
-        if tokens[2].kind != tokenTypes.semicolon:
-            return None
-
-        return ReturnStatement(tokens[1])
+class ReturnStatement(Node):
+    def __init__(self, *children):
+        self.children = children
 
 
 class NUMCONST(Node):
     def __init__(self, value):
         self.value = value
 
-    def next(self, level):
-        return None
-
-    def parse(tokens):
-        if len(tokens) != 1:
-            return None
-
-        token = tokens[0]
-        if isinstance(token, Node):
-            return None
-
-        if token.kind != tokenTypes.number:
-            return None
-
-        return NUMCONST(token.content)
+    def print(self, level):
+        printPrefix(level)
+        print(f"{self.__class__.__name__}: {self.value}")
 
 
 class IDENTIFIER(Node):
     def __init__(self, value):
         self.value = value
 
-    def parse(tokens):
-        if len(tokens) != 1:
-            return None
-
-        token = tokens[0]
-
-        if isinstance(token, Node):
-            return None
-
-        if token.kind != tokenTypes.identifier:
-            return None
-
-        return IDENTIFIER(token.content)
-
-
-## TODO: implement statement, expression, unaryop
-class SIMPLEEXPRESSION(Node):
-    def __init__(self, value):
-        self.value = value
-
-    def parse(tokens):
-        # parse as regular int
-        if len(tokens) != 1:
-            return None
-        # else convert to unaryop
-        token = tokens[0]
-
-        # return
-        return SIMPLEEXPRESSION(token.content)
-
-
-rules = [
-    Program,
-    FunctionDeclaration,
-    TypeSpecifier,
-    ReturnStatement,
-    NUMCONST,
-    IDENTIFIER,
-]
+    def print(self, level):
+        printPrefix(level)
+        print(f"{self.__class__.__name__}: {self.value}")

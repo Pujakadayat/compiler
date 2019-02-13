@@ -1,11 +1,11 @@
 import sys
 import getopt
 import lexer
-from parser.parser import Parser
-from parser.lrTable import LRTable
 import logging
 import pprint
 import os
+from parser.parser import Parser
+from parser.lrTable import LRTable
 
 
 def main():
