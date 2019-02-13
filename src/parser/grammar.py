@@ -1,4 +1,4 @@
-from .. import tokens as tokenTypes
+import tokens as tokenTypes
 
 
 def printPrefix(level):
