@@ -60,7 +60,7 @@ class LRTable:
 
     def parseGrammar(self):
         # Open file with grammar
-        file = open("src/parser/grammar3.txt", "r")
+        file = open("src/parser/grammar2.txt", "r")
 
         # parse grammar file into rules
         for line in file:
@@ -119,11 +119,34 @@ class LRTable:
         return newSet
 
     
+    # remove any nonterm following from item sets
     def cleanItemSet(self, setNum):
-        for currItem in self.itemSets[setNum]:
-            if currItem.following in self.nonTerminals:
-                print(setNum, currItem.following)
-                currItem.following = self.rules[currItem.following][0][0]
+        nonTerms = True
+        while nonTerms:
+            #self.printItemSets()
+            nonTerms = False
+            for itemNum in range(len(self.itemSets[setNum])):
+                if self.itemSets[setNum][itemNum].following in self.nonTerminals:
+                    #print(setNum, itemNum)
+                    nonTerms = True
+                    lhs = self.itemSets[setNum][itemNum].lhs
+                    rhs = self.itemSets[setNum][itemNum].rhs
+                    sep = self.itemSets[setNum][itemNum].seperator
+                    following = self.itemSets[setNum][itemNum].following
+                    for numRule in range(len(self.rules[following])):
+                        #print(self.rules[following], numRule)
+                        newItem = item(lhs, rhs, sep, self.rules[following][numRule][0])
+                        isNew = True
+                        for tempItem in self.itemSets[setNum]:
+                            if newItem.isSame(tempItem):
+                                isNew = False
+                        if isNew:
+                            self.itemSets[setNum].append(newItem)
+                            #print("Added item")
+                            #self.printItemSets()
+                    del self.itemSets[setNum][itemNum]
+                    break
+
 
     def createItemSets(self, setNum):
         for currItem in self.itemSets[setNum]:
@@ -179,9 +202,7 @@ class LRTable:
                                     # print("This rule: ", self.rules[k][i])
                                     if itemSetNum not in self.actions.keys():
                                         self.actions[itemSetNum] = {}
-                                    self.actions[itemSetNum][
-                                        item.following
-                                    ] = "r %s %i" % (k, i)
+                                    self.actions[itemSetNum][item.following] = "r %s %i" % (k, i)
         for k1, v1 in self.transitions.items():
             # print(k1)
             for k2, v2 in v1.items():
@@ -239,6 +260,7 @@ class LRTable:
                             states.append(self.goto[topState][topStack])
             else:
                 print("ERROR: State", state, "Token", token)
+                print(self.actions[state])
                 break
             if len(stack) == 1 and stack[0] == "ACC":
                 done = True
