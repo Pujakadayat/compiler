@@ -118,23 +118,22 @@ class LRTable:
                     done = True
         return newSet
 
-    
     # remove any nonterm following from item sets
     def cleanItemSet(self, setNum):
         nonTerms = True
         while nonTerms:
-            #self.printItemSets()
+            # self.printItemSets()
             nonTerms = False
             for itemNum in range(len(self.itemSets[setNum])):
                 if self.itemSets[setNum][itemNum].following in self.nonTerminals:
-                    #print(setNum, itemNum)
+                    # print(setNum, itemNum)
                     nonTerms = True
                     lhs = self.itemSets[setNum][itemNum].lhs
                     rhs = self.itemSets[setNum][itemNum].rhs
                     sep = self.itemSets[setNum][itemNum].seperator
                     following = self.itemSets[setNum][itemNum].following
                     for numRule in range(len(self.rules[following])):
-                        #print(self.rules[following], numRule)
+                        # print(self.rules[following], numRule)
                         newItem = item(lhs, rhs, sep, self.rules[following][numRule][0])
                         isNew = True
                         for tempItem in self.itemSets[setNum]:
@@ -142,11 +141,10 @@ class LRTable:
                                 isNew = False
                         if isNew:
                             self.itemSets[setNum].append(newItem)
-                            #print("Added item")
-                            #self.printItemSets()
+                            # print("Added item")
+                            # self.printItemSets()
                     del self.itemSets[setNum][itemNum]
                     break
-
 
     def createItemSets(self, setNum):
         for currItem in self.itemSets[setNum]:
@@ -202,7 +200,9 @@ class LRTable:
                                     # print("This rule: ", self.rules[k][i])
                                     if itemSetNum not in self.actions.keys():
                                         self.actions[itemSetNum] = {}
-                                    self.actions[itemSetNum][item.following] = "r %s %i" % (k, i)
+                                    self.actions[itemSetNum][
+                                        item.following
+                                    ] = "r %s %i" % (k, i)
         for k1, v1 in self.transitions.items():
             # print(k1)
             for k2, v2 in v1.items():
@@ -231,8 +231,19 @@ class LRTable:
                 token = token.kind.desc()
             else:
                 token = token.content
-            print("---\nState:", state, "\nStates:", states, "\nlookahead Token:", token, "\nstack:", stack, "\noutput:", output)
-            #print(stack, "\n")
+            print(
+                "---\nState:",
+                state,
+                "\nStates:",
+                states,
+                "\nlookahead Token:",
+                token,
+                "\nstack:",
+                stack,
+                "\noutput:",
+                output,
+            )
+            # print(stack, "\n")
             if token in self.actions[state].keys():
                 result = self.actions[state][token]
                 output.append(result)
@@ -252,10 +263,10 @@ class LRTable:
                     if match:
                         del stack[len(stack) - len(rule) : len(stack)]
                         stack.append(result[1])
-                        del states[len(states)-len(rule):len(states)]
+                        del states[len(states) - len(rule) : len(states)]
                         print("Reducing rule", result[1], "->", rule)
-                        topState = states[len(states)-1]
-                        topStack = stack[len(stack)-1]
+                        topState = states[len(states) - 1]
+                        topStack = stack[len(stack) - 1]
                         if topStack in self.goto[topState].keys():
                             states.append(self.goto[topState][topStack])
             else:
