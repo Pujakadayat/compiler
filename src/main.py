@@ -10,13 +10,18 @@ from parser.lrTable import LRTable
 
 def main():
     # Get command line arguments
-    filename, flags = parseArguments()
+    filename, grammar, flags = parseArguments()
 
     # Start logging file
-    startLog()
+    if "-v" in flags:
+        startLog()
 
     # Read in the program file
     code = readFile(filename)
+
+    # Read in the grammar file
+    if grammar:
+        grammar = readFile(grammar)
 
     # Tokenize the input file
     tokens = lexer.tokenize(code)
@@ -27,16 +32,14 @@ def main():
         for token in tokens:
             print(token)
 
-    # Build LR(1) table
-    lrTable = LRTable()
+    # Parse the tokens using an LR(1) table
+    lrTable = LRTable(grammar)
     lrTable.buildTable()
     abstractSyntaxTree = lrTable.parse(tokens)
 
-    # Parse the tokens
-    # parser = Parser(tokens)
-    # parser.parse()
     print("✨ Completed parsing!")
 
+    # Print the AST
     # if "-p" in flags:
     #   parser.print()
 
@@ -46,18 +49,22 @@ def printUsage():
     end = "\033[0m"
 
     print(f"\n  {bold}Usage{end}:\n")
-    print("    python3 main.py [<flags>] filename\n")
+    print("    python3 main.py [<flags>] [-g grammar] filename\n")
     print(f"  {bold}Flags{end}:\n")
-    print("     -h, --help     Output usage information.")
-    print("     -s, --scanner  Convert a source file into tokens.")
-    print("     -p, --parser   Convert tokens into a parse tree")
+    print("     -h, --help                  Output usage information.")
+    print("     -v, --verbose               Generate a log file with debug info.")
+    print("     -s, --scanner               Convert a source file into tokens.")
+    print("     -p, --parser                Convert tokens into a parse tree.")
+    print("     -f, --file                  The C file to compile.")
+    print("     -g, --grammar <filename>    Provide a grammar file to parse with.")
     print()
 
 
 def parseArguments():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hspf:", ["file="])
-    except getopt.GetoptError:
+        opts, args = getopt.getopt(sys.argv[1:], "hvspg:f:", ["help", "verbose", "scanner", "parser", "grammar=", "file="])
+    except getopt.GetoptError as err:
+        print(err)
         printUsage()
         sys.exit(2)
 
@@ -78,8 +85,14 @@ def parseArguments():
             flags.append("-s")
         elif opt in ("-p", "--parser"):
             flags.append("-p")
+        elif opt in ("-v", "--verbose"):
+            flags.append("-v")
+        elif opt in ("-f", "--file"):
+            filename = arg
+        elif opt in ("-g", "--grammar"):
+            grammar = arg
 
-    return filename, flags
+    return filename, grammar, flags
 
 
 def readFile(filename):
@@ -98,6 +111,7 @@ def startLog():
         if len(log.split(".")) == 3:
             if int(log.split(".")[2]) >= biggestLog:
                 biggestLog = int(log.split(".")[2]) + 1
+
     logging.basicConfig(
         filename="logs/compiler.log.%s" % (biggestLog),
         filemode="w",

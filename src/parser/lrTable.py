@@ -16,7 +16,10 @@ def main():
 
 # This class will generate the action and goto tables
 class LRTable:
-    def __init__(self):
+    def __init__(self, grammar):
+        # The grammar file to use
+        self.grammar = grammar
+
         # Rules parsed from grammar
         self.rules = {}
 
@@ -60,11 +63,12 @@ class LRTable:
 
     def parseGrammar(self):
         # Open file with grammar
-        file = open("src/parser/grammar2.txt", "r")
+        lines = self.grammar.splitlines()
 
         # parse grammar file into rules
-        for line in file:
-            rule = line[:-1].split(" ")
+        for line in lines:
+            rule = line.split(" ")
+
             if rule[1] == "->":
                 # seperate | in the rule
                 last = 2
@@ -75,13 +79,16 @@ class LRTable:
                         else:
                             self.rules[rule[0]] = [rule[last:i]]
                         last = i + 1
+
                 if rule[0] in self.rules.keys():
                     self.rules[rule[0]].append(rule[last:])
                 else:
                     self.rules[rule[0]] = [rule[last:]]
+
         for k in self.rules.keys():
             if k not in self.nonTerminals:
                 self.nonTerminals.append(k)
+
         for v in self.rules.values():
             for tokenList in v:
                 for token in tokenList:
