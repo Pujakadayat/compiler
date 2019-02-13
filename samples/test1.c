@@ -8,19 +8,7 @@
 */
 
 int main() {
-
   int a = 2;
-  int b = 3;
-  int c;
 
-	if (a < b)
-  {
-    c = 2;
-    return c;
-  }
-  else {
-    c = 3;
-  }
-
-	return 0;
+  return 0;
 }
