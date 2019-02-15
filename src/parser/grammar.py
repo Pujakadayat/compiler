@@ -2,7 +2,7 @@ import tokens as tokenTypes
 
 
 def printPrefix(level):
-    for i in range(level):
+    for _ in range(level):
         print("  ", end=" ")
     print("| - ", end=" ")
 

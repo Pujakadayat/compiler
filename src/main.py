@@ -35,7 +35,7 @@ def main():
     # Parse the tokens using an LR(1) table
     lrTable = LRTable(grammar)
     lrTable.buildTable()
-    abstractSyntaxTree = lrTable.parse(tokens)
+    lrTable.parse(tokens)
 
     print("✨ Completed parsing!")
 
@@ -62,7 +62,11 @@ def printUsage():
 
 def parseArguments():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hvspg:f:", ["help", "verbose", "scanner", "parser", "grammar=", "file="])
+        opts, args = getopt.getopt(
+            sys.argv[1:],
+            "hvspg:f:",
+            ["help", "verbose", "scanner", "parser", "grammar=", "file="],
+        )
     except getopt.GetoptError as err:
         print(err)
         printUsage()
@@ -100,6 +104,7 @@ def readFile(filename):
         with open(filename) as file:
             return file.read()
     except IOError as err:
+        print(err)
         print(f"Could not read the file: {filename}")
         sys.exit(2)
 

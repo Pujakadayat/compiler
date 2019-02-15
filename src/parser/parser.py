@@ -69,11 +69,3 @@ class Parser:
     def print(self):
         for token in self.stack:
             token.prettyPrint(0)
-            # if not isinstance(grammar.TypeSpecifier, grammar.NUMCONST):
-            #    return None
-
-            # else:
-            #    print(token)
-            #    pp = pprint.PrettyPrinter(indent=8)
-            #    pp.pprint(token)
-            #    print("are you getting here??")
