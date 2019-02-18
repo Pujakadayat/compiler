@@ -229,6 +229,8 @@ def matchSymbol(line, start):
         except IndexError:
             pass
 
+    return None
+
 
 def matchKeyword(text):
     """Check if string matches a keyword"""
@@ -236,14 +238,20 @@ def matchKeyword(text):
         if keyword.rep == text:
             return keyword
 
+    return None
+
 
 def matchIdentifier(text):
     """Check if string matches an identifier"""
     if re.match(r"[_a-zA-Z][_a-zA-Z0-9]*$", text):
         return text
+    else:
+        return None
 
 
 def matchNumber(text):
     """Check if string matches a number"""
     if text.isdigit():
         return text
+    else:
+        return None
