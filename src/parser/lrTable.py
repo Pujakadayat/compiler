@@ -36,13 +36,13 @@ class LRTable:
 
     def buildTable(self):
         # Augment rules with accepting state
-        self.rules["ACC"] = [["S"]]
+        self.rules["ACC"] = [["program"]]
 
         # Parse the input grammar
         self.parseGrammar()
 
         # Start itemset 0 with the accepting state
-        self.itemSets[0] = [item("ACC", "S", 0, "$")]
+        self.itemSets[0] = [item("ACC", "program", 0, "$")]
 
         # close Itemsets and create new sets until no more
         i = 0
@@ -232,7 +232,7 @@ class LRTable:
                             if self.transitions[k1][k2] == i:
                                 self.transitions[k1][k2] = j
                     break
-    
+
     # build the action and goto tables from the itemSets and the transition table
     def buildActionGoto(self):
         # go through itemSets to get reduction rules
