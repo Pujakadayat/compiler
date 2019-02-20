@@ -1,14 +1,11 @@
 program -> statementList
 statementList -> statementList statement | statement
-statement -> functionStatement | returnStatement | assignmentStatement | ifStatement | forStatement
+statement -> functionStatement | returnStatement | ifStatement
 functionStatement -> typeSpecifier ID ( ) { statementList }
-returnStatement -> return constNum ; | return expression ;
-expression -> s
-s -> t | s + t | s - t
+returnStatement -> return expression ;
+expression -> t | expression + t | expression - t
 t -> e | t * e | t / e
-e -> p | p ^ e
-p -> ID | constNum | ( s )
+e -> constNum | ID
+assignment -> typeSpecifier ID = expression ;
 ifStatement -> if ( condition ) { statementList }
 condition -> ID == constNum
-assignmentStatement -> typeSpecifier ID = constNum ; | ID = constNum ; | ID += constNum ;
-forStatement -> for ( ID = constNum ; ID < ID ; ID ++ ) { statementList }

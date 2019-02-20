@@ -46,22 +46,23 @@ class LRTable:
 
         # close Itemsets and create new sets until no more
         i = 0
-        while self.hasItemSet(i):
-            # close out itemset i
-            self.closure(i)
-            # change nonterminal followers to terminals in itemset i
-            self.cleanItemSet(i)
-            # create any new itemsets from itemset i
-            self.createItemSets(i)
-            # search through itemsets and remove any copies
-            self.cleanItemSets()
+        while i <= max(self.itemSets.keys()):
+            if self.hasItemSet(i):
+                # close out itemset i
+                self.closure(i)
+                # change nonterminal followers to terminals in itemset i
+                self.cleanItemSet(i)
+                # create any new itemsets from itemset i
+                self.createItemSets(i)
+                # search through itemsets and remove any copies
+                self.cleanItemSets()
             i = i + 1
 
         # build tables
         self.buildActionGoto()
 
         self.printRules()
-        self.printItemSets()
+        # self.printItemSets()
         self.printTransitions()
         self.printTable()
 
@@ -112,6 +113,8 @@ class LRTable:
     # close out an itemset
     # this involves expanding out rules from the grammar
     def closure(self, setNum):
+        if debug:
+            print('closing out itemset', setNum)
         # newSet is just the itemset we are currently interested in
         newSet = self.itemSets[setNum]
         done = False
@@ -223,6 +226,8 @@ class LRTable:
                         break
                 # if itemSets i and j are identical delete itemSet i (the itemSet that came later)
                 if same:
+                    if debug:
+                        print('Replacing itemset', i, 'with itemset', j)
                     del self.itemSets[i]
                     # self.setNum is now the lowest available set number
                     self.updateSetNum()
@@ -248,6 +253,7 @@ class LRTable:
                                     self.actions[itemSetNum][
                                         item.following
                                     ] = "r %s %i" % (k, i)
+
         # go through transition table to get:
         for k1, v1 in self.transitions.items():
             for k2, v2 in v1.items():
@@ -268,15 +274,21 @@ class LRTable:
         stack = []
         states = [0]
         done = False
+
+        # Lookahead is an index into the scannedTokens
         lookahead = 0
 
         while not done:
-            state = states[len(states) - 1]
+            # Current state is the most recent of the pushed states list
+            state = states[-1]
+
+            # Peek at the next token
             token = scannedTokens[lookahead]
             if token.kind.desc() in self.terminals:
                 token = token.kind.desc()
             else:
                 token = token.content
+
             print(
                 "---\nState:",
                 state,
@@ -289,38 +301,57 @@ class LRTable:
                 "\noutput:",
                 output,
             )
-            # print(stack, "\n")
-            if token in self.actions[state].keys():
-                result = self.actions[state][token]
-                output.append(result)
-                result = result.split(" ")
-                if result[0] == "s":
-                    states.append(int(result[1]))
-                    stack.append(token)
-                    lookahead = lookahead + 1
-                    print("Shifting")
-                if result[0] == "r":
-                    rule = self.rules[result[1]][int(result[2])]
-                    # print("rule:", rule)
-                    match = True
-                    for i in range(len(rule)):
-                        if rule[i] != stack[len(stack) - len(rule) + i]:
-                            match = False
-                    if match:
-                        del stack[len(stack) - len(rule) : len(stack)]
-                        stack.append(result[1])
-                        del states[len(states) - len(rule) : len(states)]
-                        print("Reducing rule", result[1], "->", rule)
-                        topState = states[len(states) - 1]
-                        topStack = stack[len(stack) - 1]
-                        if topStack in self.goto[topState].keys():
-                            states.append(self.goto[topState][topStack])
-            else:
-                print("ERROR: State", state, "Token", token)
-                print(self.actions[state])
+
+            try:
+                # Check if we have an entry in our action table for the lookahead token
+                if token in self.actions[state].keys():
+                    result = self.actions[state][token]
+                    output.append(result)
+                    result = result.split(" ")
+
+                    # If the action table says to shift, shift the next token
+                    if result[0] == "s":
+                        states.append(int(result[1]))
+                        stack.append(token)
+                        lookahead += 1
+                        print("Shifting")
+
+                    # If the action table says to reduce
+                    if result[0] == "r":
+                        # Get the corresponding rule from our rules table
+                        rule = self.rules[result[1]][int(result[2])]
+
+                        # Check if the tokens on the stack match a grammar rule
+                        match = True
+                        for i in range(len(rule)):
+                            if rule[i] != stack[len(stack) - len(rule) + i]:
+                                match = False
+
+                        # If one of the grammar rules matched...
+                        if match:
+                            # Reduce the tokens on the stack to our new rule token
+                            del stack[len(stack) - len(rule) : len(stack)]
+                            del states[len(states) - len(rule) : len(states)]
+                            stack.append(result[1])
+                            print("Reducing rule", result[1], "->", rule)
+
+                            # Check if there is a goto rule for our current state
+                            topState = states[-1]
+                            topStack = stack[-1]
+                            if topStack in self.goto[topState].keys():
+                                states.append(self.goto[topState][topStack])
+                else:
+                    print("ERROR: State", state, "Token", token)
+                    print(self.actions[state])
+                    break
+            except KeyError:
+                print(f"No entry in the action table for state: {state}")
                 break
+
+            # Check if we have reached the accepting state
             if len(stack) == 1 and stack[0] == "ACC":
                 done = True
+
         print(output)
 
     def updateSetNum(self):
