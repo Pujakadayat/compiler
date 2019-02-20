@@ -2,7 +2,7 @@ program -> statementList
 statementList -> statementList statement | statement
 statement -> functionStatement | returnStatement | assignmentStatement | ifStatement | forStatement
 functionStatement -> typeSpecifier ID ( ) { statementList }
-returnStatement -> return constNum | return expression;
+returnStatement -> return constNum ; | return expression ;
 expression -> s
 s -> t | s + t | s - t
 t -> e | t * e | t / e
