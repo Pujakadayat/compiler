@@ -1,25 +1,18 @@
 # http://www.orcca.on.ca/~watt/home/courses/2007-08/cs447a/notes/LR1%20Parsing%20Tables%20Example.pdf
 # used this to write this file
 
-import tokens as tokens
-from tokens import Token, TokenType
+import getopt
 import logging
 import sys
+import os
+import json
 
 debug = True
 
-# This main function is just for testing
-def main():
-    lrt = LRTable()
-    lrt.buildTable()
-
 
 # This class will generate the action and goto tables
-class LRTable:
-    def __init__(self, grammar):
-        # The grammar file to use
-        self.grammar = grammar
-
+class LRParser:
+    def __init__(self):
         # Rules parsed from grammar
         self.rules = {}
 
@@ -34,15 +27,9 @@ class LRTable:
         self.actions = {}
         self.goto = {}
 
-    def buildTable(self):
-        # Augment rules with accepting state
-        self.rules["ACC"] = [["S"]]
-
-        # Parse the input grammar
-        self.parseGrammar()
-
+    def buildTables(self):
         # Start itemset 0 with the accepting state
-        self.itemSets[0] = [item("ACC", "S", 0, "$")]
+        self.itemSets[0] = [item("ACC", "program", 0, "$")]
 
         # close Itemsets and create new sets until no more
         i = 0
@@ -60,19 +47,17 @@ class LRTable:
         # build tables
         self.buildActionGoto()
 
-        self.printRules()
-        self.printItemSets()
-        self.printTransitions()
-        self.printTable()
-
     # parse the input grammar into rules
     #   the variable self.rules is filled here
     #   self.rules in a dictionary with the lhs of a rule as the key
     #   and lists as the value. The lists are the different rhs's that
     #   the rule points to.
-    def parseGrammar(self):
+    def parseGrammar(self, grammar):
+        # Augment rules with accepting state
+        self.rules["ACC"] = [["program"]]
+
         # Open file with grammar
-        lines = self.grammar.splitlines()
+        lines = grammar.splitlines()
 
         # parse grammar file into rules
         for line in lines:
@@ -262,17 +247,61 @@ class LRTable:
                         self.actions[k1] = {}
                     self.actions[k1][k2] = "s %i" % (v2)
 
-    def parse(self, scannedTokens):
-        scannedTokens.append(Token(tokens.eof, "$"))
+    def loadParseTables(self, grammarFile):
+        grammarName = grammarFile.split('/')[1].split('.')[0]
+        tableFile = "{}{}{}".format("tables/", grammarName, "_table.json")
+
+        # Parse the input grammar
+        self.parseGrammar(readFile(grammarFile))
+
+        if os.path.isfile(tableFile):
+            # Load a saved tables file
+            self.loadTables(readFile(tableFile))
+        else:
+            # Parse the tokens using an LR(1) table
+            self.buildTables()
+            self.saveTables(tableFile)
+
+    def saveTables(self, tableFileName):
+        with open(tableFileName, 'w') as outfile:
+            print(len(self.actions))
+            json.dump(self.actions, outfile)
+            outfile.write('\n')
+            print(len(self.goto))
+            json.dump(self.goto, outfile)
+            """
+            for i in range(self.setNum):
+                outfile.write('%i:{'%(i))
+                for j in range(len(self.actions[i])):
+                    print(self.actions[i].values)
+                    #outfile.write('"{}":"{}"'.format(self.actions[i].values[j]))
+                outfile.write('\n')
+            outfile.write('\n')
+            for i in range(self.setNum):
+                if i in self.goto.keys():
+                    outfile.write('{}:{}'.format(i, self.goto[i]))
+                    outfile.write('\n')
+            """
+
+    def loadTables(self, tableFile):
+        lines = tableFile.splitlines()
+        tempActions = json.loads(lines[0])
+        for key,value in tempActions.items():
+            self.actions[int(key)] = value
+        tempGoto = json.loads(lines[1])
+        for key,value in tempGoto.items():
+            self.goto[int(key)] = value
+
+    def parse(self, tokens):
+        lookahead = 0
+        done = False
+        states = [0]
         output = []
         stack = []
-        states = [0]
-        done = False
-        lookahead = 0
 
         while not done:
             state = states[len(states) - 1]
-            token = scannedTokens[lookahead]
+            token = tokens[lookahead]
             if token.kind.desc() in self.terminals:
                 token = token.kind.desc()
             else:
@@ -321,7 +350,6 @@ class LRTable:
                 break
             if len(stack) == 1 and stack[0] == "ACC":
                 done = True
-        print(output)
 
     def updateSetNum(self):
         i = 0
@@ -427,5 +455,12 @@ class item:
         return item(self.lhs, self.rhs, self.seperator + 1, self.following)
 
 
-if __name__ == "__main__":
-    sys.exit(main())
+def readFile(filename):
+    try:
+        with open(filename) as file:
+            return file.read()
+    except IOError as err:
+        print(err)
+        print(f"Could not read the file: {filename}")
+        sys.exit(2)
+

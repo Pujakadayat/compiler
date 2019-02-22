@@ -4,8 +4,7 @@ import lexer
 import logging
 import pprint
 import os
-from parser.parser import Parser
-from parser.lrTable import LRTable
+from parser.lrParser import LRParser
 
 
 def main():
@@ -19,10 +18,6 @@ def main():
     # Read in the program file
     code = readFile(filename)
 
-    # Read in the grammar file
-    if grammar:
-        grammar = readFile(grammar)
-
     # Tokenize the input file
     tokens = lexer.tokenize(code)
     print("✨ Completed scanning!")
@@ -32,16 +27,15 @@ def main():
         for token in tokens:
             print(token)
 
-    # Parse the tokens using an LR(1) table
-    lrTable = LRTable(grammar)
-    lrTable.buildTable()
-    lrTable.parse(tokens)
-
+    # Load the action and goto tables for parsing
+    parser = LRParser() 
+    parser.loadParseTables(grammar)
+    parser.parse(tokens)
     print("✨ Completed parsing!")
 
-    # Print the AST
-    # if "-p" in flags:
-    #   parser.print()
+    # Print the parseTree
+    #if "-p" in flags:
+    #    parser.print()
 
 
 def printUsage():
