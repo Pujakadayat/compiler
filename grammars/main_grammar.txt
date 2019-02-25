@@ -1,9 +1,32 @@
-program -> statementList
+# General
+
+program -> declarationList
+declarationList -> declarationList declaration | declaration
+declaration -> varDec | functionDeclaration
+
+# Variable Declarations
+
+varDec -> typeSpecifier ID = expression ;
+assignment -> ID = expression ;
+
+# Function Declarations
+
+functionDeclaration -> typeSpecifier ID ( ) { statementList }
+
+# Statements
+
 statementList -> statementList statement | statement
-statement -> functionStatement | returnStatement | assignmentStatement | ifStatement | forStatement
-functionStatement -> typeSpecifier ID ( typeSpecifier ) { statementList }
-returnStatement -> return constNum ; | return ID ;
+statement -> varDec | returnStatement | ifStatement | assignment
+returnStatement -> return expression ;
+
+# Control Flow
+
 ifStatement -> if ( condition ) { statementList } | if ( condition ) { statementList } else { statementList }
-condition -> ID == constNum
-assignmentStatement -> typeSpecifier ID = constNum ; | ID = constNum ; | ID += constNum ;
-forStatement -> for ( ID = constNum ; ID < ID ; ID ++ ) { statementList }
+condition -> e == e
+
+# Expressions
+
+expression -> t + expression | t - expression | t
+t -> e * t | e / t | e
+e -> constNum | ID
+
