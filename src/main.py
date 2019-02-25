@@ -55,7 +55,9 @@ def printUsage():
     print("     -s, --scanner               Convert a source file into tokens.")
     print("     -p, --parser                Convert tokens into a parse tree.")
     print("     -g, --grammar <filename>    Provide a grammar file to parse with.")
-    print("     -f, --force                 Force the Parser to generate a new parse table.")
+    print(
+        "     -f, --force                 Force the Parser to generate a new parse table."
+    )
     print()
 
 

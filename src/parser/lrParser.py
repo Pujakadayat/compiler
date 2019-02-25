@@ -7,7 +7,7 @@ import sys
 import os
 import json
 
-debug = True
+debug = False
 
 
 # This class will generate the action and goto tables
@@ -48,10 +48,10 @@ class LRParser:
         # build tables
         self.buildActionGoto()
 
-        # self.printRules()
+        self.printRules()
         # self.printItemSets()
         # self.printTransitions()
-        # self.printTable()
+        self.printTable()
 
     # parse the input grammar into rules
     #   the variable self.rules is filled here

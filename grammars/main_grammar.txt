@@ -6,7 +6,7 @@ declaration -> varDec | functionDeclaration
 
 # Variable Declarations
 
-varDec -> typeSpecifier ID = expression ;
+varDec -> typeSpecifier ID = expression ; | typeSpecifier ID ;
 assignment -> ID = expression ;
 
 # Function Declarations
@@ -21,12 +21,28 @@ returnStatement -> return expression ;
 
 # Control Flow
 
-ifStatement -> if ( condition ) { statementList } | if ( condition ) { statementList } else { statementList }
-condition -> e == e
+ifStatement -> if ( expression ) { statementList } | if ( condition ) { statementList } else { statementList }
 
 # Expressions
 
-expression -> t + expression | t - expression | t
-t -> e * t | e / t | e
-e -> constNum | ID
+expression -> a
+
+# Binary operations
+a -> b && a | b
+b -> c || b | c
+
+# Not working, overlap with e != d rule?
+#c -> ! c | d
+c -> d
+
+# Comparisons
+d -> e <= d | e >= d | e < d | e > d | e != d | e == d | e
+
+# Multiplication and addition
+e -> f + e | f - e | f
+f -> g * f | g / f | g % f | g
+
+# Immutables
+g -> var
+var -> constNum | ID
 
