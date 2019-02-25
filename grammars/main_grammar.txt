@@ -6,6 +6,7 @@ returnStatement -> return expression ;
 expression -> t | expression + t | expression - t
 t -> e | t * e | t / e
 e -> constNum | ID
-assignment -> typeSpecifier ID = expression ;
 ifStatement -> if ( condition ) { statementList }
 condition -> ID == constNum
+assignment -> typeSpecifier ID = expression ;
+varDec -> typeSpecifier ID ;

@@ -114,7 +114,7 @@ class LRTable:
     # this involves expanding out rules from the grammar
     def closure(self, setNum):
         if debug:
-            print('closing out itemset', setNum)
+            print("closing out itemset", setNum)
         # newSet is just the itemset we are currently interested in
         newSet = self.itemSets[setNum]
         done = False
@@ -227,7 +227,7 @@ class LRTable:
                 # if itemSets i and j are identical delete itemSet i (the itemSet that came later)
                 if same:
                     if debug:
-                        print('Replacing itemset', i, 'with itemset', j)
+                        print("Replacing itemset", i, "with itemset", j)
                     del self.itemSets[i]
                     # self.setNum is now the lowest available set number
                     self.updateSetNum()

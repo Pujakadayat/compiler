@@ -55,7 +55,6 @@ def printUsage():
     print("     -v, --verbose               Generate a log file with debug info.")
     print("     -s, --scanner               Convert a source file into tokens.")
     print("     -p, --parser                Convert tokens into a parse tree.")
-    print("     -f, --file                  The C file to compile.")
     print("     -g, --grammar <filename>    Provide a grammar file to parse with.")
     print()
 
@@ -72,14 +71,8 @@ def parseArguments():
         printUsage()
         sys.exit(2)
 
-    try:
-        filename = args[0]
-    except IndexError:
-        print("No filename found.")
-        printUsage()
-        sys.exit()
-
     flags = []
+    grammar = "grammars/main_grammar.txt"
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
@@ -91,10 +84,15 @@ def parseArguments():
             flags.append("-p")
         elif opt in ("-v", "--verbose"):
             flags.append("-v")
-        elif opt in ("-f", "--file"):
-            filename = arg
         elif opt in ("-g", "--grammar"):
             grammar = arg
+
+    try:
+        filename = args[0]
+    except IndexError:
+        print("No filename found.")
+        printUsage()
+        sys.exit()
 
     return filename, grammar, flags
 
