@@ -55,6 +55,7 @@ def printUsage():
     print("     -s, --scanner               Convert a source file into tokens.")
     print("     -p, --parser                Convert tokens into a parse tree.")
     print("     -g, --grammar <filename>    Provide a grammar file to parse with.")
+    print("     -f, --force                 Force the Parser to generate a new parse table.")
     print()
 
 
@@ -83,7 +84,7 @@ def parseArguments():
             flags.append("-p")
         elif opt in ("-v", "--verbose"):
             flags.append("-v")
-        elif opt in ("-f", "--file"):
+        elif opt in ("-f", "--force"):
             flags.append("-f")
         elif opt in ("-g", "--grammar"):
             grammar = arg
