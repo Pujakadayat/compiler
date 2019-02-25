@@ -142,9 +142,10 @@ rightShift = TokenType(">>", symbols, description="bitShiftRight")
 
 # Numbers
 
+void = TokenType("void", keywords, description="typeSpecifier")
 int = TokenType("int", keywords, description="typeSpecifier")
-long = TokenType("int", keywords, description="typeSpecifier")
-double = TokenType("int", keywords, description="typeSpecifier")
+long = TokenType("long", keywords, description="typeSpecifier")
+double = TokenType("double", keywords, description="typeSpecifier")
 char = TokenType("char", keywords, description="typeSpecifier")
 short = TokenType("short", keywords, description="typeSpecifier")
 signed = TokenType("signed", keywords, description="typeSpecifier")

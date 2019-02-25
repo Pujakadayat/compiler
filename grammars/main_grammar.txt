@@ -1,28 +1,9 @@
-# General
-
-program -> declarationList
-declarationList -> declarationList declaration | declaration
-declaration -> varDec | functionDeclaration
-
-# Variable Declarations
-
-varDec -> typeSpecifier ID = expression ;
-# varDec -> typeSpecifier varDecList ;
-# varDeclist -> varDecList, varDecInit | varDecInit
-# varDecInit -> ID | ID = expression
-
-# Function Declarations
-
-functionDeclaration -> typeSpecifier ID ( ) { statementList }
-
-# Statements
-
+program -> statementList
 statementList -> statementList statement | statement
-statement -> varDec | returnStatement
-returnStatement -> return expression ;
-
-# Expressions
-
-expression -> t + expression | t - expression | t
-t -> e * t | e / t | e
-e -> constNum | ID
+statement -> functionStatement | returnStatement | assignmentStatement | ifStatement | forStatement
+functionStatement -> typeSpecifier ID ( typeSpecifier ) { statementList }
+returnStatement -> return constNum ; | return ID ;
+ifStatement -> if ( condition ) { statementList } | if ( condition ) { statementList } else { statementList }
+condition -> ID == constNum
+assignmentStatement -> typeSpecifier ID = constNum ; | ID = constNum ; | ID += constNum ;
+forStatement -> for ( ID = constNum ; ID < ID ; ID ++ ) { statementList }

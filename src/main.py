@@ -4,8 +4,7 @@ import lexer
 import logging
 import pprint
 import os
-from parser.parser import Parser
-from parser.lrTable import LRTable
+from parser.lrParser import LRParser
 
 
 def main():
@@ -19,10 +18,6 @@ def main():
     # Read in the program file
     code = readFile(filename)
 
-    # Read in the grammar file
-    if grammar:
-        grammar = readFile(grammar)
-
     # Tokenize the input file
     tokens = lexer.tokenize(code)
     print("✨ Completed scanning!")
@@ -32,16 +27,20 @@ def main():
         for token in tokens:
             print(token)
 
-    # Parse the tokens using an LR(1) table
-    lrTable = LRTable(grammar)
-    lrTable.buildTable()
-    lrTable.parse(tokens)
+    # Load the action and goto tables for parsing
+    parser = LRParser()
 
+    if "-f" in flags:
+        parser.loadParseTables(grammar, force=True)
+    else:
+        parser.loadParseTables(grammar, force=False)
+
+    parser.parse(tokens)
     print("✨ Completed parsing!")
 
-    # Print the AST
+    # Print the parseTree
     # if "-p" in flags:
-    #   parser.print()
+    #    parser.print()
 
 
 def printUsage():
@@ -63,8 +62,8 @@ def parseArguments():
     try:
         opts, args = getopt.getopt(
             sys.argv[1:],
-            "hvspg:f:",
-            ["help", "verbose", "scanner", "parser", "grammar=", "file="],
+            "hvspfg:",
+            ["help", "verbose", "scanner", "parser", "force", "grammar="],
         )
     except getopt.GetoptError as err:
         print(err)
@@ -84,6 +83,8 @@ def parseArguments():
             flags.append("-p")
         elif opt in ("-v", "--verbose"):
             flags.append("-v")
+        elif opt in ("-f", "--file"):
+            flags.append("-f")
         elif opt in ("-g", "--grammar"):
             grammar = arg
 

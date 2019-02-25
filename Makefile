@@ -8,6 +8,5 @@ lint:
 	black ./
 	pylint **/*.py
 
-
 clean:
 	rm -f *.o logs/* tables/*

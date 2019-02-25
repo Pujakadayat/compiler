@@ -26,6 +26,8 @@ def tokenize(code):
             logging.error(err)
             sys.exit(2)
 
+    codeTokens.append(Token(tokens.eof, "$"))
+
     return codeTokens
 
 
