@@ -1,25 +1,52 @@
+# General
+
 program -> declarationList
 declarationList -> declarationList declaration | declaration
 declaration -> variableDeclaration | functionDeclaration
-variableDeclaration -> typeSpecifier variableDeclarationList ;
-variableDeclarationList -> variableDeclarationList , variableDeclarationInitialize | variableDeclarationInitialize
-variableDeclarationInitialize -> ID | ID = numericalExpression
-functionDeclaration -> typeSpecifier ID ( ) compoundStatement
-compoundStatement -> { statementList }
-statementList -> statementList statement | statement
+
+# Variable Declarations
+
+variableDeclaration -> typeSpecifier variableDeclarationList;
+variableDeclarationList -> variableDeclarationList, variableDeclarationInitialize | variableDeclarationInitialize
+variableDeclarationInitialize -> ID | ID = simpleExpression
+scopedTypedSpecifier -> static typeSpecifier | typeSpecifier
+typeSpecifier -> INT | BOOL | CHAR | FLOAT
+
+# Function Declarations
+
+functionDeclaration -> typeSpecifier ID ( parameters ) compoundStatement
+parameters -> parameterList | EMPTY
+parameterList -> parameterTypeList
+parameterTypeList -> typeSpecifier ID
+
 statement -> expressionStatement | compoundStatement | selectionStatement | iterationStatement | returnStatement | breakStatement
-expressionStatement -> ID = numericalExperssion ;
-selectionStatement -> if ( boolExpression ) statement | if ( boolExpression ) statement else statement
-iterationStatement -> while ( boolExpression ) statement
-returnStatement -> return ; | return numericalExpression ;
-breakStatement -> break ;
-numericalExpression -> s
-s -> t | s + t | s - t
-t -> e | t x e | t / e
-e -> p | p ^ e
-p -> ID | numConst | ( s )
-boolExpression -> m | boolExpression && m | boolExpression || m
-m -> o | ! m
-o -> grb | ( boolExpression )
-grb -> bool | numericalExpression == numericalExpression | numericalExpression > numericalExpression | numericalExpression < numericalExpression
-bool -> True | False
+expressionStatement -> expression; | ;
+compoundStatement -> { localDeclaration statementList }
+selectionStatement -> if ( simpleExpression ) statement | if ( simpleExpression ) statement else statement
+iterationStatement -> while ( simpleExpression ) statement
+returnStatement -> return; | return expression;
+breakStatement -> break;
+
+statementList -> statementList statement | EMPTY
+localDeclaration -> localDeclaration scopedVariableDeclaration | EMPTY
+scopedVariableDeclaration -> scopedTypedSpecifier variableDeclarationList;
+
+
+simpleExpression -> simpleExpression || andExpression | andExpression
+andExpression -> andExpression && unaryRelExpression
+unaryRelExpression -> !unaryRelExpression | relExpression
+relExpression -> sumExpression sumOp term | term
+term -> term multOp unaryExpression | unaryExpression
+unaryExpression -> unaryOp unaryExpression | factor
+
+factor -> immutable | mutable
+mutable -> ID
+immutable -> ( expression ) | functionCall | constant
+functionCall -> ID ( args )
+args -> argList | EMPTY
+argList -> argList, expression | expression
+
+constant -> NUMCONST | CHARCONST | FLOATCONST | true | false
+multOp -> * | /
+sumOp -> + | -
+unaryOp -> -
