@@ -77,6 +77,13 @@ class LRTable:
 
         # parse grammar file into rules
         for line in lines:
+            if line == "":
+                # Skip blank lines
+                continue
+            elif line[0] == "#":
+                # Skip comment lines
+                continue
+
             rule = line.split(" ")
             # Check to see if valid format
             if rule[1] == "->":

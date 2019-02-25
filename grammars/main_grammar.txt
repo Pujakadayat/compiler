@@ -1,12 +1,28 @@
-program -> statementList
+# General
+
+program -> declarationList
+declarationList -> declarationList declaration | declaration
+declaration -> varDec | functionDeclaration
+
+# Variable Declarations
+
+varDec -> typeSpecifier ID = expression ;
+# varDec -> typeSpecifier varDecList ;
+# varDeclist -> varDecList, varDecInit | varDecInit
+# varDecInit -> ID | ID = expression
+
+# Function Declarations
+
+functionDeclaration -> typeSpecifier ID ( ) { statementList }
+
+# Statements
+
 statementList -> statementList statement | statement
-statement -> functionStatement | returnStatement | ifStatement
-functionStatement -> typeSpecifier ID ( ) { statementList }
+statement -> varDec | returnStatement
 returnStatement -> return expression ;
-expression -> t | expression + t | expression - t
-t -> e | t * e | t / e
+
+# Expressions
+
+expression -> t + expression | t - expression | t
+t -> e * t | e / t | e
 e -> constNum | ID
-ifStatement -> if ( condition ) { statementList }
-condition -> ID == constNum
-assignment -> typeSpecifier ID = expression ;
-varDec -> typeSpecifier ID ;
