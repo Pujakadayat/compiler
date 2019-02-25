@@ -1,5 +1,5 @@
 main:
-	python3 src/main.py -s -p --verbose --grammar grammars/grammar2.txt samples/plain.c
+	python3 src/main.py samples/plain.c
 
 character_count:
 	python3 character_count.py words.txt
@@ -7,7 +7,6 @@ character_count:
 lint:
 	black ./
 	pylint **/*.py
-
 
 clean:
 	rm -f *.o logs/*

@@ -1,18 +1,19 @@
 # http://www.orcca.on.ca/~watt/home/courses/2007-08/cs447a/notes/LR1%20Parsing%20Tables%20Example.pdf
 # used this to write this file
 
-import getopt
-import logging
+import tokens as tokens
+from tokens import Token, TokenType
 import sys
-import os
-import json
 
 debug = True
 
 
 # This class will generate the action and goto tables
-class LRParser:
-    def __init__(self):
+class LRTable:
+    def __init__(self, grammar):
+        # The grammar file to use
+        self.grammar = grammar
+
         # Rules parsed from grammar
         self.rules = {}
 
@@ -27,37 +28,46 @@ class LRParser:
         self.actions = {}
         self.goto = {}
 
-    def buildTables(self):
+    def buildTable(self):
+        # Augment rules with accepting state
+        self.rules["ACC"] = [["program"]]
+
+        # Parse the input grammar
+        self.parseGrammar()
+
         # Start itemset 0 with the accepting state
         self.itemSets[0] = [item("ACC", "program", 0, "$")]
 
         # close Itemsets and create new sets until no more
         i = 0
-        while self.hasItemSet(i):
-            # close out itemset i
-            self.closure(i)
-            # change nonterminal followers to terminals in itemset i
-            self.cleanItemSet(i)
-            # create any new itemsets from itemset i
-            self.createItemSets(i)
-            # search through itemsets and remove any copies
-            self.cleanItemSets()
+        while i <= max(self.itemSets.keys()):
+            if self.hasItemSet(i):
+                # close out itemset i
+                self.closure(i)
+                # change nonterminal followers to terminals in itemset i
+                self.cleanItemSet(i)
+                # create any new itemsets from itemset i
+                self.createItemSets(i)
+                # search through itemsets and remove any copies
+                self.cleanItemSets()
             i = i + 1
 
         # build tables
         self.buildActionGoto()
+
+        self.printRules()
+        # self.printItemSets()
+        self.printTransitions()
+        self.printTable()
 
     # parse the input grammar into rules
     #   the variable self.rules is filled here
     #   self.rules in a dictionary with the lhs of a rule as the key
     #   and lists as the value. The lists are the different rhs's that
     #   the rule points to.
-    def parseGrammar(self, grammar):
-        # Augment rules with accepting state
-        self.rules["ACC"] = [["program"]]
-
+    def parseGrammar(self):
         # Open file with grammar
-        lines = grammar.splitlines()
+        lines = self.grammar.splitlines()
 
         # parse grammar file into rules
         for line in lines:
@@ -97,6 +107,8 @@ class LRParser:
     # close out an itemset
     # this involves expanding out rules from the grammar
     def closure(self, setNum):
+        if debug:
+            print("closing out itemset", setNum)
         # newSet is just the itemset we are currently interested in
         newSet = self.itemSets[setNum]
         done = False
@@ -208,6 +220,8 @@ class LRParser:
                         break
                 # if itemSets i and j are identical delete itemSet i (the itemSet that came later)
                 if same:
+                    if debug:
+                        print("Replacing itemset", i, "with itemset", j)
                     del self.itemSets[i]
                     # self.setNum is now the lowest available set number
                     self.updateSetNum()
@@ -233,6 +247,7 @@ class LRParser:
                                     self.actions[itemSetNum][
                                         item.following
                                     ] = "r %s %i" % (k, i)
+
         # go through transition table to get:
         for k1, v1 in self.transitions.items():
             for k2, v2 in v1.items():
@@ -247,55 +262,27 @@ class LRParser:
                         self.actions[k1] = {}
                     self.actions[k1][k2] = "s %i" % (v2)
 
-    def loadParseTables(self, grammarFile, force=False):
-        grammarName = grammarFile.split("/")[1].split(".")[0]
-        tableFile = "{}{}{}".format("tables/", grammarName, "_table.json")
-
-        # Parse the input grammar
-        self.parseGrammar(readFile(grammarFile))
-
-        if os.path.isfile(tableFile) and force is False:
-            # Load a saved tables file
-            print("✔ Reading saved tables...")
-            self.loadTables(readFile(tableFile))
-        else:
-            # Parse the tokens using an LR(1) table
-            print("✖ Generating new tables...")
-            self.buildTables()
-            self.saveTables(tableFile)
-
-    def saveTables(self, tableFileName):
-        with open(tableFileName, "w") as outfile:
-            # Save the action table
-            json.dump(self.actions, outfile)
-            outfile.write("\n")
-
-            # Save the goto table
-            json.dump(self.goto, outfile)
-
-    def loadTables(self, tableFile):
-        lines = tableFile.splitlines()
-        tempActions = json.loads(lines[0])
-        for key, value in tempActions.items():
-            self.actions[int(key)] = value
-        tempGoto = json.loads(lines[1])
-        for key, value in tempGoto.items():
-            self.goto[int(key)] = value
-
-    def parse(self, tokens):
-        lookahead = 0
-        done = False
-        states = [0]
+    def parse(self, scannedTokens):
+        scannedTokens.append(Token(tokens.eof, "$"))
         output = []
         stack = []
+        states = [0]
+        done = False
+
+        # Lookahead is an index into the scannedTokens
+        lookahead = 0
 
         while not done:
-            state = states[len(states) - 1]
-            token = tokens[lookahead]
+            # Current state is the most recent of the pushed states list
+            state = states[-1]
+
+            # Peek at the next token
+            token = scannedTokens[lookahead]
             if token.kind.desc() in self.terminals:
                 token = token.kind.desc()
             else:
                 token = token.content
+
             print(
                 "---\nState:",
                 state,
@@ -308,38 +295,58 @@ class LRParser:
                 "\noutput:",
                 output,
             )
-            # print(stack, "\n")
-            if token in self.actions[state].keys():
-                result = self.actions[state][token]
-                output.append(result)
-                result = result.split(" ")
-                if result[0] == "s":
-                    states.append(int(result[1]))
-                    stack.append(token)
-                    lookahead = lookahead + 1
-                    print("Shifting")
-                if result[0] == "r":
-                    rule = self.rules[result[1]][int(result[2])]
-                    # print("rule:", rule)
-                    match = True
-                    for i in range(len(rule)):
-                        if rule[i] != stack[len(stack) - len(rule) + i]:
-                            match = False
-                    if match:
-                        del stack[len(stack) - len(rule) : len(stack)]
-                        stack.append(result[1])
-                        del states[len(states) - len(rule) : len(states)]
-                        print("Reducing rule", result[1], "->", rule)
-                        topState = states[len(states) - 1]
-                        topStack = stack[len(stack) - 1]
-                        if topStack in self.goto[topState].keys():
-                            states.append(self.goto[topState][topStack])
-            else:
-                print("ERROR: State", state, "Token", token)
-                print(self.actions[state])
+
+            try:
+                # Check if we have an entry in our action table for the lookahead token
+                if token in self.actions[state].keys():
+                    result = self.actions[state][token]
+                    output.append(result)
+                    result = result.split(" ")
+
+                    # If the action table says to shift, shift the next token
+                    if result[0] == "s":
+                        states.append(int(result[1]))
+                        stack.append(token)
+                        lookahead += 1
+                        print("Shifting")
+
+                    # If the action table says to reduce
+                    if result[0] == "r":
+                        # Get the corresponding rule from our rules table
+                        rule = self.rules[result[1]][int(result[2])]
+
+                        # Check if the tokens on the stack match a grammar rule
+                        match = True
+                        for i in range(len(rule)):
+                            if rule[i] != stack[len(stack) - len(rule) + i]:
+                                match = False
+
+                        # If one of the grammar rules matched...
+                        if match:
+                            # Reduce the tokens on the stack to our new rule token
+                            del stack[len(stack) - len(rule) : len(stack)]
+                            del states[len(states) - len(rule) : len(states)]
+                            stack.append(result[1])
+                            print("Reducing rule", result[1], "->", rule)
+
+                            # Check if there is a goto rule for our current state
+                            topState = states[-1]
+                            topStack = stack[-1]
+                            if topStack in self.goto[topState].keys():
+                                states.append(self.goto[topState][topStack])
+                else:
+                    print("ERROR: State", state, "Token", token)
+                    print(self.actions[state])
+                    break
+            except KeyError:
+                print(f"No entry in the action table for state: {state}")
                 break
+
+            # Check if we have reached the accepting state
             if len(stack) == 1 and stack[0] == "ACC":
                 done = True
+
+        print(output)
 
     def updateSetNum(self):
         i = 0
@@ -445,11 +452,5 @@ class item:
         return item(self.lhs, self.rhs, self.seperator + 1, self.following)
 
 
-def readFile(filename):
-    try:
-        with open(filename) as file:
-            return file.read()
-    except IOError as err:
-        print(err)
-        print(f"Could not read the file: {filename}")
-        sys.exit(2)
+if __name__ == "__main__":
+    sys.exit(main())

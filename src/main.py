@@ -28,13 +28,18 @@ def main():
             print(token)
 
     # Load the action and goto tables for parsing
-    parser = LRParser() 
-    parser.loadParseTables(grammar)
+    parser = LRParser()
+
+    if "-f" in flags:
+        parser.loadParseTables(grammar, force=True)
+    else:
+        parser.loadParseTables(grammar, force=False)
+
     parser.parse(tokens)
     print("✨ Completed parsing!")
 
     # Print the parseTree
-    #if "-p" in flags:
+    # if "-p" in flags:
     #    parser.print()
 
 
@@ -58,22 +63,16 @@ def parseArguments():
     try:
         opts, args = getopt.getopt(
             sys.argv[1:],
-            "hvspg:f:",
-            ["help", "verbose", "scanner", "parser", "grammar=", "file="],
+            "hvspfg:",
+            ["help", "verbose", "scanner", "parser", "force", "grammar="],
         )
     except getopt.GetoptError as err:
         print(err)
         printUsage()
         sys.exit(2)
 
-    try:
-        filename = args[0]
-    except IndexError:
-        print("No filename found.")
-        printUsage()
-        sys.exit()
-
     flags = []
+    grammar = "grammars/main_grammar.txt"
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
@@ -86,9 +85,16 @@ def parseArguments():
         elif opt in ("-v", "--verbose"):
             flags.append("-v")
         elif opt in ("-f", "--file"):
-            filename = arg
+            flags.append("-f")
         elif opt in ("-g", "--grammar"):
             grammar = arg
+
+    try:
+        filename = args[0]
+    except IndexError:
+        print("No filename found.")
+        printUsage()
+        sys.exit()
 
     return filename, grammar, flags
 
