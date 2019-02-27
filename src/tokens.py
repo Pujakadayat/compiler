@@ -7,17 +7,16 @@ class Token:
         rep: string representation of this token
     """
 
-    def __init__(self, kind, content="", rep=""):
+    def __init__(self, kind, content=""):
         self.kind = kind
         self.content = content if content else str(self.kind)
-        self.rep = rep
 
     def __repr__(self):
         return self.content
 
     def __str__(self):
         # return self.rep if self.rep else self.content
-        return "<%s, %s>" % (self.content, self.kind.desc())
+        return "<kind.desc: %s, content: %s>" % (self.kind.desc(), self.content)
 
 
 class TokenType:

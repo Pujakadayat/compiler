@@ -9,7 +9,7 @@ import logging
 import tokens
 from tokens import Token, TokenType, symbols, keywords
 
-debug = True
+debug = False
 
 
 def tokenize(code):
@@ -202,8 +202,8 @@ def tokenizeChunk(text):
     keyword = matchKeyword(text)
     if keyword is not None:
         if debug is True:
-            logging.debug("Found keyword: %s", text)
-        return Token(keyword, text)
+            logging.debug(f"Found keyword: {text}")
+        return Token(keyword,  text)
 
     # Check if it a number second
     number = matchNumber(text)

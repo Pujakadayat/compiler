@@ -6,6 +6,7 @@ import logging
 import sys
 import os
 import json
+import parser.grammar as grammar
 
 debug = True
 
@@ -26,6 +27,9 @@ class LRParser:
         # Action and goto tables
         self.actions = {}
         self.goto = {}
+
+        # Parse tree, represented as a node list
+        self.parseTree = []
 
     def buildTables(self):
         # Start itemset 0 with the accepting state
@@ -48,10 +52,14 @@ class LRParser:
         # build tables
         self.buildActionGoto()
 
-        # self.printRules()
-        # self.printItemSets()
-        # self.printTransitions()
-        # self.printTable()
+        # Save this for testing!
+        """
+        if debug:
+            self.printRules()
+            self.printItemSets()
+            self.printTransitions()
+            self.printTable()
+        """
 
     # parse the input grammar into rules
     #   the variable self.rules is filled here
@@ -107,6 +115,7 @@ class LRParser:
                     if token not in self.nonTerminals and token not in self.terminals:
                         self.terminals.append(token)
 
+
     # close out an itemset
     # this involves expanding out rules from the grammar
     def closure(self, setNum):
@@ -147,7 +156,6 @@ class LRParser:
                         if isNew:
                             newSet.append(newItem)
                             new = True
-                            # print("\t", newItem)
                 # if no new items found we are done
                 if not new:
                     done = True
@@ -247,9 +255,7 @@ class LRParser:
                                 if item.rhs == " ".join(v[i]):
                                     if itemSetNum not in self.actions.keys():
                                         self.actions[itemSetNum] = {}
-                                    self.actions[itemSetNum][
-                                        item.following
-                                    ] = "r %s %i" % (k, i)
+                                    self.actions[itemSetNum][item.following] = "r %s %i" % (k, i)
 
         # go through transition table to get:
         for k1, v1 in self.transitions.items():
@@ -308,17 +314,16 @@ class LRParser:
         stack = []
 
         while not done:
+            self.print()
             state = states[len(states) - 1]
-            token = tokens[lookahead]
-            if token.kind.desc() in self.terminals:
-                token = token.kind.desc()
+            realToken = tokens[lookahead]
+            if realToken.kind.desc() in self.terminals:
+                token = realToken.kind.desc()
             else:
-                token = token.content
+                token = realToken.content
 
-            if debug is True:
-                logging.debug(
-                    f"---\nState: {state}\nStates: {states}\nLookahead Token: {token}\nStack: {stack}\nOutput: {output}"
-                )
+            if debug:
+                logging.debug(f"---\nState: {state}\nStates: {states}\nlookahead Token: {token}\nstack: {stack}\noutput: {output}\n")
 
             try:
                 # Check if we have an entry in our action table for the lookahead token
@@ -332,9 +337,10 @@ class LRParser:
                         states.append(int(result[1]))
                         stack.append(token)
                         lookahead += 1
-
-                        if debug is True:
-                            logging.debug("Shifting")
+                        node = grammar.parseToken(token, realToken.content)
+                        if node:
+                            self.parseTree.append(node)
+                        #print("Shifting")
 
                     # If the action table says to reduce
                     if result[0] == "r":
@@ -350,31 +356,42 @@ class LRParser:
                         # If one of the grammar rules matched...
                         if match:
                             # Reduce the tokens on the stack to our new rule token
+                            if result[1] != "ACC":
+                                tempNode = grammar.parseToken(result[1], children=self.parseTree[len(self.parseTree) - len(rule) : len(self.parseTree)])
+                                del self.parseTree[len(self.parseTree) - len(rule) : len(self.parseTree)]
+                                self.parseTree.append(tempNode)
                             del stack[len(stack) - len(rule) : len(stack)]
                             del states[len(states) - len(rule) : len(states)]
                             stack.append(result[1])
-
                             if debug is True:
                                 logging.debug(f"Reducing rule {result[1]} -> {rule}")
-
+                            
                             # Check if there is a goto rule for our current state
                             topState = states[-1]
                             topStack = stack[-1]
                             if topStack in self.goto[topState].keys():
                                 states.append(self.goto[topState][topStack])
+                        else:
+                            print("ERROR: Parse Table tried to reduce a rule with invalid tokens on top of stack\nExiting Program")
+                            exit()
                 else:
                     print("ERROR: State", state, "Token", token)
                     print(self.actions[state])
+                    print("Exiting Program")
+                    exit()
                     break
             except KeyError:
-                print(f"No entry in the action table for state: {state}")
+                print(f"ERROR: No entry in the action table for [{state}][{token}]")
+                print("Exiting Program")
+                exit()
                 break
 
             # Check if we have reached the accepting state
             if len(stack) == 1 and stack[0] == "ACC":
                 done = True
 
-        return done
+        if debug:
+            logging.debug(output)
 
     def updateSetNum(self):
         i = 0
@@ -424,6 +441,10 @@ class LRParser:
         print("--- Goto ---")
         for k, v in self.goto.items():
             print(k, v)
+
+    def print(self):
+        for node in self.parseTree:
+            node.print(0)
 
 
 # an item is like a grammar rule
@@ -476,6 +497,7 @@ class item:
 
     def incSeperator(self):
         return item(self.lhs, self.rhs, self.seperator + 1, self.following)
+
 
 
 def readFile(filename):

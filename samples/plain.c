@@ -1,7 +1,3 @@
 int main() {
 	return 1;
 }
-
-int foo() {
-  return 2;
-}

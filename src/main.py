@@ -49,8 +49,8 @@ def main():
         print("✖ The program is not valid.")
 
     # Print the parseTree
-    # if "-p" in flags:
-    #    parser.print()
+    if "-p" in flags:
+        parser.print()
 
 
 def printUsage():

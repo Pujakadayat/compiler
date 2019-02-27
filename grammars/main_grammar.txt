@@ -21,7 +21,7 @@ returnStatement -> return expression ;
 
 # Control Flow
 
-ifStatement -> if ( expression ) { statementList } | if ( condition ) { statementList } else { statementList }
+ifStatement -> if ( expression ) { statementList } | if ( expression ) { statementList } else { statementList }
 
 # Expressions
 
@@ -45,4 +45,3 @@ f -> g * f | g / f | g % f | g
 # Immutables
 g -> var
 var -> constNum | ID
-
