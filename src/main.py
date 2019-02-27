@@ -1,13 +1,18 @@
+"""
+Main executable for the compiler.
+"""
+
 import sys
 import getopt
-import lexer
 import logging
-import pprint
 import os
 from parser.lrParser import LRParser
+import lexer
 
 
 def main():
+    """Run the compiler based on the given command line arguments."""
+
     # Get command line arguments
     filename, grammar, flags = parseArguments()
 
@@ -49,6 +54,8 @@ def main():
 
 
 def printUsage():
+    """Print a usage statement."""
+
     bold = "\033[1m"
     end = "\033[0m"
 
@@ -67,6 +74,8 @@ def printUsage():
 
 
 def parseArguments():
+    """Parse the command line arguments."""
+
     try:
         opts, args = getopt.getopt(
             sys.argv[1:],
@@ -107,6 +116,8 @@ def parseArguments():
 
 
 def readFile(filename):
+    """Read the contents of a file, if it exists."""
+
     try:
         with open(filename) as file:
             return file.read()
@@ -117,6 +128,8 @@ def readFile(filename):
 
 
 def startLog():
+    """Initialize a new log file."""
+
     logs = os.listdir("logs/")
     biggestLog = 0
     for log in logs:

@@ -1,14 +1,20 @@
+"""
+Lexing phase of the compiler.
+Converts a file into a list of identified tokens.
+"""
+
 import re
 import sys
-import time
-import tokens as tokens
-from tokens import Token, TokenType, symbols, keywords
 import logging
+import tokens
+from tokens import Token, TokenType, symbols, keywords
 
 debug = True
 
 
 def tokenize(code):
+    """Parse the file (as a string) into a list of tokens."""
+
     # Big array of parsed Tokens
     codeTokens = []
     isComment = False
@@ -34,7 +40,6 @@ def tokenize(code):
 def tokenizeLine(line, isComment):
     """Parse a line into tokens"""
     lineTokens = []
-    isInclude = False
 
     # We parse characters in a "chunk" with a start and an end
     # Start both counters at 0 to catch whitespace at beginning of a line
@@ -43,7 +48,7 @@ def tokenizeLine(line, isComment):
 
     while end < len(line):
         if debug is True:
-            logging.debug(f"{start}:{end} = '{line[start:end]}'")
+            logging.debug("%s:%s = '%s'", start, end, line[start:end])
 
         symbol = matchSymbol(line, end)
 
@@ -124,16 +129,14 @@ def tokenizeLine(line, isComment):
         if symbol in {tokens.doubleQuote, tokens.singleQuote}:
             if symbol == tokens.doubleQuote:
                 delimeter = '"'
-                kind = tokens.string
             elif symbol == tokens.singleQuote:
                 delimeter = "'"
-                kind = tokens.character
 
             if debug is True:
                 logging.debug("Found a quoted string. Attempting to parse...")
 
             # Get the token between the quotes and update our chunk end
-            token, end = parseQuote(line, start, kind, delimeter)
+            token, end = parseQuote(line, start, delimeter)
             lineTokens.append(token)
 
             start = end
@@ -148,7 +151,7 @@ def tokenizeLine(line, isComment):
 
             # Append the next token
             if debug is True:
-                logging.debug(f"Found token {symbol}")
+                logging.debug("Found token %s", symbol)
             lineTokens.append(Token(symbol))
 
             # Move the chunk forward
@@ -172,7 +175,8 @@ def tokenizeLine(line, isComment):
 
 
 # TODO: handle hex, octal, escaped characters, etc...
-def parseQuote(line, start, kind, delimeter):
+def parseQuote(line, start, delimeter):
+    """Parse the quote value from the line."""
     characters = []
     i = start + 1
 
@@ -187,6 +191,7 @@ def parseQuote(line, start, kind, delimeter):
 
 
 def parseInclude(text, start):
+    """Parse the filename from the include statement line."""
     file = re.split("[<>]", text[(start + 9) :])[0]
     return Token(tokens.filename, file)
 
@@ -197,21 +202,21 @@ def tokenizeChunk(text):
     keyword = matchKeyword(text)
     if keyword is not None:
         if debug is True:
-            logging.debug(f"Found keyword: {text}")
+            logging.debug("Found keyword: %s", text)
         return Token(keyword, text)
 
     # Check if it a number second
     number = matchNumber(text)
     if number is not None:
         if debug is True:
-            logging.debug(f"Found number: {text}")
+            logging.debug("Found number: %s", text)
         return Token(tokens.number, text)
 
     # Check if it an identifier third
     identifier = matchIdentifier(text)
     if identifier is not None:
         if debug is True:
-            logging.debug(f"Found identifier: {text}")
+            logging.debug("Found identifier: %s", text)
         return Token(tokens.identifier, text)
 
     # TODO: collect compiler errors like this
@@ -247,13 +252,13 @@ def matchIdentifier(text):
     """Check if string matches an identifier"""
     if re.match(r"[_a-zA-Z][_a-zA-Z0-9]*$", text):
         return text
-    else:
-        return None
+
+    return None
 
 
 def matchNumber(text):
     """Check if string matches a number"""
     if text.isdigit():
         return text
-    else:
-        return None
+
+    return None

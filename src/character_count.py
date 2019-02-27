@@ -1,7 +1,12 @@
+"""
+Returns the number of characters in a file.
+"""
+
 import sys
 
 
 def usage():
+    """Print a usage statement."""
     print("\n  Usage:")
     print("    python character_count.py [filename]\n")
 
@@ -12,18 +17,18 @@ if len(sys.argv) < 2:
     usage()
     sys.exit(-1)
 
-f_name = sys.argv[1]
+fName = sys.argv[1]
 
 try:
-    file_in = open(f_name, "r")
-    num_chars = 0
+    fileIn = open(fName, "r")
+    numChars = 0
 
-    for line in file_in:
-        word_list = line.split()
+    for line in fileIn:
+        wordList = line.split()
 
         # Produces length of each word and appends to sum
-        num_chars += sum(len(word) for word in word_list)
+        numChars += sum(len(word) for word in wordList)
 
-    print(str(num_chars) + " Characters")
+    print(str(numChars) + " Characters")
 except FileNotFoundError:
-    print(f"The file {f_name} cannot be opened.")
+    print(f"The file {fName} cannot be opened.")
