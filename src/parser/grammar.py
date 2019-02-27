@@ -2,8 +2,6 @@ import tokens as tokenTypes
 
 
 def parseToken(desc, content = "", children = []):
-    print(f"Parse {desc} with {content} and {children}")
-    print(children)
     if desc == "program":
         return Program(children)
     elif desc == "functionDeclaration":

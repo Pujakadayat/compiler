@@ -314,7 +314,6 @@ class LRParser:
         stack = []
 
         while not done:
-            self.print()
             state = states[len(states) - 1]
             realToken = tokens[lookahead]
             if realToken.kind.desc() in self.terminals:
@@ -373,17 +372,17 @@ class LRParser:
                                 states.append(self.goto[topState][topStack])
                         else:
                             print("ERROR: Parse Table tried to reduce a rule with invalid tokens on top of stack\nExiting Program")
-                            exit()
+                            return False
                 else:
                     print("ERROR: State", state, "Token", token)
                     print(self.actions[state])
                     print("Exiting Program")
-                    exit()
+                    return False
                     break
             except KeyError:
                 print(f"ERROR: No entry in the action table for [{state}][{token}]")
                 print("Exiting Program")
-                exit()
+                return False
                 break
 
             # Check if we have reached the accepting state
@@ -392,6 +391,8 @@ class LRParser:
 
         if debug:
             logging.debug(output)
+
+        return done
 
     def updateSetNum(self):
         i = 0
