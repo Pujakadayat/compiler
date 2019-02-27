@@ -7,7 +7,7 @@ import sys
 import os
 import json
 
-debug = False
+debug = True
 
 
 # This class will generate the action and goto tables
@@ -48,10 +48,10 @@ class LRParser:
         # build tables
         self.buildActionGoto()
 
-        self.printRules()
+        # self.printRules()
         # self.printItemSets()
         # self.printTransitions()
-        self.printTable()
+        # self.printTable()
 
     # parse the input grammar into rules
     #   the variable self.rules is filled here
@@ -111,7 +111,7 @@ class LRParser:
     # this involves expanding out rules from the grammar
     def closure(self, setNum):
         if debug:
-            print("closing out itemset", setNum)
+            logging.debug(f"closing out itemset {setNum}")
         # newSet is just the itemset we are currently interested in
         newSet = self.itemSets[setNum]
         done = False
@@ -224,7 +224,7 @@ class LRParser:
                 # if itemSets i and j are identical delete itemSet i (the itemSet that came later)
                 if same:
                     if debug:
-                        print("Replacing itemset", i, "with itemset", j)
+                        logging.debug(f"Replacing itemset {i} with itemset {j}")
                     del self.itemSets[i]
                     # self.setNum is now the lowest available set number
                     self.updateSetNum()
@@ -315,18 +315,10 @@ class LRParser:
             else:
                 token = token.content
 
-            print(
-                "---\nState:",
-                state,
-                "\nStates:",
-                states,
-                "\nlookahead Token:",
-                token,
-                "\nstack:",
-                stack,
-                "\noutput:",
-                output,
-            )
+            if debug is True:
+                logging.debug(
+                    f"---\nState: {state}\nStates: {states}\nLookahead Token: {token}\nStack: {stack}\nOutput: {output}"
+                )
 
             try:
                 # Check if we have an entry in our action table for the lookahead token
@@ -340,7 +332,9 @@ class LRParser:
                         states.append(int(result[1]))
                         stack.append(token)
                         lookahead += 1
-                        print("Shifting")
+
+                        if debug is True:
+                            logging.debug("Shifting")
 
                     # If the action table says to reduce
                     if result[0] == "r":
@@ -359,7 +353,9 @@ class LRParser:
                             del stack[len(stack) - len(rule) : len(stack)]
                             del states[len(states) - len(rule) : len(states)]
                             stack.append(result[1])
-                            print("Reducing rule", result[1], "->", rule)
+
+                            if debug is True:
+                                logging.debug(f"Reducing rule {result[1]} -> {rule}")
 
                             # Check if there is a goto rule for our current state
                             topState = states[-1]
@@ -378,7 +374,7 @@ class LRParser:
             if len(stack) == 1 and stack[0] == "ACC":
                 done = True
 
-        print(output)
+        return done
 
     def updateSetNum(self):
         i = 0
@@ -420,8 +416,6 @@ class LRParser:
         print("--- Transitions ---")
         for k, v in self.transitions.items():
             print(k, v)
-            # for tokenK,tokenV in v.items():
-            #    print ("\n%s:%i"%(tokenK, tokenV))
 
     def printTable(self):
         print("--- Actions ---")

@@ -35,8 +35,13 @@ def main():
     else:
         parser.loadParseTables(grammar, force=False)
 
-    parser.parse(tokens)
-    print("✨ Completed parsing!")
+    # Parse the program
+    isAccepted = parser.parse(tokens)
+
+    if isAccepted:
+        print("✨ Completed parsing!")
+    else:
+        print("✖ The program is not valid.")
 
     # Print the parseTree
     # if "-p" in flags:

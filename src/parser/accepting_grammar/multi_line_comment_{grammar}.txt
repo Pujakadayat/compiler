@@ -1,6 +1,0 @@
-program -> program | funDec
-program -> funDec
-program -> program funDec, typeSpecifier
-program -> funDec, typeSpecifier
-funDec -> typeSpecifier ID ( ) { statement }
-funDec -> typeSpecifier ID ( ) { statement }, typeSpecifier
