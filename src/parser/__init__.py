@@ -1,1 +1,1 @@
-"""Dummy init"""
+"""The parser module."""

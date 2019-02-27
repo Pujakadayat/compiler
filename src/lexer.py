@@ -28,7 +28,7 @@ def tokenize(code):
             # Get the tokens of the current line and add to the big list
             lineTokens, isComment = tokenizeLine(line, isComment)
             codeTokens.extend(lineTokens)
-        except Exception as err:
+        except ValueError as err:
             logging.error(err)
             sys.exit(2)
 

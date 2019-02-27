@@ -4,12 +4,6 @@ Returns the number of characters in a file.
 
 import sys
 
-"""
-Prints usage statement(s)
-Loops through each character in fName
-Returns number of characters in a file.
-"""
-
 
 def usage():
     """Print a usage statement."""
