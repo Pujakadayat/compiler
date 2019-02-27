@@ -21,21 +21,21 @@ class Token:
 
 class TokenType:
     """
-    A known token type (return, int, sizeof, etc...)
+    A known token knownType (return, int, sizeof, etc...)
 
     Attributes:
         rep: The representation of this token in text, if it exists (i.e. 'int')
-        type: The list to add this TokenType to (i.e. 'symbols')
+        knownType: The list to add this TokenType to (i.e. 'symbols')
     """
 
-    def __init__(self, rep="", type=[], description=""):
+    def __init__(self, rep="", knownType=[], description=""):
         self.rep = rep
-        type.append(self)
+        knownType.append(self)
         self.description = description
 
         # Sort the list of this TokenType
         # NOTE: This is because we want to match longest matching tokens first.
-        type.sort(key=lambda t: -len(t.rep))
+        knownType.sort(key=lambda t: -len(t.rep))
 
     def __str__(self):
         return self.rep
