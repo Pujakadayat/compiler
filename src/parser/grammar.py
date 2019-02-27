@@ -1,25 +1,30 @@
-import tokens as tokenTypes
+"""
+Classes that represent grammar rules for our Parse Tree.
+"""
 
 
 def parseToken(desc, content="", children=[]):
-    """asdf asdf asd fa sdf """
+    """Parse a token into the relevant class."""
+
     if desc == "program":
         return Program(children)
-    elif desc == "functionDeclaration":
+    if desc == "functionDeclaration":
         return FunctionDeclaration(children)
-    elif desc == "returnStatement":
+    if desc == "returnStatement":
         return ReturnStatement(children)
-    elif desc == "typeSpecifier":
+    if desc == "typeSpecifier":
         return TypeSpecifier(content)
-    elif desc == "ID":
+    if desc == "ID":
         return Identifier(content)
-    elif desc == "constNum":
+    if desc == "constNum":
         return ConstNum(content)
-    else:
-        return GeneralNode(content, children)
+
+    return GeneralNode(content, children)
 
 
 def printPrefix(level):
+    """Print a prefix level deep for pretty printing."""
+
     for _ in range(level):
         print("  ", end=" ")
     print("| - ", end=" ")
@@ -61,7 +66,7 @@ class TypeSpecifier(Node):
     def __init__(self, value):
         self.value = value
 
-    def print(self, level):
+    def print(self, level=0):
         printPrefix(level)
         print(f"{self.__class__.__name__}: {self.value}")
 
@@ -70,7 +75,7 @@ class ReturnStatement(Node):
     def __init__(self, *children):
         self.children = children
 
-    def print(self, level):
+    def print(self, level=0):
         printPrefix(level)
         print(f"{self.__class__.__name__}")
         for child in self.children[0]:
@@ -81,7 +86,7 @@ class ConstNum(Node):
     def __init__(self, value):
         self.value = value
 
-    def print(self, level):
+    def print(self, level=0):
         printPrefix(level)
         print(f"{self.__class__.__name__}: {self.value}")
 
@@ -90,7 +95,7 @@ class Identifier(Node):
     def __init__(self, value):
         self.value = value
 
-    def print(self, level):
+    def print(self, level=0):
         printPrefix(level)
         print(f"{self.__class__.__name__}: {self.value}")
 
@@ -100,7 +105,7 @@ class GeneralNode(Node):
         self.value = value
         self.children = children
 
-    def print(self, level):
+    def print(self, level=0):
         # if len(self.children) == 0:
         #    printPrefix(level)
         #    print(self.value)

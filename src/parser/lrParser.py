@@ -1,18 +1,23 @@
-# http://www.orcca.on.ca/~watt/home/courses/2007-08/cs447a/notes/LR1%20Parsing%20Tables%20Example.pdf
-# used this to write this file
+"""
+The main parsing module.
+Reads in the grammar and generated action and goto tables.
+Parses the list of tokens using the action and goto tables.
+"""
 
-import getopt
+
 import logging
 import sys
 import os
 import json
 import parser.grammar as grammar
+from util import readFile
 
 debug = True
 
 
-# This class will generate the action and goto tables
 class LRParser:
+    """The general parser class."""
+
     def __init__(self):
         # Rules parsed from grammar
         self.rules = {}
@@ -32,8 +37,10 @@ class LRParser:
         self.parseTree = []
 
     def buildTables(self):
+        """Build the item sets, transitions, and action goto tables."""
+
         # Start itemset 0 with the accepting state
-        self.itemSets[0] = [item("ACC", "program", 0, "$")]
+        self.itemSets[0] = [Item("ACC", "program", 0, "$")]
 
         # close Itemsets and create new sets until no more
         i = 0
@@ -53,25 +60,26 @@ class LRParser:
         self.buildActionGoto()
 
         # Save this for testing!
+        # if debug:
+        #     self.printRules()
+        #     self.printItemSets()
+        #     self.printTransitions()
+        #     self.printTable()
+
+    def parseGrammar(self, grammarText):
         """
-        if debug:
-            self.printRules()
-            self.printItemSets()
-            self.printTransitions()
-            self.printTable()
+        Parse the input grammar into rules.
+        The variable self.rules is filled here.
+        self.rules is a dictionary with the LHS of a rule as the key,
+        and lists as the value. The lists are the different RHS' that
+        the rule points to.
         """
 
-    # parse the input grammar into rules
-    #   the variable self.rules is filled here
-    #   self.rules in a dictionary with the lhs of a rule as the key
-    #   and lists as the value. The lists are the different rhs's that
-    #   the rule points to.
-    def parseGrammar(self, grammar):
         # Augment rules with accepting state
         self.rules["ACC"] = [["program"]]
 
         # Open file with grammar
-        lines = grammar.splitlines()
+        lines = grammarText.splitlines()
 
         # parse grammar file into rules
         for line in lines:
@@ -87,8 +95,8 @@ class LRParser:
             if rule[1] == "->":
                 # seperate the "|" out of the rule
                 last = 2
-                for i in range(len(rule)):
-                    if rule[i] == "|":
+                for i, r in enumerate(rule):
+                    if r == "|":
                         # if lhs of rule is in self.rules, append rhs of rule to the list
                         if rule[0] in self.rules.keys():
                             self.rules[rule[0]].append(rule[last:i])
@@ -104,7 +112,7 @@ class LRParser:
                     self.rules[rule[0]] = [rule[last:]]
 
         # add all the nonTerminals to self.nonTerminal list
-        for k in self.rules.keys():
+        for k in self.rules:
             if k not in self.nonTerminals:
                 self.nonTerminals.append(k)
 
@@ -115,14 +123,18 @@ class LRParser:
                     if token not in self.nonTerminals and token not in self.terminals:
                         self.terminals.append(token)
 
-    # close out an itemset
-    # this involves expanding out rules from the grammar
     def closure(self, setNum):
+        """
+        Close out an item set.
+        This involves expanding out rules from the grammar.
+        """
+
         if debug:
-            logging.debug(f"closing out itemset {setNum}")
+            logging.debug("Closing out itemset %s", setNum)
         # newSet is just the itemset we are currently interested in
         newSet = self.itemSets[setNum]
         done = False
+
         # keep looping until no more rules can be expanded
         while not done:
             # for each item in the set:
@@ -136,7 +148,7 @@ class LRParser:
                 # if there is a token after the token after the seperator
                 # if not, following is just the o
                 following = currItem.following
-                if len(b) > 0:
+                if b:
                     following = b[0]
                 # if a is a nonTerminal, expand rule
                 if a in self.rules.keys():
@@ -145,7 +157,7 @@ class LRParser:
                     for rule in self.rules[a]:
                         # make a new item for nonTerminal a rule
                         rhs = " ".join(rule)
-                        newItem = item(a, rhs, 0, following)
+                        newItem = Item(a, rhs, 0, following)
                         # check if item already exists in the itemSet
                         isNew = True
                         for tempItem in newSet:
@@ -159,8 +171,9 @@ class LRParser:
                 if not new:
                     done = True
 
-    # remove any nonterm following token from itemSet
     def cleanItemSet(self, setNum):
+        """Remove any nonterm following token from item set."""
+
         nonTerms = True
         # loop until no more nonTerminal following tokens found in itemset
         while nonTerms:
@@ -175,7 +188,7 @@ class LRParser:
                     following = self.itemSets[setNum][itemNum].following
                     # for each rule the nonTerminal token expands into:
                     for numRule in range(len(self.rules[following])):
-                        newItem = item(lhs, rhs, sep, self.rules[following][numRule][0])
+                        newItem = Item(lhs, rhs, sep, self.rules[following][numRule][0])
                         # check to see if new item is new to the set
                         isNew = True
                         for tempItem in self.itemSets[setNum]:
@@ -188,9 +201,12 @@ class LRParser:
                     del self.itemSets[setNum][itemNum]
                     break
 
-    # create new itemSets from past itemSets
-    # this is tracked with the transition table
     def createItemSets(self, setNum):
+        """
+        Create new item sets from past item sets.
+        This is tracked with the transition table.
+        """
+
         # for each item in itemSet[setNum]
         for currItem in self.itemSets[setNum]:
             # make a newItem from the currItem with the seperator incremented by 1
@@ -198,11 +214,12 @@ class LRParser:
             # get the delimeter for the transition table
             delimeter = newItem.getRightBefore()
             # if delimeter exists
-            if len(delimeter) > 0:
+            if delimeter:
                 # if the transitions for itemSet[setNum] does not exist add it
                 if setNum not in self.transitions.keys():
                     self.transitions[setNum] = {}
-                # if delimeter does not exist in transition[setNum] add it and increment self.setNum by 1
+                # if delimeter does not exist in transition[setNum],
+                # add it and increment self.setNum by 1
                 if delimeter not in self.transitions[setNum].keys():
                     self.setNum = self.setNum + 1
                     self.transitions[setNum][delimeter] = self.setNum
@@ -212,8 +229,9 @@ class LRParser:
                 # add the newItem to the new set
                 self.itemSets[self.transitions[setNum][delimeter]].append(newItem)
 
-    # clean itemSets of any identical sets
     def cleanItemSets(self):
+        """Clean item sets of any identical sets."""
+
         # compare the itemSets backwards
         # So compare every set with the sets that came before it
         for i in range(self.setNum, -1, -1):
@@ -231,27 +249,28 @@ class LRParser:
                 # if itemSets i and j are identical delete itemSet i (the itemSet that came later)
                 if same:
                     if debug:
-                        logging.debug(f"Replacing itemset {i} with itemset {j}")
+                        logging.debug("Replacing itemset %s with itemset %s", i, j)
                     del self.itemSets[i]
                     # self.setNum is now the lowest available set number
                     self.updateSetNum()
                     # update the transition table so any reference of itemSet i becomes itemSet j
                     for k1, v1 in self.transitions.items():
-                        for k2, v2 in v1.items():
+                        for k2, _ in v1.items():
                             if self.transitions[k1][k2] == i:
                                 self.transitions[k1][k2] = j
                     break
 
-    # build the action and goto tables from the itemSets and the transition table
     def buildActionGoto(self):
+        """Build the action and goto tables form the item sets and the transition table."""
+
         # go through itemSets to get reduction rules
         for itemSetNum, itemSet in self.itemSets.items():
             for item in itemSet:
                 if self.seperatorAtEnd(item):
                     for k, v in self.rules.items():
                         if item.lhs == k:
-                            for i in range(len(v)):
-                                if item.rhs == " ".join(v[i]):
+                            for i, r in enumerate(v):
+                                if item.rhs == " ".join(r):
                                     if itemSetNum not in self.actions.keys():
                                         self.actions[itemSetNum] = {}
                                     self.actions[itemSetNum][
@@ -273,6 +292,11 @@ class LRParser:
                     self.actions[k1][k2] = "s %i" % (v2)
 
     def loadParseTables(self, grammarFile, force=False):
+        """
+        Load the saved grammar tables if they exist.
+        Otherwise generate new ones and save them.
+        """
+
         grammarName = grammarFile.split("/")[1].split(".")[0]
         tableFile = "{}{}{}".format("tables/", grammarName, "_table.json")
 
@@ -290,6 +314,8 @@ class LRParser:
             self.saveTables(tableFile)
 
     def saveTables(self, tableFileName):
+        """Dump the action and goto tables as JSON."""
+
         with open(tableFileName, "w") as outfile:
             # Save the action table
             json.dump(self.actions, outfile)
@@ -299,6 +325,8 @@ class LRParser:
             json.dump(self.goto, outfile)
 
     def loadTables(self, tableFile):
+        """Parse the saved action and goto tables from the JSON."""
+
         lines = tableFile.splitlines()
         tempActions = json.loads(lines[0])
         for key, value in tempActions.items():
@@ -308,6 +336,11 @@ class LRParser:
             self.goto[int(key)] = value
 
     def parse(self, tokens):
+        """
+        Parse the program (as a list of tokens)
+        using our actino and goto tables.
+        """
+
         lookahead = 0
         done = False
         states = [0]
@@ -324,7 +357,12 @@ class LRParser:
 
             if debug:
                 logging.debug(
-                    f"---\nState: {state}\nStates: {states}\nlookahead Token: {token}\nstack: {stack}\noutput: {output}\n"
+                    "---\nState: %s\nStates: %s\nlookahead Token: %s\nstack: %s\noutput: %s\n",
+                    state,
+                    states,
+                    token,
+                    stack,
+                    output,
                 )
 
             try:
@@ -351,8 +389,8 @@ class LRParser:
 
                         # Check if the tokens on the stack match a grammar rule
                         match = True
-                        for i in range(len(rule)):
-                            if rule[i] != stack[len(stack) - len(rule) + i]:
+                        for i, r in enumerate(rule):
+                            if r != stack[len(stack) - len(rule) + i]:
                                 match = False
 
                         # If one of the grammar rules matched...
@@ -375,7 +413,7 @@ class LRParser:
                             del states[len(states) - len(rule) : len(states)]
                             stack.append(result[1])
                             if debug is True:
-                                logging.debug(f"Reducing rule {result[1]} -> {rule}")
+                                logging.debug("Reducing rule %s -> %s", result[1], rule)
 
                             # Check if there is a goto rule for our current state
                             topState = states[-1]
@@ -384,20 +422,20 @@ class LRParser:
                                 states.append(self.goto[topState][topStack])
                         else:
                             print(
-                                "ERROR: Parse Table tried to reduce a rule with invalid tokens on top of stack\nExiting Program"
+                                "ERROR: Tried to reduce a rule with invalid tokens on stack."
                             )
+                            print("\nExiting Program")
                             return False
                 else:
                     print("ERROR: State", state, "Token", token)
                     print(self.actions[state])
                     print("Exiting Program")
                     return False
-                    break
+
             except KeyError:
                 print(f"ERROR: No entry in the action table for [{state}][{token}]")
                 print("Exiting Program")
                 return False
-                break
 
             # Check if we have reached the accepting state
             if len(stack) == 1 and stack[0] == "ACC":
@@ -409,24 +447,26 @@ class LRParser:
         return done
 
     def updateSetNum(self):
+        """Update the number of item sets that we have generated."""
+
         i = 0
         while self.hasItemSet(i):
             i = i + 1
         self.setNum = i - 1
 
     def hasItemSet(self, num):
-        if num in self.itemSets.keys():
-            return True
-        else:
-            return False
+        """Check if the itemSet contains the number."""
+
+        return num in self.itemSets.keys()
 
     def seperatorAtEnd(self, currItem):
-        if currItem.seperator >= len(currItem.rhs.split(" ")):
-            return True
-        else:
-            return False
+        """Check if there is a separator at the end of the current item."""
+
+        return currItem.seperator >= len(currItem.rhs.split(" "))
 
     def printRules(self):
+        """Output some information about the grammar."""
+
         print("--- Rules ---")
         for k, v in self.rules.items():
             print(k, ": ", v)
@@ -438,6 +478,8 @@ class LRParser:
             print(t)
 
     def printItemSets(self):
+        """Print a list of all the item sets."""
+
         print("--- Items ---")
         for itemSetNum, itemSet in self.itemSets.items():
             print("Item Set %i: " % (itemSetNum))
@@ -445,11 +487,15 @@ class LRParser:
                 print("\t", item)
 
     def printTransitions(self):
+        """Print a list of all the transitions."""
+
         print("--- Transitions ---")
         for k, v in self.transitions.items():
             print(k, v)
 
     def printTable(self):
+        """Print a list of all the action and goto entries."""
+
         print("--- Actions ---")
         for k, v in self.actions.items():
             print(k, v)
@@ -458,16 +504,20 @@ class LRParser:
             print(k, v)
 
     def print(self):
+        """Print the parse tree."""
+
         for node in self.parseTree:
             node.print(0)
 
 
-# an item is like a grammar rule
-# there is a left hand side of the rule (lhs)
-# and a right hand side (rhs)
-# a seperator that is the dot thing
-# and a following token for the rule
-class item:
+class Item:
+    """
+    An item is like a grammar rule.
+    There is a LHS of the rule and a RHS.
+    A separator that is the dot thing,
+    and a following token for the rule.
+    """
+
     def __init__(self, lhs, rhs, seperator, following):
         self.lhs = lhs
         self.rhs = rhs
@@ -484,41 +534,38 @@ class item:
         )
 
     def isSame(self, tempItem):
-        if (
+        """Check if this Item and another Item as the same."""
+
+        return (
             tempItem.lhs == self.lhs
             and tempItem.rhs == self.rhs
             and tempItem.seperator == self.seperator
             and tempItem.following == self.following
-        ):
-            return True
-        else:
-            return False
+        )
 
     def getRightBefore(self):
+        """Return the token directly preceeeding the dot separator."""
+
         rhs = self.rhs.split(" ")
         if self.seperator - 1 < 0 or self.seperator - 1 >= len(rhs):
             return ""
         return rhs[self.seperator - 1]
 
     def getRightAfter(self):
+        """Return the token directly succeeding the dot separator."""
+
         rhs = self.rhs.split(" ")
         if self.seperator >= len(rhs):
             return ""
         return rhs[self.seperator]
 
     def getAfter(self):
+        """Return all the tokens after the dot separator."""
+
         rhs = self.rhs.split(" ")
         return rhs[self.seperator + 1 : len(self.rhs)]
 
     def incSeperator(self):
-        return item(self.lhs, self.rhs, self.seperator + 1, self.following)
+        """Make a new Item with the seperator incremented by 1."""
 
-
-def readFile(filename):
-    try:
-        with open(filename) as file:
-            return file.read()
-    except IOError as err:
-        print(err)
-        print(f"Could not read the file: {filename}")
-        sys.exit(2)
+        return Item(self.lhs, self.rhs, self.seperator + 1, self.following)

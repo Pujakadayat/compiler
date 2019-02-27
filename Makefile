@@ -1,12 +1,12 @@
 main:
-	python3 src/main.py -f samples/expression.c
+	python3 src/main.py -p samples/basic_math.c
 
 character_count:
 	python3 character_count.py words.txt
 
 lint:
 	black ./
-	pylint **/*.py
+	pylint src/
 
 clean:
 	rm -f *.o logs/* tables/*

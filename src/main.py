@@ -8,6 +8,7 @@ import logging
 import os
 from parser.lrParser import LRParser
 import lexer
+from util import readFile
 
 
 def main():
@@ -113,18 +114,6 @@ def parseArguments():
         sys.exit()
 
     return filename, grammar, flags
-
-
-def readFile(filename):
-    """Read the contents of a file, if it exists."""
-
-    try:
-        with open(filename) as file:
-            return file.read()
-    except IOError as err:
-        print(err)
-        print(f"Could not read the file: {filename}")
-        sys.exit(2)
 
 
 def startLog():
