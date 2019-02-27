@@ -4,3 +4,6 @@ const-naming-style=camelCase
 function-naming-style=camelCase
 variable-naming-style=camelCase
 argument-naming-style=camelCase
+
+disable=too-many-branches,
+				too-many-statements

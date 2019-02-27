@@ -1,7 +1,8 @@
 import tokens as tokenTypes
 
 
-def parseToken(desc, content = "", children = []):
+def parseToken(desc, content="", children=[]):
+    """asdf asdf asd fa sdf """
     if desc == "program":
         return Program(children)
     elif desc == "functionDeclaration":
@@ -16,6 +17,7 @@ def parseToken(desc, content = "", children = []):
         return ConstNum(content)
     else:
         return GeneralNode(content, children)
+
 
 def printPrefix(level):
     for _ in range(level):
@@ -42,7 +44,7 @@ class Node:
         print(self.__class__.__name__)
 
         for child in self.children[0]:
-            child.print(level+1)
+            child.print(level + 1)
 
 
 class Program(Node):
@@ -72,7 +74,7 @@ class ReturnStatement(Node):
         printPrefix(level)
         print(f"{self.__class__.__name__}")
         for child in self.children[0]:
-            child.print(level+1)
+            child.print(level + 1)
 
 
 class ConstNum(Node):
@@ -94,14 +96,14 @@ class Identifier(Node):
 
 
 class GeneralNode(Node):
-    def __init__(self, value, children = []):
+    def __init__(self, value, children=[]):
         self.value = value
         self.children = children
 
     def print(self, level):
-        #if len(self.children) == 0:
+        # if len(self.children) == 0:
         #    printPrefix(level)
         #    print(self.value)
-        #else:
+        # else:
         for child in self.children:
             child.print(level)

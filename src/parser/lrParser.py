@@ -115,7 +115,6 @@ class LRParser:
                     if token not in self.nonTerminals and token not in self.terminals:
                         self.terminals.append(token)
 
-
     # close out an itemset
     # this involves expanding out rules from the grammar
     def closure(self, setNum):
@@ -255,7 +254,9 @@ class LRParser:
                                 if item.rhs == " ".join(v[i]):
                                     if itemSetNum not in self.actions.keys():
                                         self.actions[itemSetNum] = {}
-                                    self.actions[itemSetNum][item.following] = "r %s %i" % (k, i)
+                                    self.actions[itemSetNum][
+                                        item.following
+                                    ] = "r %s %i" % (k, i)
 
         # go through transition table to get:
         for k1, v1 in self.transitions.items():
@@ -322,7 +323,9 @@ class LRParser:
                 token = realToken.content
 
             if debug:
-                logging.debug(f"---\nState: {state}\nStates: {states}\nlookahead Token: {token}\nstack: {stack}\noutput: {output}\n")
+                logging.debug(
+                    f"---\nState: {state}\nStates: {states}\nlookahead Token: {token}\nstack: {stack}\noutput: {output}\n"
+                )
 
             try:
                 # Check if we have an entry in our action table for the lookahead token
@@ -339,7 +342,7 @@ class LRParser:
                         node = grammar.parseToken(token, realToken.content)
                         if node:
                             self.parseTree.append(node)
-                        #print("Shifting")
+                        # print("Shifting")
 
                     # If the action table says to reduce
                     if result[0] == "r":
@@ -356,22 +359,33 @@ class LRParser:
                         if match:
                             # Reduce the tokens on the stack to our new rule token
                             if result[1] != "ACC":
-                                tempNode = grammar.parseToken(result[1], children=self.parseTree[len(self.parseTree) - len(rule) : len(self.parseTree)])
-                                del self.parseTree[len(self.parseTree) - len(rule) : len(self.parseTree)]
+                                tempNode = grammar.parseToken(
+                                    result[1],
+                                    children=self.parseTree[
+                                        len(self.parseTree)
+                                        - len(rule) : len(self.parseTree)
+                                    ],
+                                )
+                                del self.parseTree[
+                                    len(self.parseTree)
+                                    - len(rule) : len(self.parseTree)
+                                ]
                                 self.parseTree.append(tempNode)
                             del stack[len(stack) - len(rule) : len(stack)]
                             del states[len(states) - len(rule) : len(states)]
                             stack.append(result[1])
                             if debug is True:
                                 logging.debug(f"Reducing rule {result[1]} -> {rule}")
-                            
+
                             # Check if there is a goto rule for our current state
                             topState = states[-1]
                             topStack = stack[-1]
                             if topStack in self.goto[topState].keys():
                                 states.append(self.goto[topState][topStack])
                         else:
-                            print("ERROR: Parse Table tried to reduce a rule with invalid tokens on top of stack\nExiting Program")
+                            print(
+                                "ERROR: Parse Table tried to reduce a rule with invalid tokens on top of stack\nExiting Program"
+                            )
                             return False
                 else:
                     print("ERROR: State", state, "Token", token)
@@ -498,7 +512,6 @@ class item:
 
     def incSeperator(self):
         return item(self.lhs, self.rhs, self.seperator + 1, self.following)
-
 
 
 def readFile(filename):

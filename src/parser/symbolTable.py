@@ -18,12 +18,14 @@ class SymbolTable:
         self.current = self.current[name]
 
     def declareVariable(self, name):
+        # TODO: add type to variable declaration
         # Append the variable to the current scope's variable list
         self.current["variables"].append(name)
 
     def endScope(self):
         # Go back up one scope
-        self.current = self.current[".."]
+        if ".." in self.current:
+            self.current = self.current[".."]
 
     def find(self, name):
         c = self.current
@@ -33,7 +35,7 @@ class SymbolTable:
             if name in c["variables"]:
                 return self.table["name"]
             else:
-                return False
+                return None
         else:
             # Search up the tree from our current scope
             # as long as there is a parent
@@ -44,24 +46,37 @@ class SymbolTable:
                     c = c[".."]
 
         # Not found in any scope, return False
-        return False
+        return None
 
 
 # Example below on how to use this Symbol Table
 
 """
-var = "zzz"
+C code we will parse:
+
+int i, j;
+
+int main() {
+    int i = 0;
+
+    i = j;
+}
+"""
+
 
 s = SymbolTable()
-s.declareVariable("x")
-s.declareVariable("y")
-s.declareVariable("z")
-s.startScope("foo")
-s.declareVariable("x")
-out = s.find(var)
-if out is not False:
-    print(f"Found the variable {var} in scope: {out}.")
-else:
-    print(f"The variable {var} was not found in any scope.")
-s.endScope()
-"""
+s.declareVariable("i")
+s.declareVariable("j")
+s.startScope("main")
+s.declareVariable("i")
+ret = s.find("xxx")
+
+print(ret)
+
+
+# Reductions that will trigger a new scope:
+
+# Functions
+# For Statement
+# While Statement
+# If Statement

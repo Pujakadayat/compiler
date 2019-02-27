@@ -7,7 +7,7 @@ import re
 import sys
 import logging
 import tokens
-from tokens import Token, TokenType, symbols, keywords
+from tokens import Token, symbols, keywords
 
 debug = False
 
@@ -202,8 +202,8 @@ def tokenizeChunk(text):
     keyword = matchKeyword(text)
     if keyword is not None:
         if debug is True:
-            logging.debug(f"Found keyword: {text}")
-        return Token(keyword,  text)
+            logging.debug("Found keyword: %s", text)
+        return Token(keyword, text)
 
     # Check if it a number second
     number = matchNumber(text)
@@ -228,8 +228,8 @@ def matchSymbol(line, start):
     """Check if a string matches a symbol"""
     for symbol in symbols:
         try:
-            for i, c in enumerate(symbol.rep):
-                if line[start + i] != c:
+            for i, char in enumerate(symbol.rep):
+                if line[start + i] != char:
                     break
             else:
                 return symbol
