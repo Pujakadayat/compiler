@@ -11,7 +11,7 @@ import compiler.lexer as lexer
 from compiler.util import readFile
 
 
-def main():
+def run(filename, grammar, flags):
     """Run the compiler based on the given command line arguments."""
 
     # Get command line arguments
@@ -52,6 +52,8 @@ def main():
     # Print the parseTree
     if "-p" in flags:
         parser.print()
+
+    return isAccepted
 
 
 def printUsage():
@@ -132,6 +134,10 @@ def startLog():
         level=logging.DEBUG,
     )
 
+def main():
+    filename, grammar, flags = parseArguments()
+    run(filename, grammar, flags)
+
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
