@@ -6,11 +6,10 @@ Parses the list of tokens using the action and goto tables.
 
 
 import logging
-import sys
 import os
 import json
-import parser.grammar as grammar
-from util import readFile
+import compiler.parser.grammar as grammar
+from compiler.util import readFile
 
 debug = True
 

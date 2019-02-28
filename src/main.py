@@ -6,9 +6,9 @@ import sys
 import getopt
 import logging
 import os
-from parser.lrParser import LRParser
-import lexer
-from util import readFile
+from compiler.parser.lrParser import LRParser
+import compiler.lexer as lexer
+from compiler.util import readFile
 
 
 def main():
