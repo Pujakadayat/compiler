@@ -8,20 +8,25 @@ Usage: python3 -m testing.py
 """
 
 import unittest
-import main
+import src.main as main
 
 class AssignmentTestCase(unittest.TestCase):
 
     def test_lexer(self):
-        self.assertEqual("✨ Completed scanning!".run(), "✨ Completed scanning!")
+        self.assertEqual("✨ Completed scanning!".main.run(), "✨ Completed scanning!")
 
     def test_islexer(self):
-        self.assertTrue("✨ Completed scanning!".run())
-        self.assertFalse("".run())
-"""
-    def test_parser(self):
-        #self.
+        self.assertTrue("✨ Completed scanning!".main.run())
+        self.assertFalse("".main.run())
 
+    def test_parser(self):
+        filename = "samples/assignment.c"
+        grammar = "grammars/main_grammar.txt"
+        flags = ["-p"]
+
+        isAcceptedByParser = main.run(filename, grammar, flags)
+        self.assertEqual(isAcceptedByParser, True)
+"""
     def test_symbolTable(self):
         #self.
 
