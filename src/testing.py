@@ -3,14 +3,22 @@ Each test case has an accompanying class.
 Each have methods such as: test_lexer, test_parser & test_symbolTable
 """
 
+"""
+Usage: python3 -m testing.py
+"""
+
 import unittest
-import src.main
+import main
 
 class AssignmentTestCase(unittest.TestCase):
 
     def test_lexer(self):
-        #self.
+        self.assertEqual("✨ Completed scanning!".run(), "✨ Completed scanning!")
 
+    def test_islexer(self):
+        self.assertTrue("✨ Completed scanning!".run())
+        self.assertFalse("".run())
+"""
     def test_parser(self):
         #self.
 
@@ -170,6 +178,6 @@ class SingleLineCommentTestCase(unittest.TestCase):
 
     def test_symbolTable(self):
         #self.
-
+"""
 if __name__ == '__main__':
     unittest.main()
