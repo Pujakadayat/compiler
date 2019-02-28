@@ -6,16 +6,13 @@ import sys
 import getopt
 import logging
 import os
-from compiler.parser.lrParser import LRParser
-import compiler.lexer as lexer
-from compiler.util import readFile
+from src.parser.lrParser import LRParser
+import src.lexer as lexer
+from src.util import readFile
 
 
 def run(filename, grammar, flags):
     """Run the compiler based on the given command line arguments."""
-
-    # Get command line arguments
-    filename, grammar, flags = parseArguments()
 
     # Start logging file
     if "-v" in flags:
@@ -133,6 +130,7 @@ def startLog():
         filemode="w",
         level=logging.DEBUG,
     )
+
 
 def main():
     filename, grammar, flags = parseArguments()

@@ -6,8 +6,8 @@ Converts a file into a list of identified tokens.
 import re
 import sys
 import logging
-import compiler.tokens as tokens
-from compiler.tokens import Token, symbols, keywords
+import src.tokens as tokens
+from src.tokens import Token, symbols, keywords
 
 debug = False
 

@@ -8,8 +8,8 @@ Parses the list of tokens using the action and goto tables.
 import logging
 import os
 import json
-import compiler.parser.grammar as grammar
-from compiler.util import readFile
+import src.parser.grammar as grammar
+from src.util import readFile
 
 debug = True
 
