@@ -4,7 +4,7 @@ Each have methods such as: test_lexer, test_parser & test_symbolTable
 """
 
 """
-Usage: python3 -m testing.py
+Usage: python3 -m tests.testing
 """
 
 import unittest
@@ -13,11 +13,12 @@ import src.main as main
 class AssignmentTestCase(unittest.TestCase):
 
     def test_lexer(self):
-        self.assertEqual("✨ Completed scanning!".main.run(), "✨ Completed scanning!")
+        filename = "samples/assignment.c"
+        grammar = "grammars/main_grammar.txt"
+        flags = ["-s"]
 
-    def test_islexer(self):
-        self.assertTrue("✨ Completed scanning!".main.run())
-        self.assertFalse("".main.run())
+        isAcceptedByParser = main.run(filename, grammar, flags)
+        self.assertEqual(isAcceptedByParser, True)
 
     def test_parser(self):
         filename = "samples/assignment.c"
@@ -26,10 +27,12 @@ class AssignmentTestCase(unittest.TestCase):
 
         isAcceptedByParser = main.run(filename, grammar, flags)
         self.assertEqual(isAcceptedByParser, True)
-"""
-    def test_symbolTable(self):
-        #self.
 
+#    def test_symbolTable(self):
+#        filename = "samples/assignment.c"
+#        grammar = "grammars/main_grammar.txt"
+#        flags = ["-"]
+"""
 class BasicMathTestCase(unittest.TestCase):
 
     def test_lexer(self):
