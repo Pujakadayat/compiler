@@ -3,6 +3,7 @@ simple script to test the compiler on all of the current sample programs
 prints which sample programs pass and which fail
 """
 import glob
+import main
 #glob is basically grep
 #finds files & directories with given pattern
 
@@ -13,4 +14,5 @@ fileNames = fileNames[0:15]
 for i in fileNames:
 #loop through testing files
 #test with main_grammar
-    print(i)
+    ##print(i)
+    main.main()
