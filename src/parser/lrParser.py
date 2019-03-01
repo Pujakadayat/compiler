@@ -308,7 +308,7 @@ class LRParser:
             self.loadTables(readFile(tableFile))
         else:
             # Parse the tokens using an LR(1) table
-            print("✖ Generating new tables...")
+            print("∞ Generating new tables. Consider removing the -f flag.")
             self.buildTables()
             self.saveTables(tableFile)
 

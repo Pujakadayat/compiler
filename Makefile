@@ -2,7 +2,7 @@ main:
 	python3 -m src.main -p -f samples/basic_math.c
 
 test:
-	python3 -m tests.integration
+	python3 -m tests.testing
 
 character_count:
 	python3 character_count.py words.txt
