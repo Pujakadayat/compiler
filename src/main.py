@@ -6,52 +6,70 @@ import sys
 import getopt
 import logging
 import os
-from parser.lrParser import LRParser
-import lexer
-from util import readFile
+from src.parser.lrParser import LRParser
+import src.lexer as lexer
+from src.util import readFile
 
 
-def main():
-    """Run the compiler based on the given command line arguments."""
+class Compiler:
+    """The main compiler class."""
 
-    # Get command line arguments
-    filename, grammar, flags = parseArguments()
+    def __init__(self, filename, grammar=None, flags=None):
+        self.filename = filename
+        self.flags = flags
+        self.tokens = []
 
-    # Start logging file
-    if "-v" in flags:
-        startLog()
+        # Setup default grammar if none provided
+        if grammar:
+            self.grammar = grammar
+        else:
+            self.grammar = "grammars/main_grammar.txt"
 
-    # Read in the program file
-    code = readFile(filename)
+        # Setup empty list for flags if none provided
+        if flags is None:
+            self.flags = []
 
-    # Tokenize the input file
-    tokens = lexer.tokenize(code)
-    print("✨ Completed scanning!")
+        # Start a log if verbose flag
+        if "-v" in self.flags:
+            startLog()
 
-    # Handle printing flags
-    if "-s" in flags:
-        for token in tokens:
-            print(token)
+    def parse(self):
+        """Parse the tokens using our LR Parser."""
 
-    # Load the action and goto tables for parsing
-    parser = LRParser()
+        # Cannot parse until we tokenize
+        if not self.tokens:
+            self.tokens = self.tokenize()
 
-    if "-f" in flags:
-        parser.loadParseTables(grammar, force=True)
-    else:
-        parser.loadParseTables(grammar, force=False)
+        parser = LRParser()
 
-    # Parse the program
-    isAccepted = parser.parse(tokens)
+        # Check if we should force generate the tables
+        if "-f" in self.flags:
+            parser.loadParseTables(self.grammar, force=True)
+        else:
+            parser.loadParseTables(self.grammar, force=False)
 
-    if isAccepted:
-        print("✨ Completed parsing!")
-    else:
-        print("✖ The program is not valid.")
+        # Parse the tokens
+        isAccepted = parser.parse(self.tokens)
 
-    # Print the parseTree
-    if "-p" in flags:
-        parser.print()
+        # Print the parse tree
+        if "-p" in self.flags:
+            parser.print()
+
+        return isAccepted
+
+    def tokenize(self):
+        """Tokenize the input file."""
+
+        # Read in the file and tokenize
+        code = readFile(self.filename)
+        tokens = lexer.tokenize(code)
+
+        # Print the tokens
+        if "-s" in self.flags:
+            for token in tokens:
+                print(token)
+
+        return tokens
 
 
 def printUsage():
@@ -133,5 +151,24 @@ def startLog():
     )
 
 
+def main():
+    """Run the compiler from the command line."""
+
+    filename, grammar, flags = parseArguments()
+    compiler = Compiler(filename, grammar, flags)
+
+    tokens = compiler.tokenize()
+    if tokens:
+        print("✔ Tokenized the file successfully.")
+    else:
+        print("✖ Failed to tokenize the file.")
+
+    isAccepted = compiler.parse()
+    if isAccepted:
+        print("✔ Parsed the tokens successfully.")
+    else:
+        print("✖ Failed to parse the tokens.")
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

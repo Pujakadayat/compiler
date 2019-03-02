@@ -6,11 +6,10 @@ Parses the list of tokens using the action and goto tables.
 
 
 import logging
-import sys
 import os
 import json
-import parser.grammar as grammar
-from util import readFile
+import src.parser.grammar as grammar
+from src.util import readFile
 
 debug = True
 
@@ -309,7 +308,7 @@ class LRParser:
             self.loadTables(readFile(tableFile))
         else:
             # Parse the tokens using an LR(1) table
-            print("✖ Generating new tables...")
+            print("∞ Generating new tables. Consider removing the -f flag.")
             self.buildTables()
             self.saveTables(tableFile)
 
