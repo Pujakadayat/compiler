@@ -121,64 +121,68 @@ class ForTestCase(unittest.TestCase):
 #     # self.
 
 
-# class FunctionTestCase(unittest.TestCase):
-#     def test_lexer(self):
-#         filename = "samples/function.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-s"]
+class FunctionTestCase(unittest.TestCase):
+    """Test case for function.c"""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def setUp(self):
+        filename = "samples/function.c"
+        self.compiler = Compiler(filename, grammar=None, flags=None)
+        self.tokens = self.compiler.tokenize()
 
-#     def test_parser(self):
-#         filename = "samples/function.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-p"]
+    def test_lexer(self):
+        """Test the result of the lexer."""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+        result = "[#, include, <, stdio, ., h, >, int, sum, (, int, a, int, b, ), {, return, a, +, b, ;, }, int, main, (, void, ), {, int, x, =, 2, ;, int, y, =, 5, ;, int, z, =, sum, (, x, y, ), ;, printf, (, ', %, d, \, n, ', z, ), ;, return, 0, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
 
-#     # def test_symbolTable(self):
-#     # self.
-
-
-# class HelloWorldTestCase(unittest.TestCase):
-#     def test_lexer(self):
-#         filename = "samples/hello_world.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-s"]
-
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
-
-#     def test_parser(self):
-#         filename = "samples/hello_world.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-p"]
-
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def test_parser(self):
+        isAcceptedByParser = self.compiler.parse()
+        self.assertEqual(isAcceptedByParser, True)
 
 #     # def test_symbolTable(self):
 #     # self.
 
 
-# class IfElseTestCase(unittest.TestCase):
-#     def test_lexer(self):
-#         filename = "samples/if_else.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-s"]
+class HelloWorldTestCase(unittest.TestCase):
+    """Test case for hello_world.c"""
+    def setUp(self):
+        filename = "samples/hello_world.c"
+        self.compiler = Compiler(filename, grammar=None, flags=None)
+        self.tokens = self.compiler.tokenize()
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def test_lexer(self):
+        """Test the result of the lexer."""
 
-#     def test_parser(self):
-#         filename = "samples/if_else.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-p"]
+        result = "[<, stdio, ., h, >, int, main, (, void, ), {, printf, (, ', Hello, world, !, \n, ', ), ;, return, 0, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def test_parser(self):
+        isAcceptedByParser = self.compiler.parse()
+        self.assertEqual(isAcceptedByParser, True)
+
+#     # def test_symbolTable(self):
+#     # self.
+
+
+class IfElseTestCase(unittest.TestCase):
+    """Test case for if_else.c"""
+
+    def setUp(self):
+        filename = "samples/if_else.c"
+        self.compiler = Compiler(filename, grammar=None, flags=None)
+        self.tokens = self.compiler.tokenize()
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        result = "[int, main, (, ), {, int, number, =, 0, ;, if, (, number, ==, 0, ), {, number, =, 1, ;, }, else, {, number, =, 2, ;, }, return, 0, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
+
+    def test_parser(self):
+        isAcceptedByParser = self.compiler.parse()
+        self.assertEqual(isAcceptedByParser, True)
+
+
 
 #     # def test_symbolTable(self):
 #     # self.
