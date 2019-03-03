@@ -49,69 +49,73 @@ class BasicMathTestCase(unittest.TestCase):
     def test_parser(self):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
-        
-#     # def test_symbolTable(self):
-#     # self.
-
-
-# class ExpressionTestCase(unittest.TestCase):
-#     def test_lexer(self):
-#         filename = "samples/expression.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-s"]
-
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
-
-#     def test_parser(self):
-#         filename = "samples/expression.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-p"]
-
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
 
 #     # def test_symbolTable(self):
 #     # self.
 
 
-# class FloatTestCase(unittest.TestCase):
-#     def test_lexer(self):
-#         filename = "samples/float.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-s"]
+class ExpressionTestCase(unittest.TestCase):
+    """Test case for expression.c"""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def setUp(self):
+        filename = "samples/expression.c"
+        self.compiler = Compiler(filename, grammar=None, flags=None)
+        self.tokens = self.compiler.tokenize()
 
-#     def test_parser(self):
-#         filename = "samples/float.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-p"]
+    def test_lexer(self):
+        """Test the result of the lexer."""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+        result = "[int, main, (, ), {, int, x, ;, x, =, 2, ==, 2, ;, return, 0, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
+
+    def test_parser(self):
+        isAcceptedByParser = self.compiler.parse()
+        self.assertEqual(isAcceptedByParser, True)
 
 #     # def test_symbolTable(self):
 #     # self.
 
 
-# class ForTestCase(unittest.TestCase):
-#     def test_lexer(self):
-#         filename = "samples/for.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-s"]
+class FloatTestCase(unittest.TestCase):
+    """Test case for float.c"""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def setUp(self):
+        filename = "samples/float.c"
+        self.compiler = Compiler(filename, grammar=None, flags=None)
+        self.tokens = self.compiler.tokenize()
 
-#     def test_parser(self):
-#         filename = "samples/for.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-p"]
+    def test_lexer(self):
+        """Test the result of the lexer."""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+        result = "[int, main, (, ), {, float, x, =, 2, ., 5, ;, return, x, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
+
+    def test_parser(self):
+        isAcceptedByParser = self.compiler.parse()
+        self.assertEqual(isAcceptedByParser, True)
+
+#     # def test_symbolTable(self):
+#     # self.
+
+
+class ForTestCase(unittest.TestCase):
+    """Test case for for.c"""
+
+    def setUp(self):
+        filename = "samples/for.c"
+        self.compiler = Compiler(filename, grammar=None, flags=None)
+        self.tokens = self.compiler.tokenize()
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        result = "[int, main, (, ), {, int, number, =, 10, ;, int, i, =, 0, ;, int, y, =, 0, ;, for, (, i, =, 0, ;, i, <, number, ;, i, ++, ), {, y, +=, 1, ;, }, return, 0, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
+
+    def test_parser(self):
+        isAcceptedByParser = self.compiler.parse()
+        self.assertEqual(isAcceptedByParser, True)
+
 
 #     # def test_symbolTable(self):
 #     # self.
