@@ -32,23 +32,24 @@ class AssignmentTestCase(unittest.TestCase):
 #        flags = ["-"]
 
 
-# class BasicMathTestCase(unittest.TestCase):
-#     def test_lexer(self):
-#         filename = "samples/basic_math.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-s"]
+class BasicMathTestCase(unittest.TestCase):
+    """Test case for basic_math.c"""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def setUp(self):
+        filename = "samples/basic_math.c"
+        self.compiler = Compiler(filename, grammar=None, flags=None)
+        self.tokens = self.compiler.tokenize()
 
-#     def test_parser(self):
-#         filename = "samples/basic_math.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-p"]
+    def test_lexer(self):
+        """Test the result of the lexer."""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+        result = "[int, main, (, ), {, return, 2, +, 2, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
 
+    def test_parser(self):
+        isAcceptedByParser = self.compiler.parse()
+        self.assertEqual(isAcceptedByParser, True)
+        
 #     # def test_symbolTable(self):
 #     # self.
 
