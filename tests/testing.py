@@ -159,7 +159,7 @@ class HelloWorldTestCase(unittest.TestCase):
     def test_lexer(self):
         """Test the result of the lexer."""
 
-        result = "[<, stdio, ., h, >, int, main, (, void, ), {, printf, (, ', Hello, world, !, \n, ', ), ;, return, 0, ;, }, $]"
+        result = "[stdio.h, int, main, (, void, ), {, printf, (, Hello world!, ), ;, return, 0, ;, }, $]"
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
