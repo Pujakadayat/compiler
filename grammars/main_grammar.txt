@@ -2,12 +2,12 @@
 
 program -> declarationList
 declarationList -> declarationList declaration | declaration
-declaration -> varDec | functionDeclaration
+declaration -> varDec | functionDeclaration | includeStatement
 
 # Variable Declarations
 
 varDec -> typeSpecifier ID = expression ; | typeSpecifier ID ;
-assignment -> ID = expression ;
+assignment -> ID = expression ; | ID += expression ; | ID -= expression ;
 
 # Function Declarations
 
@@ -16,12 +16,15 @@ functionDeclaration -> typeSpecifier ID ( ) { statementList }
 # Statements
 
 statementList -> statementList statement | statement
-statement -> varDec | returnStatement | ifStatement | assignment
+statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | callStatement
 returnStatement -> return expression ;
+includeStatement -> fileName
+callStatement -> ID ( str ) ;
 
 # Control Flow
 
 ifStatement -> if ( expression ) { statementList } | if ( expression ) { statementList } else { statementList }
+forStatement -> for ( assignment expression ; ID ++ ) { statementList }
 
 # Expressions
 

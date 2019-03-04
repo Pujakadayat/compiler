@@ -430,8 +430,9 @@ class LRParser:
                             print("\nExiting Program")
                             return False
                 else:
-                    print("ERROR: State", state, "Token", token)
+                    print("ERROR: State", state, " does not have Token", token)
                     print(self.actions[state])
+                    print(stack)
                     print("Exiting Program")
                     return False
 
