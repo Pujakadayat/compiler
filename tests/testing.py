@@ -10,7 +10,8 @@ from src.main import Compiler
 class AssignmentTestCase(unittest.TestCase):
     """Test case for assignment.c"""
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         filename = "samples/assignment.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
@@ -34,7 +35,8 @@ class AssignmentTestCase(unittest.TestCase):
 class BasicMathTestCase(unittest.TestCase):
     """Test case for basic_math.c"""
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         filename = "samples/basic_math.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
@@ -56,7 +58,8 @@ class BasicMathTestCase(unittest.TestCase):
 class ExpressionTestCase(unittest.TestCase):
     """Test case for expression.c"""
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         filename = "samples/expression.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
@@ -78,7 +81,8 @@ class ExpressionTestCase(unittest.TestCase):
 class FloatTestCase(unittest.TestCase):
     """Test case for float.c"""
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         filename = "samples/float.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
@@ -100,7 +104,8 @@ class FloatTestCase(unittest.TestCase):
 class ForTestCase(unittest.TestCase):
     """Test case for for.c"""
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         filename = "samples/for.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
@@ -122,7 +127,8 @@ class ForTestCase(unittest.TestCase):
 class FunctionTestCase(unittest.TestCase):
     """Test case for function.c"""
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         filename = "samples/function.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
@@ -143,7 +149,9 @@ class FunctionTestCase(unittest.TestCase):
 
 class HelloWorldTestCase(unittest.TestCase):
     """Test case for hello_world.c"""
-    def setUp(self):
+
+    @classmethod
+    def setUpClass(self):
         filename = "samples/hello_world.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
@@ -165,7 +173,8 @@ class HelloWorldTestCase(unittest.TestCase):
 class IfElseTestCase(unittest.TestCase):
     """Test case for if_else.c"""
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         filename = "samples/if_else.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
@@ -186,7 +195,9 @@ class IfElseTestCase(unittest.TestCase):
 
 class IfTestCase(unittest.TestCase):
     """Test case for if.c"""
-    def setUp(self):
+
+    @classmethod
+    def setUpClass(self):
         filename = "samples/if.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
@@ -208,7 +219,8 @@ class IfTestCase(unittest.TestCase):
 class IncludeTestCase(unittest.TestCase):
     """Test case for include.c"""
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         filename = "samples/include.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
@@ -216,7 +228,7 @@ class IncludeTestCase(unittest.TestCase):
     def test_lexer(self):
         """Test the result of the lexer."""
 
-        result = "[#, include, <, stdio, ., h, >, int, main, (, ), {, return, 0, ;, }, $]"
+        result = "[stdio.h, int, main, (, ), {, return, 0, ;, }, $]"
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
@@ -230,7 +242,8 @@ class IncludeTestCase(unittest.TestCase):
 class LineBreakTestCase(unittest.TestCase):
     """Test case for linebreak.c"""
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         filename = "samples/linebreak.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
@@ -251,7 +264,9 @@ class LineBreakTestCase(unittest.TestCase):
 
 class MathTestCase(unittest.TestCase):
     """Test case for math.c"""
-    def setUp(self):
+
+    @classmethod
+    def setUpClass(self):
         filename = "samples/math.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
@@ -273,7 +288,8 @@ class MathTestCase(unittest.TestCase):
 class MultiLineCommentTestCase(unittest.TestCase):
     """Test case for multi_line_comment.c"""
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         filename = "samples/multi_line_comment.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
@@ -295,7 +311,8 @@ class MultiLineCommentTestCase(unittest.TestCase):
 class PlainTestCase(unittest.TestCase):
     """Test case for plain.c"""
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         filename = "samples/plain.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
@@ -317,7 +334,8 @@ class PlainTestCase(unittest.TestCase):
 class SingleLineCommentTestCase(unittest.TestCase):
     """Test case for single_line_comment.c"""
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         filename = "samples/single_line_comment.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
         self.tokens = self.compiler.tokenize()
