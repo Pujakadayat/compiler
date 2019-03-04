@@ -95,7 +95,7 @@ class FloatTestCase(unittest.TestCase):
     def test_lexer(self):
         """Test the result of the lexer."""
 
-        result = "[int, main, (, ), {, float, x, =, 2, ., 5, ;, return, x, ;, }, $]"
+        result = "[int, main, (, ), {, float, x, =, 2.5, ;, return, x, ;, }, $]"
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
@@ -167,7 +167,7 @@ class HelloWorldTestCase(unittest.TestCase):
     def test_lexer(self):
         """Test the result of the lexer."""
 
-        result = "[stdio.h, int, main, (, void, ), {, printf, (, Hello world!, ), ;, return, 0, ;, }, $]"
+        result = "[stdio.h, int, main, (, ), {, printf, (, Hello world!, ), ;, return, 0, ;, }, $]"
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
