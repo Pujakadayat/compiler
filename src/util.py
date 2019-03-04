@@ -2,6 +2,8 @@
 Utility functions to be re-used across modules.
 """
 
+import sys
+
 
 def readFile(filename):
     """Read the contents of a file, if it exists."""

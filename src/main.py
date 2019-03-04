@@ -38,6 +38,7 @@ class Compiler:
 
         # Cannot parse until we tokenize
         if not self.tokens:
+            print("SLDKFJSDLKFJ")
             self.tokens = self.tokenize()
 
         parser = LRParser()
@@ -62,14 +63,14 @@ class Compiler:
 
         # Read in the file and tokenize
         code = readFile(self.filename)
-        tokens = lexer.tokenize(code)
+        self.tokens = lexer.tokenize(code)
 
         # Print the tokens
         if "-s" in self.flags:
-            for token in tokens:
+            for token in self.tokens:
                 print(token)
 
-        return tokens
+        return self.tokens
 
 
 def printUsage():

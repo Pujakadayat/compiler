@@ -26,6 +26,7 @@ class AssignmentTestCase(unittest.TestCase):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
 
+
 #    def test_symbolTable(self):
 #        filename = "samples/assignment.c"
 #        grammar = "grammars/main_grammar.txt"
@@ -51,6 +52,7 @@ class BasicMathTestCase(unittest.TestCase):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
 
+
 #     # def test_symbolTable(self):
 #     # self.
 
@@ -67,12 +69,15 @@ class ExpressionTestCase(unittest.TestCase):
     def test_lexer(self):
         """Test the result of the lexer."""
 
-        result = "[int, main, (, ), {, int, x, ;, x, =, 2, ==, 2, ;, return, 0, ;, }, $]"
+        result = (
+            "[int, main, (, ), {, int, x, ;, x, =, 2, ==, 2, ;, return, 0, ;, }, $]"
+        )
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
+
 
 #     # def test_symbolTable(self):
 #     # self.
@@ -97,6 +102,7 @@ class FloatTestCase(unittest.TestCase):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
 
+
 #     # def test_symbolTable(self):
 #     # self.
 
@@ -120,6 +126,7 @@ class ForTestCase(unittest.TestCase):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
 
+
 #     # def test_symbolTable(self):
 #     # self.
 
@@ -136,12 +143,13 @@ class FunctionTestCase(unittest.TestCase):
     def test_lexer(self):
         """Test the result of the lexer."""
 
-        result = "[#, include, <, stdio, ., h, >, int, sum, (, int, a, int, b, ), {, return, a, +, b, ;, }, int, main, (, void, ), {, int, x, =, 2, ;, int, y, =, 5, ;, int, z, =, sum, (, x, y, ), ;, printf, (, ', %, d, \, n, ', z, ), ;, return, 0, ;, }, $]"
+        result = "[stdio.h, int, sum, (, int, a, ,, int, b, ), {, return, a, +, b, ;, }, int, main, (, void, ), {, int, x, =, 2, ;, int, y, =, 5, ;, int, z, =, sum, (, x, ,, y, ), ;, printf, (, %d, ,, z, ), ;, return, 0, ;, }, $]"
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
+
 
 #     # def test_symbolTable(self):
 #     # self.
@@ -166,6 +174,7 @@ class HelloWorldTestCase(unittest.TestCase):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
 
+
 #     # def test_symbolTable(self):
 #     # self.
 
@@ -188,6 +197,7 @@ class IfElseTestCase(unittest.TestCase):
     def test_parser(self):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
+
 
 #     # def test_symbolTable(self):
 #     # self.
@@ -212,6 +222,7 @@ class IfTestCase(unittest.TestCase):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
 
+
 #     # def test_symbolTable(self):
 #     # self.
 
@@ -234,6 +245,7 @@ class IncludeTestCase(unittest.TestCase):
     def test_parser(self):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
+
 
 #     # def test_symbolTable(self):
 #     # self.
@@ -258,6 +270,7 @@ class LineBreakTestCase(unittest.TestCase):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
 
+
 #     # def test_symbolTable(self):
 #     # self.
 
@@ -280,6 +293,7 @@ class MathTestCase(unittest.TestCase):
     def test_parser(self):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
+
 
 #     # def test_symbolTable(self):
 #     # self.
@@ -304,6 +318,7 @@ class MultiLineCommentTestCase(unittest.TestCase):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
 
+
 #     # def test_symbolTable(self):
 #     # self.
 
@@ -327,6 +342,7 @@ class PlainTestCase(unittest.TestCase):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
 
+
 #     # def test_symbolTable(self):
 #     # self.
 
@@ -349,6 +365,7 @@ class SingleLineCommentTestCase(unittest.TestCase):
     def test_parser(self):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
+
 
 #     # def test_symbolTable(self):
 #     # self.

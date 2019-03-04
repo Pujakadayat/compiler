@@ -265,7 +265,7 @@ class LRParser:
         # go through itemSets to get reduction rules
         for itemSetNum, itemSet in self.itemSets.items():
             for item in itemSet:
-                if self.seperatorAtEnd(item):
+                if seperatorAtEnd(item):
                     for k, v in self.rules.items():
                         if item.lhs == k:
                             for i, r in enumerate(v):
@@ -304,11 +304,15 @@ class LRParser:
 
         if os.path.isfile(tableFile) and force is False:
             # Load a saved tables file
-            print("✔ Reading saved tables...")
+            if debug is True:
+                logging.debug("✔ Reading saved tables...")
+
             self.loadTables(readFile(tableFile))
         else:
             # Parse the tokens using an LR(1) table
-            print("∞ Generating new tables. Consider removing the -f flag.")
+            if debug is True:
+                logging.debug("∞ Generating new tables. Consider removing the -f flag.")
+
             self.buildTables()
             self.saveTables(tableFile)
 
@@ -458,11 +462,6 @@ class LRParser:
 
         return num in self.itemSets.keys()
 
-    def seperatorAtEnd(self, currItem):
-        """Check if there is a separator at the end of the current item."""
-
-        return currItem.seperator >= len(currItem.rhs.split(" "))
-
     def printRules(self):
         """Output some information about the grammar."""
 
@@ -568,3 +567,9 @@ class Item:
         """Make a new Item with the seperator incremented by 1."""
 
         return Item(self.lhs, self.rhs, self.seperator + 1, self.following)
+
+
+def seperatorAtEnd(currItem):
+    """Check if there is a separator at the end of the current item."""
+
+    return currItem.seperator >= len(currItem.rhs.split(" "))

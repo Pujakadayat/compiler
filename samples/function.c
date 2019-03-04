@@ -9,7 +9,7 @@ int main(void) {
 	int y = 5;
 
 	int z = sum(x, y);
-	printf("%d\n", z);
+	printf("%d", z);
 
 	return 0;
 }

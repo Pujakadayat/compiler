@@ -31,6 +31,8 @@ def printPrefix(level):
 
 
 class Node:
+    """General parse tree node class"""
+
     def __init__(self):
         pass
 
@@ -53,16 +55,22 @@ class Node:
 
 
 class Program(Node):
+    """Program node."""
+
     def __init__(self, *children):
         self.children = children
 
 
 class FunctionDeclaration(Node):
+    """Function declaration node."""
+
     def __init__(self, *children):
         self.children = children
 
 
 class TypeSpecifier(Node):
+    """Type specifier node."""
+
     def __init__(self, value):
         self.value = value
 
@@ -72,6 +80,8 @@ class TypeSpecifier(Node):
 
 
 class ReturnStatement(Node):
+    """Return statement node."""
+
     def __init__(self, *children):
         self.children = children
 
@@ -83,6 +93,8 @@ class ReturnStatement(Node):
 
 
 class ConstNum(Node):
+    """Number constant node."""
+
     def __init__(self, value):
         self.value = value
 
@@ -92,6 +104,8 @@ class ConstNum(Node):
 
 
 class Identifier(Node):
+    """ID node."""
+
     def __init__(self, value):
         self.value = value
 
@@ -101,6 +115,8 @@ class Identifier(Node):
 
 
 class GeneralNode(Node):
+    """General node (fallback)."""
+
     def __init__(self, value, children=[]):
         self.value = value
         self.children = children
