@@ -272,6 +272,7 @@ class MathTestCase(unittest.TestCase):
 
 class MultiLineCommentTestCase(unittest.TestCase):
     """Test case for multi_line_comment.c"""
+
     def setUp(self):
         filename = "samples/multi_line_comment.c"
         self.compiler = Compiler(filename, grammar=None, flags=None)
@@ -291,43 +292,45 @@ class MultiLineCommentTestCase(unittest.TestCase):
 #     # self.
 
 
-# class PlainTestCase(unittest.TestCase):
-#     def test_lexer(self):
-#         filename = "samples/plain.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-s"]
+class PlainTestCase(unittest.TestCase):
+    """Test case for plain.c"""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def setUp(self):
+        filename = "samples/plain.c"
+        self.compiler = Compiler(filename, grammar=None, flags=None)
+        self.tokens = self.compiler.tokenize()
 
-#     def test_parser(self):
-#         filename = "samples/plain.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-p"]
+    def test_lexer(self):
+        """Test the result of the lexer."""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+        result = "[int, main, (, ), {, return, 1, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
+
+    def test_parser(self):
+        isAcceptedByParser = self.compiler.parse()
+        self.assertEqual(isAcceptedByParser, True)
 
 #     # def test_symbolTable(self):
 #     # self.
 
 
-# class SingleLineCommentTestCase(unittest.TestCase):
-#     def test_lexer(self):
-#         filename = "samples/single_line_comment.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-s"]
+class SingleLineCommentTestCase(unittest.TestCase):
+    """Test case for single_line_comment.c"""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def setUp(self):
+        filename = "samples/single_line_comment.c"
+        self.compiler = Compiler(filename, grammar=None, flags=None)
+        self.tokens = self.compiler.tokenize()
 
-#     def test_parser(self):
-#         filename = "samples/single_line_comment.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-p"]
+    def test_lexer(self):
+        """Test the result of the lexer."""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+        result = "[int, main, (, ), {, return, 0, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
+
+    def test_parser(self):
+        isAcceptedByParser = self.compiler.parse()
+        self.assertEqual(isAcceptedByParser, True)
 
 #     # def test_symbolTable(self):
 #     # self.
