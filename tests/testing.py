@@ -25,7 +25,6 @@ class AssignmentTestCase(unittest.TestCase):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
 
-
 #    def test_symbolTable(self):
 #        filename = "samples/assignment.c"
 #        grammar = "grammars/main_grammar.txt"
@@ -116,7 +115,6 @@ class ForTestCase(unittest.TestCase):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
 
-
 #     # def test_symbolTable(self):
 #     # self.
 
@@ -182,112 +180,112 @@ class IfElseTestCase(unittest.TestCase):
         isAcceptedByParser = self.compiler.parse()
         self.assertEqual(isAcceptedByParser, True)
 
+#     # def test_symbolTable(self):
+#     # self.
 
+
+class IfTestCase(unittest.TestCase):
+    """Test case for if.c"""
+    def setUp(self):
+        filename = "samples/if.c"
+        self.compiler = Compiler(filename, grammar=None, flags=None)
+        self.tokens = self.compiler.tokenize()
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        result = "[int, main, (, ), {, int, number, =, 0, ;, if, (, number, ==, 0, ), {, number, =, 99, ;, }, return, 0, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
+
+    def test_parser(self):
+        isAcceptedByParser = self.compiler.parse()
+        self.assertEqual(isAcceptedByParser, True)
 
 #     # def test_symbolTable(self):
 #     # self.
 
 
-# class IfTestCase(unittest.TestCase):
-#     def test_lexer(self):
-#         filename = "samples/if.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-s"]
+class IncludeTestCase(unittest.TestCase):
+    """Test case for include.c"""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def setUp(self):
+        filename = "samples/include.c"
+        self.compiler = Compiler(filename, grammar=None, flags=None)
+        self.tokens = self.compiler.tokenize()
 
-#     def test_parser(self):
-#         filename = "samples/if.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-p"]
+    def test_lexer(self):
+        """Test the result of the lexer."""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+        result = "[#, include, <, stdio, ., h, >, int, main, (, ), {, return, 0, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
 
-#     # def test_symbolTable(self):
-#     # self.
-
-
-# class IncludeTestCase(unittest.TestCase):
-#     def test_lexer(self):
-#         filename = "samples/include.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-s"]
-
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
-
-#     def test_parser(self):
-#         filename = "samples/include.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-p"]
-
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def test_parser(self):
+        isAcceptedByParser = self.compiler.parse()
+        self.assertEqual(isAcceptedByParser, True)
 
 #     # def test_symbolTable(self):
 #     # self.
 
 
-# class LineBreakTestCase(unittest.TestCase):
-#     def test_lexer(self):
-#         filename = "samples/linebreak.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-s"]
+class LineBreakTestCase(unittest.TestCase):
+    """Test case for linebreak.c"""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def setUp(self):
+        filename = "samples/linebreak.c"
+        self.compiler = Compiler(filename, grammar=None, flags=None)
+        self.tokens = self.compiler.tokenize()
 
-#     def test_parser(self):
-#         filename = "samples/linebreak.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-p"]
+    def test_lexer(self):
+        """Test the result of the lexer."""
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+        result = "[int, main, (, ), {, char, *, string, =, ', Line 1, \, Line, 2, ', ;, return, string, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
 
-#     # def test_symbolTable(self):
-#     # self.
-
-
-# class MathTestCase(unittest.TestCase):
-#     def test_lexer(self):
-#         filename = "samples/math.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-s"]
-
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
-
-#     def test_parser(self):
-#         filename = "samples/math.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-p"]
-
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def test_parser(self):
+        isAcceptedByParser = self.compiler.parse()
+        self.assertEqual(isAcceptedByParser, True)
 
 #     # def test_symbolTable(self):
 #     # self.
 
 
-# class MultiLineCommentTestCase(unittest.TestCase):
-#     def test_lexer(self):
-#         filename = "samples/multi_line_comment.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-s"]
+class MathTestCase(unittest.TestCase):
+    """Test case for math.c"""
+    def setUp(self):
+        filename = "samples/math.c"
+        self.compiler = Compiler(filename, grammar=None, flags=None)
+        self.tokens = self.compiler.tokenize()
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def test_lexer(self):
+        """Test the result of the lexer."""
 
-#     def test_parser(self):
-#         filename = "samples/multi_line_comment.c"
-#         grammar = "grammars/main_grammar.txt"
-#         flags = ["-p"]
+        result = "[int, main, (, ), {, int, i, =, 0, ;, i, +=, 25, ;, i, ++, ;, float, y, =, 2, ., 5, ;, return, i, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
 
-#         isAcceptedByParser = main.run(filename, grammar, flags)
-#         self.assertEqual(isAcceptedByParser, True)
+    def test_parser(self):
+        isAcceptedByParser = self.compiler.parse()
+        self.assertEqual(isAcceptedByParser, True)
+
+#     # def test_symbolTable(self):
+#     # self.
+
+
+class MultiLineCommentTestCase(unittest.TestCase):
+    """Test case for multi_line_comment.c"""
+    def setUp(self):
+        filename = "samples/multi_line_comment.c"
+        self.compiler = Compiler(filename, grammar=None, flags=None)
+        self.tokens = self.compiler.tokenize()
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        result = "[int, main, (, ), {, return, 0, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
+
+    def test_parser(self):
+        isAcceptedByParser = self.compiler.parse()
+        self.assertEqual(isAcceptedByParser, True)
 
 #     # def test_symbolTable(self):
 #     # self.
