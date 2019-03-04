@@ -60,6 +60,17 @@ class TokenType:
 # assert    else        import      pass
 # break     except      in          raise
 
+
+# Have to recognize the C keywords...
+# auto      break       case        char
+# const     continue    default     do
+# int       long        register    return
+# short     signed      sizeof      static
+# struct    switch      typedef     union
+# unsigned  void        volatile    while
+# double    else        enum        extern
+# float     for         goto        if
+
 symbols = []
 keywords = []
 
@@ -174,6 +185,11 @@ forKeyword = TokenType("for", keywords, description="forKeyword")
 breakKeyword = TokenType("break", keywords, description="breakKeyword")
 continueKeyword = TokenType("continue", keywords, description="continueKeyword")
 returnKeyword = TokenType("return", keywords, description="returnKeyword")
+switch = TokenType("switch", keywords, description="switchKeyword")
+goto = TokenType("goto", keywords, description="gotoKeyword")
+case = TokenType("case", keywords, description="caseKeyword")
+do = TokenType("do", keywords, description="doKeyword")
+
 
 # Boolean
 
@@ -188,3 +204,6 @@ typedef = TokenType("typedef", keywords, description="typedefKeyword")
 const = TokenType("const", keywords, description="constKeyword")
 extern = TokenType("extern", keywords, description="externKeyword")
 auto = TokenType("auto", keywords, description="autoKeyword")
+default = TokenType("default", keywords, description="defaultKeyword")
+volatile = TokenType("volatile", keywords, description="volatileKeyword")
+register = TokenType("register", keywords, description="registerKeyword")
