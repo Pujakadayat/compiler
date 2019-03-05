@@ -18,6 +18,10 @@ def parseToken(desc, content="", children=[]):
         return Identifier(content)
     if desc == "constNum":
         return ConstNum(content)
+    if desc == "varDec":
+        return varDec(children)
+    if desc == "assignment":
+        return assignment(children)
 
     return GeneralNode(content, children)
 
