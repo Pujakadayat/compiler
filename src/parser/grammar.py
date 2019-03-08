@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring, multiple-statements
+# pylint: disable=missing-docstring
 
 """
 Classes that represent grammar rules for our Parse Tree.
@@ -137,6 +137,24 @@ class EqualExpression(Expression):
     pass
 
 
+class ForStatement(Node):
+    pass
+
+
+class IncrementAssignment(VariableAssignment):
+    pass
+
+
+class DecrementAssignment(VariableAssignment):
+    pass
+
+class PlusEqualAssignment(VariableAssignment):
+    pass
+
+class MinusEqualAssignment(VariableAssignment):
+    pass
+
+
 # A dictionary of all the parse tree nodes we recognize
 # Key: string of the grammar rule
 # Value: the associated class
@@ -146,6 +164,10 @@ nodes = {
     "funcDec": FunctionDeclaration,
     "varDec": VariableDeclaration,
     "assignment": VariableAssignment,
+    "incAssignment": IncrementAssignment,
+    "decAssignemnt": DecrementAssignment,
+    "incEqualAssignment": PlusEqualAssignment,
+    "decEqualAssignment": MinusEqualAssignment,
     "returnStatement": ReturnStatement,
     "expression": Expression,
     "addExpr": AdditionExpression,
@@ -161,6 +183,7 @@ nodes = {
     "gtExpr": GTExpression,
     "neExpr": NotEqualExpression,
     "eExpr": EqualExpression,
+    "forStatement": ForStatement
 }
 
 # General Node fallback

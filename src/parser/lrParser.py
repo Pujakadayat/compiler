@@ -300,14 +300,12 @@ class LRParser:
 
         if os.path.isfile(tableFile) and force is False:
             # Load a saved tables file
-            if debug is True:
-                logging.debug("✔ Reading saved tables...")
+            print("✔ Reading saved tables...")
 
             self.loadTables(readFile(tableFile))
         else:
             # Parse the tokens using an LR(1) table
-            if debug is True:
-                logging.debug("∞ Generating new tables. Consider removing the -f flag.")
+            print("∞ Generating new tables. Consider removing the -f flag.")
 
             self.buildTables()
             self.saveTables(tableFile)
