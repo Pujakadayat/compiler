@@ -4,8 +4,6 @@
 Classes that represent grammar rules for our Parse Tree.
 """
 
-nodes = {}
-
 
 def parseToken(desc, content="", children=[]):
     """Parse a token into the relevant class."""
@@ -20,7 +18,7 @@ def parseToken(desc, content="", children=[]):
 
     # Did not match any of the known parse tree nodes.
     # Classify it as a "general"  node
-    return GeneralNode(content, children)
+    return None
 
 
 def printPrefix(level):
@@ -43,9 +41,9 @@ class Node:
     def print(self, level=0):
         """
         General node print method.
-        First, print the class name, then print all it's children.
+        First, print the class name, then print all its children.
 
-        This method is overriden at lower level nodes like NUMCONST.
+        This method is overriden at lower level nodes like ConstNum.
         """
 
         printPrefix(level)
@@ -62,19 +60,54 @@ class Program(Node):
     pass
 
 
-class FunctionDeclaration(Node):
+class DeclarationList(Node):
     pass
 
 
-class ReturnStatement(Node):
+class Declaration(Node):
     pass
 
 
-class VariableDeclaration(Node):
+class FunctionDeclaration(Declaration):
     pass
 
 
-class VariableAssignment(Node):
+class StatementList(Node):
+    pass
+
+
+class Statement(Node):
+    pass
+
+
+class ReturnStatement(Statement):
+    pass
+
+
+class VariableDeclaration(Declaration):
+    pass
+
+
+# Assignments
+
+
+class VariableAssignment(Declaration):
+    pass
+
+
+class IncrementAssignment(VariableAssignment):
+    pass
+
+
+class DecrementAssignment(VariableAssignment):
+    pass
+
+
+class PlusEqualAssignment(VariableAssignment):
+    pass
+
+
+class MinusEqualAssignment(VariableAssignment):
     pass
 
 
@@ -137,39 +170,26 @@ class EqualExpression(Expression):
     pass
 
 
-class ForStatement(Node):
+# Statements
+
+
+class ForStatement(Statement):
     pass
 
 
-class IncrementAssignment(VariableAssignment):
+class IncludeStatement(Statement):
     pass
 
 
-class DecrementAssignment(VariableAssignment):
+class CallStatement(Statement):
     pass
 
 
-class PlusEqualAssignment(VariableAssignment):
+class IfStatement(Statement):
     pass
 
 
-class MinusEqualAssignment(VariableAssignment):
-    pass
-
-
-class IncludeStatement(Node):
-    pass
-
-
-class CallStatement(Node):
-    pass
-
-
-class IfStatement(Node):
-    pass
-
-
-class ElseStatement(Node):
+class ElseStatement(Statement):
     pass
 
 
@@ -179,14 +199,23 @@ class ElseStatement(Node):
 
 nodes = {
     "program": Program,
-    "functionDeclaration": FunctionDeclaration,
+    "declarationList": DeclarationList,
+    "declaration": Declaration,
     "varDec": VariableDeclaration,
     "assignment": VariableAssignment,
     "incAssignment": IncrementAssignment,
     "decAssignemnt": DecrementAssignment,
     "incEqualAssignment": PlusEqualAssignment,
     "decEqualAssignment": MinusEqualAssignment,
+    "functionDeclaration": FunctionDeclaration,
+    "statementList": StatementList,
+    "statement": Statement,
     "returnStatement": ReturnStatement,
+    "forStatement": ForStatement,
+    "includeStatement": IncludeStatement,
+    "callStatement": CallStatement,
+    "ifStatement": IfStatement,
+    "elseStatement": ElseStatement,
     "expression": Expression,
     "addExpr": AdditionExpression,
     "subExpr": SubtractionExpression,
@@ -201,16 +230,9 @@ nodes = {
     "gtExpr": GTExpression,
     "neExpr": NotEqualExpression,
     "eExpr": EqualExpression,
-    "forStatement": ForStatement,
-    "includeStatement": IncludeStatement,
-    "callStatement": CallStatement,
-    "ifStatement": IfStatement,
-    "elseStatement": ElseStatement,
 }
 
 # General Node fallback
-
-
 class GeneralNode(Node):
     """General node (fallback)."""
 
@@ -273,6 +295,10 @@ class Filename(Node):
         printPrefix(level)
         print(f"{self.__class__.__name__}: {self.value}")
 
+
+# A dictionary of all the terminal parse tree nodes we recognize
+# Key: string of the grammar rule
+# Value: the associated class
 
 terminals = {
     "typeSpecifier": TypeSpecifier,

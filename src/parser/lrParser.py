@@ -374,10 +374,9 @@ class LRParser:
                         states.append(int(result[1]))
                         stack.append(token)
                         lookahead += 1
+
                         node = grammar.parseToken(token, realToken.content)
-                        if node:
-                            self.parseTree.append(node)
-                        # print("Shifting")
+                        self.parseTree.append(node)
 
                     # If the action table says to reduce
                     if result[0] == "r":
@@ -394,20 +393,21 @@ class LRParser:
                         if match:
                             # Reduce the tokens on the stack to our new rule token
                             if result[1] != "ACC":
-                                tempNode = grammar.parseToken(
-                                    result[1],
-                                    children=self.parseTree[
-                                        len(self.parseTree)
-                                        - len(rule) : len(self.parseTree)
-                                    ],
-                                )
-                                del self.parseTree[
-                                    len(self.parseTree)
-                                    - len(rule) : len(self.parseTree)
+                                # Remove the "empty" nodes from our parse tree
+                                c = [
+                                    x
+                                    for x in self.parseTree[-len(rule) :]
+                                    if x is not None
                                 ]
-                                self.parseTree.append(tempNode)
-                            del stack[len(stack) - len(rule) : len(stack)]
-                            del states[len(states) - len(rule) : len(states)]
+
+                                tempNode = grammar.parseToken(result[1], children=c)
+
+                                if tempNode:
+                                    del self.parseTree[-len(rule) :]
+                                    self.parseTree.append(tempNode)
+
+                            del stack[-len(rule) :]
+                            del states[-len(rule) :]
                             stack.append(result[1])
                             if debug is True:
                                 logging.debug("Reducing rule %s -> %s", result[1], rule)
