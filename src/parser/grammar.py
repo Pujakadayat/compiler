@@ -148,10 +148,28 @@ class IncrementAssignment(VariableAssignment):
 class DecrementAssignment(VariableAssignment):
     pass
 
+
 class PlusEqualAssignment(VariableAssignment):
     pass
 
+
 class MinusEqualAssignment(VariableAssignment):
+    pass
+
+
+class IncludeStatement(Node):
+    pass
+
+
+class CallStatement(Node):
+    pass
+
+
+class IfStatement(Node):
+    pass
+
+
+class ElseStatement(Node):
     pass
 
 
@@ -161,7 +179,7 @@ class MinusEqualAssignment(VariableAssignment):
 
 nodes = {
     "program": Program,
-    "funcDec": FunctionDeclaration,
+    "functionDeclaration": FunctionDeclaration,
     "varDec": VariableDeclaration,
     "assignment": VariableAssignment,
     "incAssignment": IncrementAssignment,
@@ -183,7 +201,11 @@ nodes = {
     "gtExpr": GTExpression,
     "neExpr": NotEqualExpression,
     "eExpr": EqualExpression,
-    "forStatement": ForStatement
+    "forStatement": ForStatement,
+    "includeStatement": IncludeStatement,
+    "callStatement": CallStatement,
+    "ifStatement": IfStatement,
+    "elseStatement": ElseStatement,
 }
 
 # General Node fallback
@@ -241,4 +263,20 @@ class Identifier(Node):
         print(f"{self.__class__.__name__}: {self.value}")
 
 
-terminals = {"typeSpecifier": TypeSpecifier, "ID": Identifier, "constNum": ConstNum}
+class Filename(Node):
+    """Filename node."""
+
+    def __init__(self, value):
+        self.value = value
+
+    def print(self, level=0):
+        printPrefix(level)
+        print(f"{self.__class__.__name__}: {self.value}")
+
+
+terminals = {
+    "typeSpecifier": TypeSpecifier,
+    "ID": Identifier,
+    "constNum": ConstNum,
+    "fileName": Filename,
+}

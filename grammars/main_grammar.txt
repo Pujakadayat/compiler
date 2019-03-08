@@ -27,7 +27,8 @@ callStatement -> ID ( str ) ;
 
 # Control Flow
 
-ifStatement -> if ( expression ) { statementList } | if ( expression ) { statementList } else { statementList }
+ifStatement -> if ( expression ) { statementList } | if ( expression ) { statementList } elseStatement
+elseStatement -> else { statementList }
 forStatement -> for ( assignment expression ; ID ++ ) { statementList }
 
 # Expressions
