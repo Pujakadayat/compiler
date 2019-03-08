@@ -69,7 +69,9 @@ class Declaration(Node):
 
 
 class FunctionDeclaration(Declaration):
-    pass
+    def __init__(self, *children):
+        self.children = children;
+        self.name = children[0][1].value
 
 
 class StatementList(Node):
@@ -85,7 +87,9 @@ class ReturnStatement(Statement):
 
 
 class VariableDeclaration(Declaration):
-    pass
+    def __init__(self, *children):
+        self.children = children;
+        self.name = children[0][1].value
 
 
 # Assignments

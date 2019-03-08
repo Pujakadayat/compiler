@@ -2,6 +2,9 @@
 Contains the Symbol Table class.
 """
 
+import json
+import src.parser.grammar as grammar
+
 
 class SymbolTable:
     """Symbol Table that represents all variables and their scopes in the program."""
@@ -62,3 +65,43 @@ class SymbolTable:
 
         # Not found in any scope, return False
         return None
+
+    def print(self, t=None, level=0):
+        """Pretty print the symbol table."""
+
+        print("⚭ Symbol Table: ")
+        print(self.table)
+        print("")
+
+
+def buildSymbolTable(parseTree):
+    """Given the parse tree, build a symbol table."""
+
+    st = SymbolTable()
+
+    visitChildren(parseTree[0], st)
+
+    st.endScope()
+
+    st.print()
+    return st
+
+
+def visitChildren(node, st):
+    """Visit each node of the parse tree."""
+
+    if hasattr(node, "children"):
+        updateSymbolTable(node, st)
+        for child in node.children:
+            visitChildren(child, st)
+    elif isinstance(node, list):
+        for child in node:
+            visitChildren(child, st)
+
+def updateSymbolTable(node, st):
+    """Check if symbol table should be updated based on node."""
+
+    if isinstance(node, grammar.FunctionDeclaration):
+        st.startScope(node.name)
+    elif isinstance(node, grammar.VariableDeclaration):
+        st.declareVariable(node.name)
