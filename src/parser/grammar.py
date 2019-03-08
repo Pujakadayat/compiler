@@ -1,28 +1,25 @@
+# pylint: disable=missing-docstring, multiple-statements
+
 """
 Classes that represent grammar rules for our Parse Tree.
 """
+
+nodes = {}
 
 
 def parseToken(desc, content="", children=[]):
     """Parse a token into the relevant class."""
 
-    if desc == "program":
-        return Program(children)
-    if desc == "functionDeclaration":
-        return FunctionDeclaration(children)
-    if desc == "returnStatement":
-        return ReturnStatement(children)
-    if desc == "typeSpecifier":
-        return TypeSpecifier(content)
-    if desc == "ID":
-        return Identifier(content)
-    if desc == "constNum":
-        return ConstNum(content)
-    if desc == "varDec":
-        return varDec(children)
-    if desc == "assignment":
-        return assignment(children)
+    # Check if the node is a terminal
+    if desc in terminals:
+        return terminals[desc](content)
 
+    # Check if the node exists
+    if desc in nodes:
+        return nodes[desc](children)
+
+    # Did not match any of the known parse tree nodes.
+    # Classify it as a "general"  node
     return GeneralNode(content, children)
 
 
@@ -37,8 +34,8 @@ def printPrefix(level):
 class Node:
     """General parse tree node class"""
 
-    def __init__(self):
-        pass
+    def __init__(self, *children):
+        self.children = children
 
     def __str__(self):
         return self.__class__.__name__
@@ -58,18 +55,134 @@ class Node:
             child.print(level + 1)
 
 
-class Program(Node):
-    """Program node."""
+# Parse Tree Node Classes
 
-    def __init__(self, *children):
-        self.children = children
+
+class Program(Node):
+    pass
 
 
 class FunctionDeclaration(Node):
-    """Function declaration node."""
+    pass
 
-    def __init__(self, *children):
+
+class ReturnStatement(Node):
+    pass
+
+
+class VariableDeclaration(Node):
+    pass
+
+
+class VariableAssignment(Node):
+    pass
+
+
+# Expressions
+
+
+class Expression(Node):
+    pass
+
+
+class AdditionExpression(Expression):
+    pass
+
+
+class SubtractionExpression(Expression):
+    pass
+
+
+class MultiplicationExpression(Expression):
+    pass
+
+
+class DivisionExpression(Expression):
+    pass
+
+
+class ModulusExpression(Expression):
+    pass
+
+
+class BooleanAnd(Expression):
+    pass
+
+
+class BooleanOr(Expression):
+    pass
+
+
+class LTOEExpression(Expression):
+    pass
+
+
+class GTOEExpression(Expression):
+    pass
+
+
+class LTExpression(Expression):
+    pass
+
+
+class GTExpression(Expression):
+    pass
+
+
+class NotEqualExpression(Expression):
+    pass
+
+
+class EqualExpression(Expression):
+    pass
+
+
+# A dictionary of all the parse tree nodes we recognize
+# Key: string of the grammar rule
+# Value: the associated class
+
+nodes = {
+    "program": Program,
+    "funcDec": FunctionDeclaration,
+    "varDec": VariableDeclaration,
+    "assignment": VariableAssignment,
+    "returnStatement": ReturnStatement,
+    "expression": Expression,
+    "addExpr": AdditionExpression,
+    "subExpr": SubtractionExpression,
+    "multExpr": MultiplicationExpression,
+    "divExpr": DivisionExpression,
+    "modExpr": ModulusExpression,
+    "boolAnd": BooleanAnd,
+    "boolOr": BooleanOr,
+    "lteExpr": LTOEExpression,
+    "gteExpr": GTOEExpression,
+    "ltExpr": LTExpression,
+    "gtExpr": GTExpression,
+    "neExpr": NotEqualExpression,
+    "eExpr": EqualExpression,
+}
+
+# General Node fallback
+
+
+class GeneralNode(Node):
+    """General node (fallback)."""
+
+    def __init__(self, value, children=[]):
+        self.value = value
         self.children = children
+
+    def print(self, level=0):
+        # if len(self.children) == 0:
+        #    printPrefix(level)
+        #    print(self.value)
+        # else:
+        for child in self.children:
+            child.print(level)
+
+
+# Terminal Nodes
 
 
 class TypeSpecifier(Node):
@@ -81,19 +194,6 @@ class TypeSpecifier(Node):
     def print(self, level=0):
         printPrefix(level)
         print(f"{self.__class__.__name__}: {self.value}")
-
-
-class ReturnStatement(Node):
-    """Return statement node."""
-
-    def __init__(self, *children):
-        self.children = children
-
-    def print(self, level=0):
-        printPrefix(level)
-        print(f"{self.__class__.__name__}")
-        for child in self.children[0]:
-            child.print(level + 1)
 
 
 class ConstNum(Node):
@@ -118,17 +218,4 @@ class Identifier(Node):
         print(f"{self.__class__.__name__}: {self.value}")
 
 
-class GeneralNode(Node):
-    """General node (fallback)."""
-
-    def __init__(self, value, children=[]):
-        self.value = value
-        self.children = children
-
-    def print(self, level=0):
-        # if len(self.children) == 0:
-        #    printPrefix(level)
-        #    print(self.value)
-        # else:
-        for child in self.children:
-            child.print(level)
+terminals = {"typeSpecifier": TypeSpecifier, "ID": Identifier, "constNum": ConstNum}

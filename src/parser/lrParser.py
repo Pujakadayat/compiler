@@ -59,11 +59,11 @@ class LRParser:
         self.buildActionGoto()
 
         # Save this for testing!
-        # if debug:
-        #     self.printRules()
-        #     self.printItemSets()
-        #     self.printTransitions()
-        #     self.printTable()
+        if debug:
+            self.printRules()
+            self.printItemSets()
+            self.printTransitions()
+            self.printTable()
 
     def parseGrammar(self, grammarText):
         """
@@ -128,8 +128,6 @@ class LRParser:
         This involves expanding out rules from the grammar.
         """
 
-        if debug:
-            logging.debug("Closing out itemset %s", setNum)
         # newSet is just the itemset we are currently interested in
         newSet = self.itemSets[setNum]
         done = False
@@ -247,8 +245,6 @@ class LRParser:
                         break
                 # if itemSets i and j are identical delete itemSet i (the itemSet that came later)
                 if same:
-                    if debug:
-                        logging.debug("Replacing itemset %s with itemset %s", i, j)
                     del self.itemSets[i]
                     # self.setNum is now the lowest available set number
                     self.updateSetNum()
@@ -466,41 +462,41 @@ class LRParser:
     def printRules(self):
         """Output some information about the grammar."""
 
-        print("--- Rules ---")
+        logging.debug("--- Rules ---")
         for k, v in self.rules.items():
-            print(k, ": ", v)
-        print("--- NonTerminals ---")
+            logging.debug("%s: %s", k, v)
+        logging.debug("--- NonTerminals ---")
         for nt in self.nonTerminals:
-            print(nt)
-        print("--- Terminals ---")
+            logging.debug(nt)
+        logging.debug("--- Terminals ---")
         for t in self.terminals:
-            print(t)
+            logging.debug(t)
 
     def printItemSets(self):
         """Print a list of all the item sets."""
 
-        print("--- Items ---")
+        logging.debug("--- Items ---")
         for itemSetNum, itemSet in self.itemSets.items():
-            print("Item Set %i: " % (itemSetNum))
+            logging.debug("Item Set %s: ", itemSetNum)
             for item in itemSet:
-                print("\t", item)
+                logging.debug("\t%s", item)
 
     def printTransitions(self):
         """Print a list of all the transitions."""
 
-        print("--- Transitions ---")
+        logging.debug("--- Transitions ---")
         for k, v in self.transitions.items():
-            print(k, v)
+            logging.debug("%s %s", k, v)
 
     def printTable(self):
         """Print a list of all the action and goto entries."""
 
-        print("--- Actions ---")
+        logging.debug("--- Actions ---")
         for k, v in self.actions.items():
-            print(k, v)
-        print("--- Goto ---")
+            logging.debug("%s %s", k, v)
+        logging.debug("--- Goto ---")
         for k, v in self.goto.items():
-            print(k, v)
+            logging.debug("%s %s", k, v)
 
     def print(self):
         """Print the parse tree."""

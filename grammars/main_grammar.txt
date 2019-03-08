@@ -30,20 +30,34 @@ forStatement -> for ( assignment expression ; ID ++ ) { statementList }
 
 expression -> a
 
-# Binary operations
-a -> b && a | b
-b -> c || b | c
+# Boolean operations
+a -> boolAnd | boolOr | c
 
-# Not working, overlap with e != d rule?
+boolAnd -> c && a
+boolOr -> c || a
+
+# Not working, overlap with notEqualExpr -> e != d rule?
 #c -> ! c | d
 c -> d
 
 # Comparisons
-d -> e <= d | e >= d | e < d | e > d | e != d | e == d | e
+d -> lteExpr | gteExpr | ltExpr | gtExpr | neExpr | eExpr | e
+lteExpr -> e <= d
+gteExpr -> e >= d
+ltExpr -> e < d
+gtExpr -> e > d
+neExpr -> e != d
+eExpr -> e == d
 
 # Multiplication and addition
-e -> f + e | f - e | f
-f -> g * f | g / f | g % f | g
+e -> addExpr | subExpr | f
+addExpr -> f + e
+subExpr -> f - e
+
+f -> multExpr | divExpr | modExpr | g
+multExpr -> g * f
+divExpr -> g / f
+modExpr -> g % f
 
 # Immutables
 g -> var
