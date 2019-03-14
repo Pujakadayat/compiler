@@ -76,20 +76,76 @@ class SymbolTable:
         print(self.table)
         print("")
 
+def flattenTree(root, reducer, seen=False):
+    """
+    Collapse recursive rules to have a single parent.
+    The grammar rule to collapse should be specified in reducer.
+    i.e. DeclarationList or StatementList.
+    """
 
-def buildSymbolTable(parseTree):
+    if isinstance(root, reducer):
+        if not seen:
+            seen = True
+
+            if len(root.children) == 1:
+                return root
+            else:
+                root.children = [root.children[1], flattenTree(root.children[0], reducer, seen)]
+                return root
+
+        if len(root.children) == 1:
+            # This is a DecList that only has a Dec child, no recurse
+            return root.children[0]
+        else:
+            # Save the sibling
+            dec = root.children[1]
+
+            # Recurse on the DecList
+            children = flattenTree(root.children[0], reducer, seen)
+
+            return [dec, children]
+
+    # Current node is not a DecList,
+    # we just want to descend the parse tree
+    if isinstance(root, list):
+        for item in root:
+            flattenTree(item, reducer, seen)
+
+    if hasattr(root, "children"):
+        children = []
+        for item in root.children:
+            children.append(flattenTree(item, reducer, seen))
+        root.children = children
+        return root
+
+
+    return item
+
+
+def buildSymbolTable(pt):
     """Given the parse tree, build a symbol table."""
 
-    st = SymbolTable()
+    parseTree = pt.copy()
 
-    # TODO: flatten the symbol table
-    # building the symbol table will not work until that happens
-    visitChildren(parseTree[0], st)
+    print("------")
 
-    st.endScope()
+    tmp = flattenTree(parseTree, reducer=grammar.DeclarationList)
+    print(tmp)      # program
+    print(tmp.children) # [decList]
+    print(tmp.children[0].children) # [dec, [dec, dec]]
 
-    st.print()
-    return st
+    print("------")
+
+    # st = SymbolTable()
+
+    # # TODO: flatten the symbol table
+    # # building the symbol table will not work until that happens
+    # visitChildren(parseTree[0], st)
+
+    # st.endScope()
+
+    # st.print()
+    # return st
 
 
 def visitChildren(node, st, level=0):
