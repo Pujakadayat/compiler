@@ -150,22 +150,21 @@ def flattenTree(root, reducer, seen=False):
 def buildSymbolTable(parseTree):
     """Given the parse tree, build a symbol table."""
 
+    # NOTE: declarations are returned in reverse order than which
+    # they appear in the token list / source code.
+    # Potential problem? Not sure.
     flattenTree(parseTree, reducer=grammar.DeclarationList)
     flattenTree(parseTree, reducer=grammar.StatementList)
 
-    # st = SymbolTable()
-    # visitChildren(parseTree[0], st)
+    st = SymbolTable()
+    visitChildren(parseTree[0], st)
 
-    # st.endScope()
-
-    # st.print()
-    # return st
+    st.print()
+    return st
 
 
 def visitChildren(node, st, level=0):
     """Visit each node of the parse tree."""
-
-    print(f"Visiting node: {node} at level {level}")
 
     if hasattr(node, "children"):
         updateSymbolTable(node, st, level)
@@ -183,6 +182,5 @@ def updateSymbolTable(node, st, level=0):
         if st.level == level:
             st.endScope()
         st.startScope(node.name, level)
-        print(f"starting scope with level {level}")
     elif isinstance(node, grammar.VariableDeclaration):
         st.declareVariable(node.type, node.name)
