@@ -1,7 +1,7 @@
-FILE=samples/multiple_functions.c
+FILE=samples/multiple_statements.c
 
 main:
-	python3 -m src.main $(FILE)
+	python3 -m src.main -p $(FILE)
 
 force:
 	python3 -m src.main -p -f $(FILE)

@@ -76,6 +76,7 @@ class SymbolTable:
         print(self.table)
         print("")
 
+
 def flattenTree(root, reducer, seen=False):
     """
     Collapse recursive rules to have a single parent.
@@ -134,31 +135,25 @@ def flattenTree(root, reducer, seen=False):
         children = []
         for item in root.children:
             children.append(flattenTree(item, reducer, seen))
+
+        if isinstance(children[0], list):
+            children = children[0]
+
         root.children = children
         return root
 
+    # Not a reducer node, not a list, not a "complex" node
+    # Just return it to be appended as a child
+    return root
 
-    return item
 
-
-def buildSymbolTable(pt):
+def buildSymbolTable(parseTree):
     """Given the parse tree, build a symbol table."""
 
-    parseTree = pt.copy()
-
-    print("------")
-
-    tmp = flattenTree(parseTree, reducer=grammar.DeclarationList)
-    print(tmp)      # program
-    print(tmp.children) # [decList]
-    print(tmp.children[0].children) # [dec, [dec, dec]]
-
-    print("------")
+    flattenTree(parseTree, reducer=grammar.DeclarationList)
+    flattenTree(parseTree, reducer=grammar.StatementList)
 
     # st = SymbolTable()
-
-    # # TODO: flatten the symbol table
-    # # building the symbol table will not work until that happens
     # visitChildren(parseTree[0], st)
 
     # st.endScope()
