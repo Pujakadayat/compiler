@@ -90,7 +90,16 @@ def flattenTree(root, reducer, seen=False):
             if len(root.children) == 1:
                 return root
             else:
-                root.children = [root.children[1], flattenTree(root.children[0], reducer, seen)]
+                c = flattenTree(root.children[0], reducer, seen)
+
+                root.children = [root.children[1]]
+
+                if isinstance(c, list):
+                    for i in c:
+                        root.children.append(i)
+                else:
+                    root.children.append(c)
+
                 return root
 
         if len(root.children) == 1:
@@ -103,7 +112,15 @@ def flattenTree(root, reducer, seen=False):
             # Recurse on the DecList
             children = flattenTree(root.children[0], reducer, seen)
 
-            return [dec, children]
+            c = [dec]
+
+            if isinstance(children, list):
+                for i in children:
+                    c.append(i)
+            else:
+                c.append(children)
+
+            return c
 
     # Current node is not a DecList,
     # we just want to descend the parse tree
@@ -111,6 +128,8 @@ def flattenTree(root, reducer, seen=False):
         for item in root:
             flattenTree(item, reducer, seen)
 
+    # Current node is not a DecList,
+    # but we will need to update it's children reference
     if hasattr(root, "children"):
         children = []
         for item in root.children:
