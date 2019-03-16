@@ -1,7 +1,7 @@
 FILE=samples/expression.c
 
 main:
-	python3 -m src.main -p -t $(FILE)
+	python3 -m src.main -p -t -v $(FILE)
 
 force:
 	python3 -m src.main -p -t -f $(FILE)

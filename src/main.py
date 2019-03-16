@@ -56,7 +56,7 @@ class Compiler:
         isAccepted = parser.parse(self.tokens)
 
         # Print the parse tree
-        if "-p" in self.flags:
+        if "-p" in self.flags and isAccepted:
             print("✨ Parse Tree:")
             parser.print()
 
