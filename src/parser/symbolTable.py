@@ -69,12 +69,18 @@ class SymbolTable:
         # Not found in any scope, return False
         return None
 
-    def print(self):
+    def print(self, node=None, level=0):
         """Pretty print the symbol table."""
 
-        print("⚭ Symbol Table: ")
-        print(self.table)
-        print("")
+        if not node:
+            node = self.table
+
+        grammar.printPrefix(level)
+        print(f"{node['name']}: {node['variables']}")
+
+        for key in node:
+            if key not in ["name", "variables", ".."]:
+                self.print(node[key], level + 1)
 
 
 def flattenTree(root, reducer, seen=False):
@@ -159,7 +165,9 @@ def buildSymbolTable(parseTree):
     st = SymbolTable()
     visitChildren(parseTree[0], st)
 
+    print("")
     st.print()
+    print("")
     return st
 
 
