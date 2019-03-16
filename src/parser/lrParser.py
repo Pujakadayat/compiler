@@ -10,7 +10,6 @@ import os
 import json
 import src.parser.grammar as grammar
 from src.util import readFile
-from src.parser.symbolTable import buildSymbolTable
 
 debug = True
 
@@ -443,7 +442,6 @@ class LRParser:
         if debug:
             logging.debug(output)
 
-        buildSymbolTable(self.parseTree)
         return done
 
     def updateSetNum(self):

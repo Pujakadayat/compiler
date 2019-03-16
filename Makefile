@@ -1,10 +1,10 @@
-FILE=samples/multiple_statements.c
+FILE=samples/expression.c
 
 main:
-	python3 -m src.main -p $(FILE)
+	python3 -m src.main -p -t $(FILE)
 
 force:
-	python3 -m src.main -p -f $(FILE)
+	python3 -m src.main -p -t -f $(FILE)
 
 test:
 	python3 -m tests.testing -v

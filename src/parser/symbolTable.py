@@ -106,6 +106,8 @@ def flattenTree(root, reducer, seen=False):
             else:
                 root.children.append(c)
 
+            root.children.reverse()
+
             return root
 
         if len(root.children) == 1:
@@ -164,9 +166,6 @@ def buildSymbolTable(parseTree):
     st = SymbolTable()
     visitChildren(parseTree[0], st)
 
-    print("")
-    st.print()
-    print("")
     return st
 
 
