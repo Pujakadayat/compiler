@@ -32,7 +32,7 @@ def printPrefix(level):
 class Node:
     """General parse tree node class"""
 
-    def __init__(self, *children):
+    def __init__(self, children):
         self.children = children
 
     def __str__(self):
@@ -49,7 +49,7 @@ class Node:
         printPrefix(level)
         print(self.__class__.__name__)
 
-        for child in self.children[0]:
+        for child in self.children:
             child.print(level + 1)
 
 
@@ -69,10 +69,10 @@ class Declaration(Node):
 
 
 class FunctionDeclaration(Declaration):
-    def __init__(self, *children):
+    def __init__(self, children):
         self.children = children
-        self.type = children[0][0].value
-        self.name = children[0][1].value
+        self.type = children[0]
+        self.name = children[1]
 
 
 class StatementList(Node):
@@ -88,10 +88,10 @@ class ReturnStatement(Statement):
 
 
 class VariableDeclaration(Declaration):
-    def __init__(self, *children):
+    def __init__(self, children):
         self.children = children
-        self.type = children[0][0].value
-        self.name = children[0][1].value
+        self.type = children[0].value
+        self.name = children[1].value
 
 
 # Assignments

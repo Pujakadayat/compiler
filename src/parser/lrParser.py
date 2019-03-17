@@ -7,12 +7,14 @@ Parses the list of tokens using the action and goto tables.
 
 import logging
 import os
+import sys
 import json
 import src.parser.grammar as grammar
 from src.util import readFile
 from src.parser.symbolTable import buildSymbolTable
 
 debug = True
+printDebug = False
 
 
 class LRParser:
@@ -28,6 +30,7 @@ class LRParser:
         self.setNum = 0
         self.terminals = []
         self.nonTerminals = []
+        self.first = {}
 
         # Action and goto tables
         self.actions = {}
@@ -45,26 +48,55 @@ class LRParser:
         # close Itemsets and create new sets until no more
         i = 0
         while i <= max(self.itemSets.keys()):
+            if debug:
+                logging.debug("i: %i", i)
+            print(i)
+            #print("before iter:", len(self.itemSets.keys()))
             if self.hasItemSet(i):
                 # close out itemset i
                 self.closure(i)
                 # change nonterminal followers to terminals in itemset i
-                self.cleanItemSet(i)
+                #self.cleanItemSet(i)
+                #self.printItemSet(i)
                 # create any new itemsets from itemset i
                 self.createItemSets(i)
                 # search through itemsets and remove any copies
                 self.cleanItemSets()
+            #print("after iter:", len(self.itemSets.keys()))
             i = i + 1
 
         # build tables
         self.buildActionGoto()
 
-        # Save this for testing!
         if debug:
             self.printRules()
             self.printItemSets()
             self.printTransitions()
             self.printTable()
+
+        # Save this for testing!
+        if printDebug:
+            print("--- Items ---")
+            #for itemSetNum, itemSet in sort(self.itemSets.items()):
+            i = 0
+            while i <= max(self.itemSets.keys()):
+                if self.hasItemSet(i):
+                    print("Item Set %s: "%(i))
+                    for item in self.itemSets[i]:
+                        print("\t%s"%(item))
+                i += 1
+
+            print("--- Transitions ---")
+            for k, v in self.transitions.items():
+                print("%s %s"%(k, v))
+
+            print("--- Actions ---")
+            for k, v in self.actions.items():
+                print("%s %s"%(k, v))
+            print("--- Goto ---")
+            for k, v in self.goto.items():
+                print("%s %s"%(k, v))
+
 
     def parseGrammar(self, grammarText):
         """
@@ -123,6 +155,51 @@ class LRParser:
                     if token not in self.nonTerminals and token not in self.terminals:
                         self.terminals.append(token)
 
+        for nonTerm in self.nonTerminals:
+            self.first[nonTerm] = []
+            for rule in self.rules[nonTerm]:
+                self.first[nonTerm].append(rule[0])
+            nonTerms = True
+            # loop until no more nonTerminal following tokens found in self.first[nonTerm]
+            while nonTerms:
+                nonTerms = False
+                for itemNum in range(len(self.first[nonTerm])):
+                    # if self.first[nonTerm][term] is a nonTerm then expand the nonTerm into terminal
+                    if self.first[nonTerm][itemNum] in self.nonTerminals:
+                        nonTerms = True
+                        # for each rule the nonTerminal token expands into:
+                        for ruleNum in range(len(self.rules[self.first[nonTerm][itemNum]])):
+                            newItem = self.rules[self.first[nonTerm][itemNum]][ruleNum]
+                            # check to see if new item is new to the set
+                            isNew = True
+                            for tempItem in self.first[nonTerm]:
+                                if newItem[0] == tempItem:
+                                    isNew = False
+                            # if it is, add it to the itemSet
+                            if isNew:
+                                self.first[nonTerm].append(newItem[0])
+                        # delete the old nonTerminal
+                        del self.first[nonTerm][itemNum]
+                        break
+            for rules in self.rules.values():
+                for rule in rules:
+                    for i in range(len(rule)):
+                        if rule[i] == nonTerm:
+                            if i + 1 < len(rule):
+                                isNew = True
+                                for tempItem in self.first[nonTerm]:
+                                    if rule[i+1] == tempItem:
+                                        isNew = False
+                                # if it is, add it to the itemSet
+                                if isNew and rule[i+1] not in self.nonTerminals:
+                                    self.first[nonTerm].append(rule[i+1])
+
+        print("\nFIRST")
+        for k in self.first.keys():
+            print(k)
+            for v in self.first[k]:
+                print('\t', v)
+
     def closure(self, setNum):
         """
         Close out an item set.
@@ -150,11 +227,11 @@ class LRParser:
                     following = b[0]
                 # if a is a nonTerminal, expand rule
                 if a in self.rules.keys():
-                    new = True
                     # for each rule for nonTerminal a:
                     for rule in self.rules[a]:
                         # make a new item for nonTerminal a rule
                         rhs = " ".join(rule)
+
                         newItem = Item(a, rhs, 0, following)
                         # check if item already exists in the itemSet
                         isNew = True
@@ -165,6 +242,21 @@ class LRParser:
                         if isNew:
                             newSet.append(newItem)
                             new = True
+                        
+                        """
+                        for follower in self.first[a]:
+                            newItem = Item(a, rhs, 0, follower)
+                            # check if item already exists in the itemSet
+                            isNew = True
+                            for tempItem in newSet:
+                                if newItem.isSame(tempItem):
+                                    isNew = False
+                            # if item is new then add it to set
+                            if isNew:
+                                newSet.append(newItem)
+                                new = True
+                        """
+
                 # if no new items found we are done
                 if not new:
                     done = True
@@ -195,7 +287,11 @@ class LRParser:
                         # if it is, add it to the itemSet
                         if isNew:
                             self.itemSets[setNum].append(newItem)
+                            if debug:
+                                logging.debug("added %s", self.itemSets[setNum][itemNum])
                     # delete the old rule with the nonTerminal following token
+                    if debug:
+                        logging.debug("deleted %s", self.itemSets[setNum][itemNum])
                     del self.itemSets[setNum][itemNum]
                     break
 
@@ -219,8 +315,10 @@ class LRParser:
                 # if delimeter does not exist in transition[setNum],
                 # add it and increment self.setNum by 1
                 if delimeter not in self.transitions[setNum].keys():
-                    self.setNum = self.setNum + 1
+                    self.setNum += 1
                     self.transitions[setNum][delimeter] = self.setNum
+                    if debug:
+                        logging.debug("making set: %i", self.setNum)
                 # if the new itemSet does not exist in self.itemSets add it
                 if self.transitions[setNum][delimeter] not in self.itemSets.keys():
                     self.itemSets[self.transitions[setNum][delimeter]] = []
@@ -234,27 +332,32 @@ class LRParser:
         # So compare every set with the sets that came before it
         for i in range(self.setNum, -1, -1):
             for j in range(i - 1, -1, -1):
-                # compare set i with set j
-                same = True
-                for itemSet in self.itemSets[j]:
-                    inThere = False
-                    for itemSetCheck in self.itemSets[i]:
-                        if itemSetCheck.isSame(itemSet):
-                            inThere = True
-                    if not inThere:
-                        same = False
+                if self.hasItemSet(i) and self.hasItemSet(j):
+                    # compare set i with set j
+                    same = True
+                    for itemSet in self.itemSets[j]:
+                        inThere = False
+                        for itemSetCheck in self.itemSets[i]:
+                            if itemSetCheck.isSame(itemSet):
+                                inThere = True
+                        if not inThere:
+                            same = False
+                            break
+                    # if itemSets i and j are identical delete itemSet i (the itemSet that came later)
+                    if same:
+                        if debug:
+                            logging.debug("Replacing itemset %s with itemset %s", i, j)
+                        if printDebug:
+                            print("Replacing itemset %s with itemset %s"%(i, j))
+                        del self.itemSets[i]
+                        # self.setNum is now the lowest available set number
+                        #self.updateSetNum()
+                        # update the transition table so any reference of itemSet i becomes itemSet j
+                        for k1, v1 in self.transitions.items():
+                            for k2, _ in v1.items():
+                                if self.transitions[k1][k2] == i:
+                                    self.transitions[k1][k2] = j
                         break
-                # if itemSets i and j are identical delete itemSet i (the itemSet that came later)
-                if same:
-                    del self.itemSets[i]
-                    # self.setNum is now the lowest available set number
-                    self.updateSetNum()
-                    # update the transition table so any reference of itemSet i becomes itemSet j
-                    for k1, v1 in self.transitions.items():
-                        for k2, _ in v1.items():
-                            if self.transitions[k1][k2] == i:
-                                self.transitions[k1][k2] = j
-                    break
 
     def buildActionGoto(self):
         """Build the action and goto tables form the item sets and the transition table."""
@@ -269,9 +372,15 @@ class LRParser:
                                 if item.rhs == " ".join(r):
                                     if itemSetNum not in self.actions.keys():
                                         self.actions[itemSetNum] = {}
+                                    #exist = False
+                                    #if item.following in self.actions[itemSetNum].keys():
+                                    #    print("before r", itemSetNum, self.actions[itemSetNum])
+                                    #    exist = True
                                     self.actions[itemSetNum][
                                         item.following
                                     ] = "r %s %i" % (k, i)
+                                    #if exist:
+                                    #    print("after  r", itemSetNum, self.actions[itemSetNum])
 
         # go through transition table to get:
         for k1, v1 in self.transitions.items():
@@ -285,7 +394,13 @@ class LRParser:
                 else:
                     if k1 not in self.actions.keys():
                         self.actions[k1] = {}
+                    #exist = False
+                    #if k2 in self.actions[k1].keys():
+                    #    print("before s", k1, self.actions[k1])
+                    #    exist = True
                     self.actions[k1][k2] = "s %i" % (v2)
+                    #if exist:
+                    #    print("after  s", k1, self.actions[k1])
 
     def loadParseTables(self, grammarFile, force=False):
         """
@@ -362,6 +477,16 @@ class LRParser:
                     stack,
                     output,
                 )
+            if printDebug:
+                print(
+                    "---\nState: %s\nStates: %s\nlookahead Token: %s\nstack: %s\noutput: %s\n"%(
+                    state,
+                    states,
+                    token,
+                    stack,
+                    output
+                    )
+                )
 
             try:
                 # Check if we have an entry in our action table for the lookahead token
@@ -388,6 +513,8 @@ class LRParser:
                         match = True
                         for i, r in enumerate(rule):
                             if r != stack[len(stack) - len(rule) + i]:
+                                print('------\n', r, " != ", stack[len(stack) - len(rule) + i])
+                                print(result[1], result[2])
                                 match = False
 
                         # If one of the grammar rules matched...
@@ -422,6 +549,8 @@ class LRParser:
                             print(
                                 "ERROR: Tried to reduce a rule with invalid tokens on stack."
                             )
+                            print(stack)
+                            print(rule)
                             print("\nExiting Program")
                             return False
                 else:
@@ -433,8 +562,15 @@ class LRParser:
 
             except KeyError:
                 print(f"ERROR: No entry in the action table for [{state}][{token}]")
+                print(stack)
                 print("Exiting Program")
                 return False
+            """except AttributeError:
+                print(f"ERROR: Shit")
+                print(stack)
+                print("Exiting Program")
+                return False
+            """
 
             # Check if we have reached the accepting state
             if len(stack) == 1 and stack[0] == "ACC":
@@ -472,6 +608,13 @@ class LRParser:
         for t in self.terminals:
             logging.debug(t)
 
+    def printItemSet(self, setNum):
+        """Print a list of all the item sets."""
+
+        print("Item Set %i: " % (setNum))
+        for item in self.itemSets[setNum]:
+            print("\t", item)
+
     def printItemSets(self):
         """Print a list of all the item sets."""
 
@@ -502,7 +645,8 @@ class LRParser:
         """Print the parse tree."""
 
         for node in self.parseTree:
-            node.print(0)
+            if node:
+                node.print(0)
 
 
 class Item:

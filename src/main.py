@@ -53,7 +53,7 @@ class Compiler:
         isAccepted = parser.parse(self.tokens)
 
         # Print the parse tree
-        if "-p" in self.flags:
+        if isAccepted and "-p" in self.flags:
             parser.print()
 
         return isAccepted
