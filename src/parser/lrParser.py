@@ -31,6 +31,8 @@ class LRParser:
         self.terminals = []
         self.nonTerminals = []
         self.first = {}
+        self.newSet = False
+        self.unique = 0
 
         # Action and goto tables
         self.actions = {}
@@ -50,18 +52,19 @@ class LRParser:
         while i <= max(self.itemSets.keys()):
             if debug:
                 logging.debug("i: %i", i)
-            print(i)
             #print("before iter:", len(self.itemSets.keys()))
             if self.hasItemSet(i):
                 # close out itemset i
                 self.closure(i)
                 # change nonterminal followers to terminals in itemset i
-                #self.cleanItemSet(i)
+                self.cleanItemSet(i)
                 #self.printItemSet(i)
                 # create any new itemsets from itemset i
                 self.createItemSets(i)
                 # search through itemsets and remove any copies
-                self.cleanItemSets()
+                if self.newSet:
+                    self.cleanItemSets()
+                    self.newSet = False
             #print("after iter:", len(self.itemSets.keys()))
             i = i + 1
 
@@ -194,11 +197,14 @@ class LRParser:
                                 if isNew and rule[i+1] not in self.nonTerminals:
                                     self.first[nonTerm].append(rule[i+1])
 
+        # used to confirm the the first dict is built correctly
+        """
         print("\nFIRST")
         for k in self.first.keys():
             print(k)
             for v in self.first[k]:
                 print('\t', v)
+        """
 
     def closure(self, setNum):
         """
@@ -317,6 +323,7 @@ class LRParser:
                 if delimeter not in self.transitions[setNum].keys():
                     self.setNum += 1
                     self.transitions[setNum][delimeter] = self.setNum
+                    self.newSet = True
                     if debug:
                         logging.debug("making set: %i", self.setNum)
                 # if the new itemSet does not exist in self.itemSets add it
@@ -330,7 +337,7 @@ class LRParser:
 
         # compare the itemSets backwards
         # So compare every set with the sets that came before it
-        for i in range(self.setNum, -1, -1):
+        for i in range(self.setNum, self.unique, -1):
             for j in range(i - 1, -1, -1):
                 if self.hasItemSet(i) and self.hasItemSet(j):
                     # compare set i with set j
@@ -358,6 +365,7 @@ class LRParser:
                                 if self.transitions[k1][k2] == i:
                                     self.transitions[k1][k2] = j
                         break
+        self.unique = self.setNum
 
     def buildActionGoto(self):
         """Build the action and goto tables form the item sets and the transition table."""
