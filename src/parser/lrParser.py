@@ -10,7 +10,6 @@ import os
 import json
 import src.parser.grammar as grammar
 from src.util import readFile
-from src.parser.symbolTable import buildSymbolTable
 
 debug = True
 
@@ -58,13 +57,6 @@ class LRParser:
 
         # build tables
         self.buildActionGoto()
-
-        # Save this for testing!
-        if debug:
-            self.printRules()
-            self.printItemSets()
-            self.printTransitions()
-            self.printTable()
 
     def parseGrammar(self, grammarText):
         """
@@ -339,6 +331,13 @@ class LRParser:
         using our actino and goto tables.
         """
 
+        # Save this for testing!
+        if debug:
+            self.printRules()
+            # self.printItemSets()
+            self.printTransitions()
+            self.printTable()
+
         lookahead = 0
         done = False
         states = [0]
@@ -355,12 +354,14 @@ class LRParser:
 
             if debug:
                 logging.debug(
-                    "---\nState: %s\nStates: %s\nlookahead Token: %s\nstack: %s\noutput: %s\n",
+                    "---\nState: %s\nStates: %s\nlookahead Token: %s\
+                        \nstack: %s\noutput: %s\nActions: %s\n",
                     state,
                     states,
                     token,
                     stack,
                     output,
+                    self.actions[state],
                 )
 
             try:
@@ -443,7 +444,6 @@ class LRParser:
         if debug:
             logging.debug(output)
 
-        buildSymbolTable(self.parseTree)
         return done
 
     def updateSetNum(self):

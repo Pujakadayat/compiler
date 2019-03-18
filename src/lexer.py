@@ -188,11 +188,12 @@ def parseQuote(line, start, delimeter):
     while True:
         if i >= len(line):
             raise ValueError("Missing terminating quote!")
-        elif line[i] == delimeter:
+
+        if line[i] == delimeter:
             return Token(tokens.string, "".join(characters)), i + 1
-        else:
-            characters.append(line[i])
-            i += 1
+
+        characters.append(line[i])
+        i += 1
 
 
 def parseInclude(text, start):

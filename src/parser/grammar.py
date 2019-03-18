@@ -33,7 +33,10 @@ class Node:
     """General parse tree node class"""
 
     def __init__(self, *children):
-        self.children = children
+        if len(children) == 1:
+            self.children = children[0]
+        else:
+            self.children = children
 
     def __str__(self):
         return self.__class__.__name__
@@ -49,8 +52,12 @@ class Node:
         printPrefix(level)
         print(self.__class__.__name__)
 
-        for child in self.children[0]:
-            child.print(level + 1)
+        if isinstance(self.children, list):
+            for child in self.children:
+                child.print(level + 1)
+        else:
+            for child in self.children[0]:
+                child.print(level + 1)
 
 
 # Parse Tree Node Classes

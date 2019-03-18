@@ -35,7 +35,6 @@ class SymbolTable:
     def declareVariable(self, t, name):
         """Declare a new variable in the current scope."""
 
-        # TODO: add type to variable declaration
         # Append the variable to the current scope's variable list
         self.current["variables"].append((t, name))
 
@@ -69,33 +68,109 @@ class SymbolTable:
         # Not found in any scope, return False
         return None
 
-    def print(self):
+    def print(self, node=None, level=0):
         """Pretty print the symbol table."""
 
-        print("⚭ Symbol Table: ")
-        print(self.table)
-        print("")
+        if not node:
+            node = self.table
+
+        grammar.printPrefix(level)
+        print(f"{node['name']}: {node['variables']}")
+
+        for key in node:
+            if key not in ["name", "variables", ".."]:
+                self.print(node[key], level + 1)
+
+
+def flattenTree(root, reducer, seen=False):
+    """
+    Collapse recursive rules to have a single parent.
+    The grammar rule to collapse should be specified in reducer.
+    i.e. DeclarationList or StatementList.
+    """
+
+    if isinstance(root, reducer):
+        if not seen:
+            seen = True
+
+            if len(root.children) == 1:
+                return root
+
+            c = flattenTree(root.children[0], reducer, seen)
+
+            root.children = [root.children[1]]
+
+            if isinstance(c, list):
+                for i in c:
+                    root.children.append(i)
+            else:
+                root.children.append(c)
+
+            root.children.reverse()
+
+            return root
+
+        if len(root.children) == 1:
+            # This is a DecList that only has a Dec child, no recurse
+            return root.children[0]
+
+        # Save the sibling
+        dec = root.children[1]
+
+        # Recurse on the DecList
+        children = flattenTree(root.children[0], reducer, seen)
+
+        c = [dec]
+
+        if isinstance(children, list):
+            for i in children:
+                c.append(i)
+        else:
+            c.append(children)
+
+        return c
+
+    # Current node is not a DecList,
+    # we just want to descend the parse tree
+    if isinstance(root, list):
+        for item in root:
+            flattenTree(item, reducer, seen)
+
+    # Current node is not a DecList,
+    # but we will need to update it's children reference
+    if hasattr(root, "children"):
+        children = []
+        for item in root.children:
+            children.append(flattenTree(item, reducer, seen))
+
+        if isinstance(children[0], list):
+            children = children[0]
+
+        root.children = children
+        return root
+
+    # Not a reducer node, not a list, not a "complex" node
+    # Just return it to be appended as a child
+    return root
 
 
 def buildSymbolTable(parseTree):
     """Given the parse tree, build a symbol table."""
 
-    st = SymbolTable()
+    # NOTE: declarations are returned in reverse order than which
+    # they appear in the token list / source code.
+    # Potential problem? Not sure.
+    flattenTree(parseTree, reducer=grammar.DeclarationList)
+    flattenTree(parseTree, reducer=grammar.StatementList)
 
-    # TODO: flatten the symbol table
-    # building the symbol table will not work until that happens
+    st = SymbolTable()
     visitChildren(parseTree[0], st)
 
-    st.endScope()
-
-    st.print()
     return st
 
 
 def visitChildren(node, st, level=0):
     """Visit each node of the parse tree."""
-
-    print(f"Visiting node: {node} at level {level}")
 
     if hasattr(node, "children"):
         updateSymbolTable(node, st, level)
@@ -113,6 +188,5 @@ def updateSymbolTable(node, st, level=0):
         if st.level == level:
             st.endScope()
         st.startScope(node.name, level)
-        print(f"starting scope with level {level}")
     elif isinstance(node, grammar.VariableDeclaration):
         st.declareVariable(node.type, node.name)

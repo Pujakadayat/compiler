@@ -6,9 +6,11 @@ import sys
 import getopt
 import logging
 import os
+from src.util import readFile
+
 from src.parser.lrParser import LRParser
 import src.lexer as lexer
-from src.util import readFile
+from src.parser.symbolTable import buildSymbolTable
 
 
 class Compiler:
@@ -18,6 +20,8 @@ class Compiler:
         self.filename = filename
         self.flags = flags
         self.tokens = []
+        self.parseTree = None
+        self.symbolTable = None
 
         # Setup default grammar if none provided
         if grammar:
@@ -38,7 +42,6 @@ class Compiler:
 
         # Cannot parse until we tokenize
         if not self.tokens:
-            print("SLDKFJSDLKFJ")
             self.tokens = self.tokenize()
 
         parser = LRParser()
@@ -53,8 +56,12 @@ class Compiler:
         isAccepted = parser.parse(self.tokens)
 
         # Print the parse tree
-        if "-p" in self.flags:
+        if "-p" in self.flags and isAccepted:
+            print("✨ Parse Tree:")
             parser.print()
+
+        # Save the parse tree
+        self.parseTree = parser.parseTree
 
         return isAccepted
 
@@ -72,6 +79,23 @@ class Compiler:
 
         return self.tokens
 
+    def buildSymbolTable(self):
+        """Build a symbol table from a parse tree."""
+
+        # Cannot build symbol table without parse tree
+        if not self.parseTree:
+            return None
+
+        # Save the symbol table
+        self.symbolTable = buildSymbolTable(self.parseTree)
+
+        # Print the symbol table if flag is present
+        if "-t" in self.flags:
+            print("✨ Symbol Table:")
+            self.symbolTable.print()
+
+        return self.symbolTable
+
 
 def printUsage():
     """Print a usage statement."""
@@ -88,6 +112,9 @@ def printUsage():
     print("     -p, --parser                Convert tokens into a parse tree.")
     print("     -g, --grammar <filename>    Provide a grammar file to parse with.")
     print(
+        "     -t, --table                 Generate a symbol table from the parse tree."
+    )
+    print(
         "     -f, --force                 Force the Parser to generate a new parse table."
     )
     print()
@@ -99,8 +126,8 @@ def parseArguments():
     try:
         opts, args = getopt.getopt(
             sys.argv[1:],
-            "hvspfg:",
-            ["help", "verbose", "scanner", "parser", "force", "grammar="],
+            "hvsptfg:",
+            ["help", "verbose", "scanner", "parser", "tree", "force", "grammar="],
         )
     except getopt.GetoptError as err:
         print(err)
@@ -120,6 +147,8 @@ def parseArguments():
             flags.append("-p")
         elif opt in ("-v", "--verbose"):
             flags.append("-v")
+        elif opt in ("-t", "--tree"):
+            flags.append("-t")
         elif opt in ("-f", "--force"):
             flags.append("-f")
         elif opt in ("-g", "--grammar"):
@@ -169,6 +198,12 @@ def main():
         print("✔ Parsed the tokens successfully.")
     else:
         print("✖ Failed to parse the tokens.")
+
+    symbolTable = compiler.buildSymbolTable()
+    if symbolTable:
+        print("✔ Built a symbol table.")
+    else:
+        print("✖ Cannot build a symbol table without a parse tree.")
 
 
 if __name__ == "__main__":

@@ -14,4 +14,6 @@ disable=invalid-name,
 				super-init-not-called,
 				too-few-public-methods,
 				too-many-return-statements,
-				too-many-nested-blocks
+				too-many-nested-blocks,
+				too-many-locals,
+				too-many-instance-attributes
