@@ -20,13 +20,6 @@ def tokenize(code):
     isComment = False
 
     lines = code.splitlines()
-    # TODO: handle multiple escaped lines using \
-    # if line ends with \ combine current line with next line
-    # lines = combineEscapedLines(lines)
-    for line in lines:
-        if '\\' in line:
-
-
 
     for line in lines:
         try:
@@ -188,12 +181,11 @@ def parseQuote(line, start, delimeter):
     while True:
         if i >= len(line):
             raise ValueError("Missing terminating quote!")
-
-        if line[i] == delimeter:
+        elif line[i] == delimeter:
             return Token(tokens.string, "".join(characters)), i + 1
-
-        characters.append(line[i])
-        i += 1
+        else:
+            characters.append(line[i])
+            i += 1
 
 
 def parseInclude(text, start):
@@ -268,3 +260,23 @@ def matchNumber(text):
         return text
 
     return None
+"""
+def splitLines():
+    """Parse multiple escaped lines and combine into single line"""
+    # TODO: recognize '\\' within file
+    # TODO: currently reads file & splits line
+    file = open('example.c', 'r')
+    # process each line separately
+    lines = file.readlines()
+    file.close()
+
+    # look for pattern within file
+    i = 1
+    for line in lines:
+        if '\\' in lines:
+            line.append(lines[i] + lines[i + 1])
+            print(lines)
+        else:
+            print('didnt quite work')
+            print(lines)
+"""
