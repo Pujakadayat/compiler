@@ -21,7 +21,12 @@ def tokenize(code):
 
     lines = code.splitlines()
     # TODO: handle multiple escaped lines using \
+    # if line ends with \ combine current line with next line
     # lines = combineEscapedLines(lines)
+    for line in lines:
+        if '\\' in line:
+
+
 
     for line in lines:
         try:
