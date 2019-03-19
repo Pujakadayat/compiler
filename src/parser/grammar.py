@@ -4,6 +4,45 @@
 Classes that represent grammar rules for our Parse Tree.
 """
 
+count = {"none": 0}
+
+
+def unique(prefix=None):
+    """Generate a new, unique variable name with optional prefix."""
+
+    if prefix:
+        if prefix not in count:
+            count[prefix] = 0
+        count[prefix] += 1
+        return f"{prefix}{count[prefix]}"
+
+    count['none'] += 1
+    return f"r{count['none']}"
+
+
+def generateIr(parseTree):
+    """Generate an intermediate representation from a parse tree."""
+
+    ir = []
+    visitChildren(parseTree, ir)
+    return ir
+
+
+def visitChildren(node, ir):
+    """Visit each node of the parse tree."""
+
+    if hasattr(node, "children"):
+        for child in node.children:
+            visitChildren(child, ir)
+    elif isinstance(node, list):
+        for child in node:
+            visitChildren(child, ir)
+
+    if not isinstance(node, list):
+        i = node.ir()
+        if i is not None:
+            ir.append(i)
+
 
 def parseToken(desc, content="", children=[]):
     """Parse a token into the relevant class."""
@@ -59,6 +98,9 @@ class Node:
             for child in self.children[0]:
                 child.print(level + 1)
 
+    def ir(self):
+        return None
+
 
 # Parse Tree Node Classes
 
@@ -78,8 +120,11 @@ class Declaration(Node):
 class FunctionDeclaration(Declaration):
     def __init__(self, *children):
         self.children = children
-        self.type = children[0][0].value
+        # self.type = children[0][0].value
         self.name = children[0][1].value
+
+    def ir(self):
+        return f".{self.name} ()"
 
 
 class StatementList(Node):
@@ -91,7 +136,9 @@ class Statement(Node):
 
 
 class ReturnStatement(Statement):
-    pass
+    def ir(self):
+        # Return the most recently assigned variable
+        return f"ret r{count['none']}"
 
 
 class VariableDeclaration(Declaration):
@@ -99,6 +146,9 @@ class VariableDeclaration(Declaration):
         self.children = children
         self.type = children[0][0].value
         self.name = children[0][1].value
+
+    def ir(self):
+        return f"{self.name} = null"
 
 
 # Assignments
@@ -109,15 +159,28 @@ class VariableAssignment(Declaration):
 
 
 class IncrementAssignment(VariableAssignment):
-    pass
+    def __init__(self, *children):
+        self.children = children
+        self.name = children[0][0].value
+
+    def ir(self):
+        return f"{self.name} = {self.name} + 1"
 
 
 class DecrementAssignment(VariableAssignment):
-    pass
+    def __init__(self, *children):
+            self.children = children
+            self.name = children[0][0].value
+
+    def ir(self):
+        return f"{self.name} = {self.name} - 1"
 
 
 class PlusEqualAssignment(VariableAssignment):
-    pass
+    def __init__(self, *children):
+        self.children = children
+
+        print(children[0])
 
 
 class MinusEqualAssignment(VariableAssignment):
@@ -132,7 +195,9 @@ class Expression(Node):
 
 
 class AdditionExpression(Expression):
-    pass
+    def ir(self):
+        var = unique()
+        return f"{var} = {self.children[0].ir()} + {self.children[1].ir()}"
 
 
 class SubtractionExpression(Expression):
@@ -285,6 +350,9 @@ class ConstNum(Node):
     def print(self, level=0):
         printPrefix(level)
         print(f"{self.__class__.__name__}: {self.value}")
+
+    def ir(self):
+        return self.value
 
 
 class Identifier(Node):

@@ -157,14 +157,8 @@ def flattenTree(root, reducer, seen=False):
 def buildSymbolTable(parseTree):
     """Given the parse tree, build a symbol table."""
 
-    # NOTE: declarations are returned in reverse order than which
-    # they appear in the token list / source code.
-    # Potential problem? Not sure.
-    flattenTree(parseTree, reducer=grammar.DeclarationList)
-    flattenTree(parseTree, reducer=grammar.StatementList)
-
     st = SymbolTable()
-    visitChildren(parseTree[0], st)
+    visitChildren(parseTree, st)
 
     return st
 

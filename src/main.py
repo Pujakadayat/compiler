@@ -10,7 +10,8 @@ from src.util import readFile
 
 from src.parser.lrParser import LRParser
 import src.lexer as lexer
-from src.parser.symbolTable import buildSymbolTable
+from src.parser.grammar import DeclarationList, StatementList, generateIr
+from src.parser.symbolTable import buildSymbolTable, flattenTree
 
 
 class Compiler:
@@ -22,6 +23,7 @@ class Compiler:
         self.tokens = []
         self.parseTree = None
         self.symbolTable = None
+        self.ir = None
 
         # Setup default grammar if none provided
         if grammar:
@@ -55,13 +57,17 @@ class Compiler:
         # Parse the tokens
         isAccepted = parser.parse(self.tokens)
 
+        # Save the parse tree
+        self.parseTree = parser.parseTree
+
+        # Flatten the parse tree
+        flattenTree(self.parseTree, reducer=DeclarationList)
+        flattenTree(self.parseTree, reducer=StatementList)
+
         # Print the parse tree
         if "-p" in self.flags and isAccepted:
             print("✨ Parse Tree:")
             parser.print()
-
-        # Save the parse tree
-        self.parseTree = parser.parseTree
 
         return isAccepted
 
@@ -96,6 +102,26 @@ class Compiler:
 
         return self.symbolTable
 
+    def generateIr(self):
+        """Convert a parse tree to the first intermediate representation."""
+
+        # Cannot convert to IR without parse tree
+        if not self.parseTree:
+            return None
+
+        # Cannot convert to IR without symbol table
+        if not self.symbolTable:
+            return None
+
+        self.ir = generateIr(self.parseTree)
+
+        if "-i" in self.flags:
+            print("✨ Intermediate Representation:")
+            for i in self.ir:
+                print(i)
+
+        return self.ir
+
 
 def printUsage():
     """Print a usage statement."""
@@ -126,7 +152,7 @@ def parseArguments():
     try:
         opts, args = getopt.getopt(
             sys.argv[1:],
-            "hvsptfg:",
+            "hvsptfig:",
             ["help", "verbose", "scanner", "parser", "tree", "force", "grammar="],
         )
     except getopt.GetoptError as err:
@@ -151,6 +177,8 @@ def parseArguments():
             flags.append("-t")
         elif opt in ("-f", "--force"):
             flags.append("-f")
+        elif opt in ("-i"):
+            flags.append("-i")
         elif opt in ("-g", "--grammar"):
             grammar = arg
 
@@ -204,6 +232,12 @@ def main():
         print("✔ Built a symbol table.")
     else:
         print("✖ Cannot build a symbol table without a parse tree.")
+
+    ir = compiler.generateIr()
+    if ir:
+        print("✔ Generated an IR from the parse tree..")
+    else:
+        print("✖ Failed to generate the IR.")
 
 
 if __name__ == "__main__":
