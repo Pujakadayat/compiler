@@ -265,7 +265,7 @@ def splitLines():
     """Parse multiple escaped lines and combine into single line"""
     # TODO: recognize '\\' within file
     # TODO: currently reads file & splits line
-    file = open('example.c', 'r')
+    file = open('/samples/linebreak.c', 'r')
     # process each line separately
     lines = file.readlines()
     file.close()
@@ -273,10 +273,11 @@ def splitLines():
     # look for pattern within file
     i = 1
     for line in lines:
-        if '\\' in lines:
-            line.append(lines[i] + lines[i + 1])
+        # works for new line entry
+        if '\n' in line:
+            lines[i] + lines[i + 1]
             print(lines)
         else:
-            print('didnt quite work')
+            print('There is not a new line found.\n')
             print(lines)
 """
