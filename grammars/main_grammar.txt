@@ -66,4 +66,4 @@ modExpr -> g % f
 
 # Immutables
 g -> var
-var -> constNum | ID
+var -> constNum | ID | str

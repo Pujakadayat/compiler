@@ -16,7 +16,7 @@ def unique(prefix=None):
         count[prefix] += 1
         return f"{prefix}{count[prefix]}"
 
-    count['none'] += 1
+    count["none"] += 1
     return f"r{count['none']}"
 
 
@@ -169,8 +169,8 @@ class IncrementAssignment(VariableAssignment):
 
 class DecrementAssignment(VariableAssignment):
     def __init__(self, *children):
-            self.children = children
-            self.name = children[0][0].value
+        self.children = children
+        self.name = children[0][0].value
 
     def ir(self):
         return f"{self.name} = {self.name} - 1"
@@ -377,6 +377,17 @@ class Filename(Node):
         print(f"{self.__class__.__name__}: {self.value}")
 
 
+class String(Node):
+    """String node."""
+
+    def __init__(self, value):
+        self.value = value
+
+    def print(self, level=0):
+        printPrefix(level)
+        print(f"{self.__class__.__name__}: {self.value}")
+
+
 # A dictionary of all the terminal parse tree nodes we recognize
 # Key: string of the grammar rule
 # Value: the associated class
@@ -386,4 +397,5 @@ terminals = {
     "ID": Identifier,
     "constNum": ConstNum,
     "fileName": Filename,
+    "str": String,
 }

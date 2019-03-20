@@ -177,7 +177,7 @@ def parseArguments():
             flags.append("-t")
         elif opt in ("-f", "--force"):
             flags.append("-f")
-        elif opt in ("-i"):
+        elif opt == "-i":
             flags.append("-i")
         elif opt in ("-g", "--grammar"):
             grammar = arg
@@ -235,7 +235,7 @@ def main():
 
     ir = compiler.generateIr()
     if ir:
-        print("✔ Generated an IR from the parse tree..")
+        print("✔ Generated an IR from the parse tree.")
     else:
         print("✖ Failed to generate the IR.")
 

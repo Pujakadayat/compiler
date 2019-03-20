@@ -20,6 +20,7 @@ def tokenize(code):
     isComment = False
 
     lines = code.splitlines()
+    lines = combineEscapedLines(lines)
 
     for line in lines:
         try:
@@ -260,24 +261,22 @@ def matchNumber(text):
         return text
 
     return None
-"""
-def splitLines():
-    """Parse multiple escaped lines and combine into single line"""
-    # TODO: recognize '\\' within file
-    # TODO: currently reads file & splits line
-    file = open('/samples/linebreak.c', 'r')
-    # process each line separately
-    lines = file.readlines()
-    file.close()
 
-    # look for pattern within file
-    i = 1
-    for line in lines:
-        # works for new line entry
-        if '\n' in line:
-            lines[i] + lines[i + 1]
-            print(lines)
-        else:
-            print('There is not a new line found.\n')
-            print(lines)
-"""
+
+def combineEscapedLines(lines):
+    """Combine escaped lines into a singular line."""
+
+    # Replace any \t characters
+    lines = [line.replace("\t", "") for line in lines]
+
+    # Copy the lines because we are changing while we iterate
+    combinedLines = lines.copy()
+
+    for i, line in enumerate(lines):
+        if str.endswith(line, "\\"):
+            escapedLine = combinedLines[i][:-1]
+            nextLine = combinedLines[i + 1]
+            combinedLines[i] = escapedLine + nextLine
+            del combinedLines[i + 1]
+
+    return combinedLines

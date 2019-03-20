@@ -1,7 +1,7 @@
-FILE=samples/expression.c
+FILE=samples/linebreak.c
 
 main:
-	python3 -m src.main -p -t -v $(FILE)
+	python3 -m src.main -p -t $(FILE)
 
 force:
 	python3 -m src.main -p -t -f $(FILE)
