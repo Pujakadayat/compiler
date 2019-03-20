@@ -263,7 +263,7 @@ class LineBreakTestCase(unittest.TestCase):
     def test_lexer(self):
         """Test the result of the lexer."""
 
-        result = "[int, main, (, ), {, char, *, string, =, ', Line 1, \, Line, 2, ', ;, return, string, ;, }, $]"
+        result = "[int, main, (, ), {, char, string, =, Line 1 Line 2, ;, return, string, ;, }, $]"
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
