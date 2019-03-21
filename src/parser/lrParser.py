@@ -9,7 +9,7 @@ import logging
 import os
 import json
 import src.parser.grammar as grammar
-from src.util import readFile
+from src.util import readFile, messages, CompilerMessage
 
 debug = True
 
@@ -293,12 +293,16 @@ class LRParser:
 
         if os.path.isfile(tableFile) and force is False:
             # Load a saved tables file
-            print("✔ Reading saved tables...")
+            messages.add(CompilerMessage("Reading saved tables.", "message"))
 
             self.loadTables(readFile(tableFile))
         else:
             # Parse the tokens using an LR(1) table
-            print("∞ Generating new tables. Consider removing the -f flag.")
+            messages.add(
+                CompilerMessage(
+                    "Generating new tables. Consider removing the -f flag.", "warning"
+                )
+            )
 
             self.buildTables()
             self.saveTables(tableFile)

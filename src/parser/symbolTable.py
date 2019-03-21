@@ -3,6 +3,7 @@ Contains the Symbol Table class.
 """
 
 import src.parser.grammar as grammar
+from src.util import CompilerMessage
 
 
 class SymbolTable:
@@ -17,6 +18,9 @@ class SymbolTable:
 
     def startScope(self, name, level):
         """Initialize a new scope."""
+
+        if name in self.current:
+            raise CompilerMessage(f"Scope with name {name} already exists.")
 
         # Add the new scope dict
         self.current[name] = {}
