@@ -52,7 +52,6 @@ class Compiler:
 
         if self.tokens is None:
             raise CompilerMessage("Failed to tokenize the file.")
-            return None
 
         messages.add(CompilerMessage("Tokenized the file successfully.", "message"))
 

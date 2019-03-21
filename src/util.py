@@ -14,16 +14,22 @@ def readFile(filename):
 
 
 class MessageCollector:
-    def __init__(self):
-        self.errors = []
+    """A collector class that hold compiler messages."""
 
-    def add(self, error):
-        self.errors.append(error)
-        print(error)
+    def __init__(self):
+        self.messages = []
+
+    def add(self, message):
+        """Add a new message to the collector, and print it."""
+
+        self.messages.append(message)
+        print(message)
 
     def print(self):
-        for error in self.errors:
-            print(error)
+        """Print all the messages in the collector."""
+
+        for message in self.messages:
+            print(message)
 
 
 class CompilerMessage(Exception):

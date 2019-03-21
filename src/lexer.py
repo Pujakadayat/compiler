@@ -4,10 +4,10 @@ Converts a file into a list of identified tokens.
 """
 
 import re
-import sys
 import logging
 import src.tokens as tokens
 from src.tokens import Token, symbols, keywords
+from src.util import CompilerMessage
 
 debug = False
 
@@ -23,13 +23,9 @@ def tokenize(code):
     lines = combineEscapedLines(lines)
 
     for line in lines:
-        try:
-            # Get the tokens of the current line and add to the big list
-            lineTokens, isComment = tokenizeLine(line, isComment)
-            codeTokens.extend(lineTokens)
-        except ValueError as err:
-            logging.error(err)
-            sys.exit(2)
+        # Get the tokens of the current line and add to the big list
+        lineTokens, isComment = tokenizeLine(line, isComment)
+        codeTokens.extend(lineTokens)
 
     codeTokens.append(Token(tokens.eof, "$"))
 
@@ -218,9 +214,8 @@ def tokenizeChunk(text):
             logging.debug("Found identifier: %s", text)
         return Token(tokens.identifier, text)
 
-    # TODO: collect compiler errors like this
     # If it is none of the above, we do not recognize this type
-    raise ValueError(f"Unrecognized token: '{text}'")
+    raise CompilerMessage(f"Unrecogized token: '{text}'")
 
 
 def matchSymbol(line, start):
