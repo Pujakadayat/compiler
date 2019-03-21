@@ -1,7 +1,7 @@
-FILE=samples/linebreak.c
+FILE=samples/ir.c
 
 main:
-	python3 -m src.main -p -t $(FILE)
+	python3 -m src.main -p -t -i $(FILE)
 
 force:
 	python3 -m src.main -p -t -f $(FILE)

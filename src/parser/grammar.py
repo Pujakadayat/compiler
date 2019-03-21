@@ -31,6 +31,9 @@ def generateIr(parseTree):
 def visitChildren(node, ir):
     """Visit each node of the parse tree."""
 
+    if isinstance(node, FunctionDeclaration):
+        ir.append(node.ir())
+
     if hasattr(node, "children"):
         for child in node.children:
             visitChildren(child, ir)
@@ -39,9 +42,10 @@ def visitChildren(node, ir):
             visitChildren(child, ir)
 
     if not isinstance(node, list):
-        i = node.ir()
-        if i is not None:
-            ir.append(i)
+        if not isinstance(node, FunctionDeclaration):
+            i = node.ir()
+            if i is not None and not i.isdigit():
+                ir.append(i)
 
 
 def parseToken(desc, content="", children=[]):
@@ -98,7 +102,7 @@ class Node:
             for child in self.children[0]:
                 child.print(level + 1)
 
-    def ir(self):
+    def ir(self, intermediate=False):
         return None
 
 
@@ -155,7 +159,13 @@ class VariableDeclaration(Declaration):
 
 
 class VariableAssignment(Declaration):
-    pass
+    def __init__(self, *children):
+        self.children = children
+        self.name = children[0][0].value
+
+    def ir(self):
+        recent = count["none"]
+        return f"{self.name} = r{recent}"
 
 
 class IncrementAssignment(VariableAssignment):
@@ -197,23 +207,31 @@ class Expression(Node):
 class AdditionExpression(Expression):
     def ir(self):
         var = unique()
-        return f"{var} = {self.children[0].ir()} + {self.children[1].ir()}"
+        return f"{var} = {self.children[0].ir(True)} + {self.children[1].ir(True)}"
 
 
 class SubtractionExpression(Expression):
-    pass
+    def ir(self):
+        var = unique()
+        return f"{var} = {self.children[0].ir(True)} - {self.children[1].ir(True)}"
 
 
 class MultiplicationExpression(Expression):
-    pass
+    def ir(self):
+        var = unique()
+        return f"{var} = {self.children[0].ir(True)} * {self.children[1].ir(True)}"
 
 
 class DivisionExpression(Expression):
-    pass
+    def ir(self):
+        var = unique()
+        return f"{var} = {self.children[0].ir(True)} / {self.children[1].ir(True)}"
 
 
 class ModulusExpression(Expression):
-    pass
+    def ir(self):
+        var = unique()
+        return f"{var} = {self.children[0].ir(True)} % {self.children[1].ir(True)}"
 
 
 class BooleanAnd(Expression):
@@ -351,8 +369,11 @@ class ConstNum(Node):
         printPrefix(level)
         print(f"{self.__class__.__name__}: {self.value}")
 
-    def ir(self):
-        return self.value
+    def ir(self, intermediate=False):
+        if intermediate:
+            return self.value
+
+        return None
 
 
 class Identifier(Node):
@@ -365,6 +386,12 @@ class Identifier(Node):
         printPrefix(level)
         print(f"{self.__class__.__name__}: {self.value}")
 
+    def ir(self, intermediate=False):
+        if intermediate:
+            return self.value
+
+        return None
+
 
 class Filename(Node):
     """Filename node."""
@@ -376,6 +403,12 @@ class Filename(Node):
         printPrefix(level)
         print(f"{self.__class__.__name__}: {self.value}")
 
+    def ir(self, intermediate=False):
+        if intermediate:
+            return self.value
+
+        return None
+
 
 class String(Node):
     """String node."""
@@ -386,6 +419,12 @@ class String(Node):
     def print(self, level=0):
         printPrefix(level)
         print(f"{self.__class__.__name__}: {self.value}")
+
+    def ir(self, intermediate=False):
+        if intermediate:
+            return self.value
+
+        return None
 
 
 # A dictionary of all the terminal parse tree nodes we recognize
