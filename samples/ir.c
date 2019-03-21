@@ -1,13 +1,8 @@
 int main() {
-	int x;
-	int y;
+	int i;
+	int j;
 
-	x = 2 + 2;
-	y = x - 2;
+	j = i / 12 * 15;
 
-	return 5 * 2;
-}
-
-int foo() {
-	return 2 / 2;
+	return i;
 }

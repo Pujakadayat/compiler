@@ -182,6 +182,7 @@ def visitChildren(node, st, level=0):
 def updateSymbolTable(node, st, level=0):
     """Check if symbol table should be updated based on node."""
 
+    # TODO: if isinstance(node, grammar.Identifier) check if ID exists within the ST
     if isinstance(node, grammar.FunctionDeclaration):
         if st.level == level:
             st.endScope()
