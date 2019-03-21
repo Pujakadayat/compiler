@@ -16,7 +16,7 @@ format:
 	black ./
 
 lint:
-	pylint src/
+	pylint src/ tests/
 
 clean:
 	rm -f *.o logs/* tables/*

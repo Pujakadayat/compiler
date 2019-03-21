@@ -78,11 +78,8 @@ class Compiler:
         else:
             parser.loadParseTables(self.grammar, force=False)
 
-        # Parse the tokens
-        isAccepted = parser.parse(self.tokens)
-
-        # Save the parse tree
-        self.parseTree = parser.parseTree
+        # Parse the tokens and save the parse tree
+        self.parseTree = parser.parse(self.tokens)
 
         if self.parseTree is None:
             messages.add(CompilerMessage("Failed to parse the tokens."))
@@ -95,11 +92,11 @@ class Compiler:
         flattenTree(self.parseTree, reducer=StatementList)
 
         # Print the parse tree
-        if "-p" in self.flags and isAccepted:
+        if "-p" in self.flags:
             messages.add(CompilerMessage("Parse Tree:", "important"))
             parser.print()
 
-        return isAccepted
+        return self.parseTree
 
     def buildSymbolTable(self):
         """Build a symbol table from a parse tree."""

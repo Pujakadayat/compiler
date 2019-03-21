@@ -1,3 +1,5 @@
+# pylint: disable=line-too-long
+
 """
 Each test case has an accompanying class.
 Each have methods such as: test_lexer, test_parser & test_symbolTable
@@ -11,10 +13,10 @@ class AssignmentTestCase(unittest.TestCase):
     """Test case for assignment.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls,):
         filename = "samples/assignment.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -23,8 +25,10 @@ class AssignmentTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #    def test_symbolTable(self):
@@ -37,10 +41,10 @@ class BasicMathTestCase(unittest.TestCase):
     """Test case for basic_math.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         filename = "samples/basic_math.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -49,8 +53,10 @@ class BasicMathTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #     # def test_symbolTable(self):
@@ -61,10 +67,10 @@ class ExpressionTestCase(unittest.TestCase):
     """Test case for expression.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         filename = "samples/expression.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -75,8 +81,10 @@ class ExpressionTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #     # def test_symbolTable(self):
@@ -87,10 +95,10 @@ class FloatTestCase(unittest.TestCase):
     """Test case for float.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         filename = "samples/float.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -99,8 +107,10 @@ class FloatTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #     # def test_symbolTable(self):
@@ -111,10 +121,10 @@ class ForTestCase(unittest.TestCase):
     """Test case for for.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         filename = "samples/for.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -123,8 +133,10 @@ class ForTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #     # def test_symbolTable(self):
@@ -135,10 +147,10 @@ class FunctionTestCase(unittest.TestCase):
     """Test case for function.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         filename = "samples/function.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -147,8 +159,10 @@ class FunctionTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #     # def test_symbolTable(self):
@@ -159,10 +173,10 @@ class HelloWorldTestCase(unittest.TestCase):
     """Test case for hello_world.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         filename = "samples/hello_world.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -171,8 +185,10 @@ class HelloWorldTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #     # def test_symbolTable(self):
@@ -183,10 +199,10 @@ class IfElseTestCase(unittest.TestCase):
     """Test case for if_else.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         filename = "samples/if_else.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -195,8 +211,10 @@ class IfElseTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #     # def test_symbolTable(self):
@@ -207,10 +225,10 @@ class IfTestCase(unittest.TestCase):
     """Test case for if.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         filename = "samples/if.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -219,8 +237,10 @@ class IfTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #     # def test_symbolTable(self):
@@ -231,10 +251,10 @@ class IncludeTestCase(unittest.TestCase):
     """Test case for include.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         filename = "samples/include.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -243,8 +263,10 @@ class IncludeTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #     # def test_symbolTable(self):
@@ -255,10 +277,10 @@ class LineBreakTestCase(unittest.TestCase):
     """Test case for linebreak.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         filename = "samples/linebreak.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -267,8 +289,10 @@ class LineBreakTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #     # def test_symbolTable(self):
@@ -279,10 +303,10 @@ class MathTestCase(unittest.TestCase):
     """Test case for math.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         filename = "samples/math.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -291,8 +315,10 @@ class MathTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #     # def test_symbolTable(self):
@@ -303,10 +329,10 @@ class MultiLineCommentTestCase(unittest.TestCase):
     """Test case for multi_line_comment.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         filename = "samples/multi_line_comment.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -315,8 +341,10 @@ class MultiLineCommentTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #     # def test_symbolTable(self):
@@ -327,10 +355,10 @@ class PlainTestCase(unittest.TestCase):
     """Test case for plain.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         filename = "samples/plain.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -339,8 +367,10 @@ class PlainTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #     # def test_symbolTable(self):
@@ -351,10 +381,10 @@ class SingleLineCommentTestCase(unittest.TestCase):
     """Test case for single_line_comment.c"""
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         filename = "samples/single_line_comment.c"
-        self.compiler = Compiler(filename, grammar=None, flags=None)
-        self.tokens = self.compiler.tokenize()
+        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
         """Test the result of the lexer."""
@@ -363,8 +393,10 @@ class SingleLineCommentTestCase(unittest.TestCase):
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
-        isAcceptedByParser = self.compiler.parse()
-        self.assertEqual(isAcceptedByParser, True)
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
 
 
 #     # def test_symbolTable(self):

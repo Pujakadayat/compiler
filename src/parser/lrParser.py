@@ -424,22 +424,27 @@ class LRParser:
                             if topStack in self.goto[topState].keys():
                                 states.append(self.goto[topState][topStack])
                         else:
-                            print(
-                                "ERROR: Tried to reduce a rule with invalid tokens on stack."
+                            messages.add(
+                                CompilerMessage(
+                                    "Tried to reduce a rule with invalid tokens on stack."
+                                )
                             )
-                            print("\nExiting Program")
-                            return False
+                            return None
                 else:
-                    print("ERROR: State", state, " does not have Token", token)
-                    print(self.actions[state])
-                    print(stack)
-                    print("Exiting Program")
-                    return False
+                    messages.add(
+                        CompilerMessage(f"State {state} does not have Token {token}")
+                    )
+                    messages.add(CompilerMessage(self.actions[state]))
+                    messages.add(CompilerMessage(stack))
+                    return None
 
             except KeyError:
-                print(f"ERROR: No entry in the action table for [{state}][{token}]")
-                print("Exiting Program")
-                return False
+                messages.add(
+                    CompilerMessage(
+                        f"No entry in the action table for [{state}][{token}]"
+                    )
+                )
+                return None
 
             # Check if we have reached the accepting state
             if len(stack) == 1 and stack[0] == "ACC":
@@ -448,7 +453,7 @@ class LRParser:
         if debug:
             logging.debug(output)
 
-        return done
+        return self.parseTree
 
     def updateSetNum(self):
         """Update the number of item sets that we have generated."""
