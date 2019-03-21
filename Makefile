@@ -1,7 +1,7 @@
-FILE=samples/ir.c
+FILE=samples/duplicate_var.c
 
 main:
-	python3 -m src.main -p -i $(FILE)
+	python3 -m src.main -p -t -i $(FILE)
 
 force:
 	python3 -m src.main -p -t -f $(FILE)

@@ -240,10 +240,14 @@ def main():
     filename, grammar, flags = parseArguments()
     compiler = Compiler(filename, grammar, flags)
 
-    compiler.tokenize()
-    compiler.parse()
-    compiler.buildSymbolTable()
-    compiler.generateIr()
+    try:
+        compiler.tokenize()
+        compiler.parse()
+        compiler.buildSymbolTable()
+        compiler.generateIr()
+    except CompilerMessage as err:
+        print(err)
+        sys.exit(2)
 
 
 if __name__ == "__main__":

@@ -28,7 +28,7 @@ class SymbolTable:
 
         # Initialize the dict with a .. and variables entry
         self.current[name][".."] = self.current
-        self.current[name]["variables"] = []
+        self.current[name]["variables"] = {}
 
         # Update the current pointer
         self.current = self.current[name]
@@ -39,8 +39,11 @@ class SymbolTable:
     def declareVariable(self, t, name):
         """Declare a new variable in the current scope."""
 
-        # Append the variable to the current scope's variable list
-        self.current["variables"].append((t, name))
+        if name in self.current["variables"]:
+            raise CompilerMessage(f"Variable with name {name} already exists.")
+
+        # Add the variable to the current scope
+        self.current["variables"][name] = t
 
     def endScope(self):
         """Finalize a scope and return it's parent scope."""
@@ -170,8 +173,10 @@ def buildSymbolTable(parseTree):
 def visitChildren(node, st, level=0):
     """Visit each node of the parse tree."""
 
+    # Update the symbol table for every visited node
+    updateSymbolTable(node, st, level)
+
     if hasattr(node, "children"):
-        updateSymbolTable(node, st, level)
         for child in node.children:
             visitChildren(child, st, level + 1)
     elif isinstance(node, list):
@@ -182,10 +187,14 @@ def visitChildren(node, st, level=0):
 def updateSymbolTable(node, st, level=0):
     """Check if symbol table should be updated based on node."""
 
-    # TODO: if isinstance(node, grammar.Identifier) check if ID exists within the ST
     if isinstance(node, grammar.FunctionDeclaration):
         if st.level == level:
             st.endScope()
         st.startScope(node.name, level)
     elif isinstance(node, grammar.VariableDeclaration):
         st.declareVariable(node.type, node.name)
+    elif isinstance(node, grammar.Identifier):
+        if node.value in st.current["variables"]:
+            raise CompilerMessage(
+                f"The variable {node.value} already exists in this scope."
+            )
