@@ -257,6 +257,12 @@ def matchNumber(text):
 
     return None
 
+def matchFloat(text):
+    """Check if string matches a floating point number"""
+    if float(text) == True:
+        return text
+
+    return None
 
 def combineEscapedLines(lines):
     """Combine escaped lines into a singular line."""
