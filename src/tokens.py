@@ -34,14 +34,16 @@ class TokenType:
         knownType: The list to add this TokenType to (i.e. 'symbols')
     """
 
-    def __init__(self, rep="", knownType=[], description=""):
+    def __init__(self, rep="", knownType=None, description=""):
         self.rep = rep
-        knownType.append(self)
         self.description = description
 
-        # Sort the list of this TokenType
-        # NOTE: This is because we want to match longest matching tokens first.
-        knownType.sort(key=lambda t: -len(t.rep))
+        if isinstance(knownType, list):
+            knownType.append(self)
+
+            # Sort the list of this TokenType
+            # NOTE: This is because we want to match longest matching tokens first.
+            knownType.sort(key=lambda t: -len(t.rep))
 
     def __str__(self):
         return self.rep

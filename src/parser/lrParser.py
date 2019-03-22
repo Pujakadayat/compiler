@@ -10,8 +10,7 @@ import os
 import sys
 import json
 import src.parser.grammar as grammar
-from src.util import readFile
-from src.parser.symbolTable import buildSymbolTable
+from src.util import readFile, messages, CompilerMessage
 
 debug = True
 printDebug = False
@@ -90,7 +89,6 @@ class LRParser:
             print("--- Goto ---")
             for k, v in self.goto.items():
                 print("%s %s"%(k, v))
-
 
     def parseGrammar(self, grammarText):
         """
@@ -415,12 +413,16 @@ class LRParser:
 
         if os.path.isfile(tableFile) and force is False:
             # Load a saved tables file
-            print("✔ Reading saved tables...")
+            messages.add(CompilerMessage("Reading saved tables.", "message"))
 
             self.loadTables(readFile(tableFile))
         else:
             # Parse the tokens using an LR(1) table
-            print("∞ Generating new tables. Consider removing the -f flag.")
+            messages.add(
+                CompilerMessage(
+                    "Generating new tables. Consider removing the -f flag.", "warning"
+                )
+            )
 
             self.buildTables()
             self.saveTables(tableFile)
@@ -453,6 +455,13 @@ class LRParser:
         using our actino and goto tables.
         """
 
+        # Save this for testing!
+        if debug:
+            self.printRules()
+            # self.printItemSets()
+            self.printTransitions()
+            self.printTable()
+
         lookahead = 0
         done = False
         states = [0]
@@ -469,12 +478,14 @@ class LRParser:
 
             if debug:
                 logging.debug(
-                    "---\nState: %s\nStates: %s\nlookahead Token: %s\nstack: %s\noutput: %s\n",
+                    "---\nState: %s\nStates: %s\nlookahead Token: %s\
+                        \nstack: %s\noutput: %s\nActions: %s\n",
                     state,
                     states,
                     token,
                     stack,
                     output,
+                    self.actions[state],
                 )
             if printDebug:
                 print(
@@ -545,31 +556,28 @@ class LRParser:
                             if topStack in self.goto[topState].keys():
                                 states.append(self.goto[topState][topStack])
                         else:
-                            print(
-                                "ERROR: Tried to reduce a rule with invalid tokens on stack."
+                            messages.add(
+                                CompilerMessage(
+                                    "Tried to reduce a rule with invalid tokens on stack."
+                                )
                             )
-                            print(stack)
-                            print(rule)
-                            print("\nExiting Program")
-                            return False
+                            
+                            return None
                 else:
-                    print("ERROR: State", state, " does not have Token", token)
-                    print(self.actions[state])
-                    print(stack)
-                    print("Exiting Program")
-                    return False
+                    messages.add(
+                        CompilerMessage(f"State {state} does not have Token {token}")
+                    )
+                    messages.add(CompilerMessage(self.actions[state]))
+                    messages.add(CompilerMessage(stack))
+                    return None
 
             except KeyError:
-                print(f"ERROR: No entry in the action table for [{state}][{token}]")
-                print(stack)
-                print("Exiting Program")
-                return False
-            """except AttributeError:
-                print(f"ERROR: Shit")
-                print(stack)
-                print("Exiting Program")
-                return False
-            """
+                messages.add(
+                    CompilerMessage(
+                        f"No entry in the action table for [{state}][{token}]"
+                    )
+                )
+                return None
 
             # Check if we have reached the accepting state
             if len(stack) == 1 and stack[0] == "ACC":
@@ -578,8 +586,7 @@ class LRParser:
         if debug:
             logging.debug(output)
 
-        buildSymbolTable(self.parseTree)
-        return done
+        return self.parseTree
 
     def updateSetNum(self):
         """Update the number of item sets that we have generated."""

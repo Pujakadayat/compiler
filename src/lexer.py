@@ -4,10 +4,10 @@ Converts a file into a list of identified tokens.
 """
 
 import re
-import sys
 import logging
 import src.tokens as tokens
 from src.tokens import Token, symbols, keywords
+from src.util import CompilerMessage
 
 debug = False
 
@@ -20,17 +20,12 @@ def tokenize(code):
     isComment = False
 
     lines = code.splitlines()
-    # TODO: handle multiple escaped lines using \
-    # lines = combineEscapedLines(lines)
+    lines = combineEscapedLines(lines)
 
     for line in lines:
-        try:
-            # Get the tokens of the current line and add to the big list
-            lineTokens, isComment = tokenizeLine(line, isComment)
-            codeTokens.extend(lineTokens)
-        except ValueError as err:
-            logging.error(err)
-            sys.exit(2)
+        # Get the tokens of the current line and add to the big list
+        lineTokens, isComment = tokenizeLine(line, isComment)
+        codeTokens.extend(lineTokens)
 
     codeTokens.append(Token(tokens.eof, "$"))
 
@@ -219,9 +214,8 @@ def tokenizeChunk(text):
             logging.debug("Found identifier: %s", text)
         return Token(tokens.identifier, text)
 
-    # TODO: collect compiler errors like this
     # If it is none of the above, we do not recognize this type
-    raise ValueError(f"Unrecognized token: '{text}'")
+    raise CompilerMessage(f"Unrecogized token: '{text}'")
 
 
 def matchSymbol(line, start):
@@ -262,3 +256,22 @@ def matchNumber(text):
         return text
 
     return None
+
+
+def combineEscapedLines(lines):
+    """Combine escaped lines into a singular line."""
+
+    # Replace any \t characters
+    lines = [line.replace("\t", "") for line in lines]
+
+    # Copy the lines because we are changing while we iterate
+    combinedLines = lines.copy()
+
+    for i, line in enumerate(lines):
+        if str.endswith(line, "\\"):
+            escapedLine = combinedLines[i][:-1]
+            nextLine = combinedLines[i + 1]
+            combinedLines[i] = escapedLine + nextLine
+            del combinedLines[i + 1]
+
+    return combinedLines

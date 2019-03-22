@@ -4,8 +4,51 @@
 Classes that represent grammar rules for our Parse Tree.
 """
 
+count = {"none": 0}
 
-def parseToken(desc, content="", children=[]):
+
+def unique(prefix=None):
+    """Generate a new, unique variable name with optional prefix."""
+
+    if prefix:
+        if prefix not in count:
+            count[prefix] = 0
+        count[prefix] += 1
+        return f"{prefix}{count[prefix]}"
+
+    count["none"] += 1
+    return f"r{count['none']}"
+
+
+def generateIr(parseTree):
+    """Generate an intermediate representation from a parse tree."""
+
+    ir = []
+    visitChildren(parseTree, ir)
+    return ir
+
+
+def visitChildren(node, ir):
+    """Visit each node of the parse tree."""
+
+    if isinstance(node, FunctionDeclaration):
+        ir.append(node.ir())
+
+    if hasattr(node, "children"):
+        for child in node.children:
+            visitChildren(child, ir)
+    elif isinstance(node, list):
+        for child in node:
+            visitChildren(child, ir)
+
+    if not isinstance(node, list):
+        if not isinstance(node, FunctionDeclaration):
+            i = node.ir()
+            if i is not None and not i.isdigit():
+                ir.append(i)
+
+
+def parseToken(desc, content="", children=None):
     """Parse a token into the relevant class."""
 
     # Check if the node is a terminal
@@ -32,8 +75,13 @@ def printPrefix(level):
 class Node:
     """General parse tree node class"""
 
-    def __init__(self, children):
-        self.children = children
+    def __init__(self, *children):
+        self.value = None
+
+        if len(children) == 1:
+            self.children = children[0]
+        else:
+            self.children = children
 
     def __str__(self):
         return self.__class__.__name__
@@ -49,8 +97,16 @@ class Node:
         printPrefix(level)
         print(self.__class__.__name__)
 
-        for child in self.children:
-            child.print(level + 1)
+        if isinstance(self.children, list):
+            for child in self.children:
+                child.print(level + 1)
+        else:
+            for child in self.children[0]:
+                child.print(level + 1)
+
+    # pylint: disable=no-self-use
+    def ir(self):
+        return None
 
 
 # Parse Tree Node Classes
@@ -71,8 +127,11 @@ class Declaration(Node):
 class FunctionDeclaration(Declaration):
     def __init__(self, children):
         self.children = children
-        self.type = children[0]
-        self.name = children[1]
+        # self.type = children[0][0].value
+        self.name = children[0][1].value
+
+    def ir(self):
+        return f".{self.name} ()"
 
 
 class StatementList(Node):
@@ -84,7 +143,9 @@ class Statement(Node):
 
 
 class ReturnStatement(Statement):
-    pass
+    def ir(self):
+        expr = self.children[0]
+        return f"ret {expr.children[0].value}"
 
 
 class VariableDeclaration(Declaration):
@@ -93,24 +154,51 @@ class VariableDeclaration(Declaration):
         self.type = children[0].value
         self.name = children[1].value
 
+        # If this VarDec is also assigned
+        if len(self.children[0]) == 3:
+            self.expr = self.children[0][2]
+
+    def ir(self):
+        if len(self.children[0]) == 3:
+            return f"{self.name} = {self.expr.children[0].value}"
+
+        return f"{self.name} = null"
+
 
 # Assignments
 
 
 class VariableAssignment(Declaration):
-    pass
+    def __init__(self, *children):
+        self.children = children
+        self.name = children[0][0].value
+
+    def ir(self):
+        recent = count["none"]
+        return f"{self.name} = r{recent}"
 
 
 class IncrementAssignment(VariableAssignment):
-    pass
+    def __init__(self, *children):
+        self.children = children
+        self.name = children[0][0].value
+
+    def ir(self):
+        return f"{self.name} = {self.name} + 1"
 
 
 class DecrementAssignment(VariableAssignment):
-    pass
+    def __init__(self, *children):
+        self.children = children
+        self.name = children[0][0].value
+
+    def ir(self):
+        return f"{self.name} = {self.name} - 1"
 
 
 class PlusEqualAssignment(VariableAssignment):
-    pass
+    def __init__(self, *children):
+        self.children = children
 
 
 class MinusEqualAssignment(VariableAssignment):
@@ -124,24 +212,34 @@ class Expression(Node):
     pass
 
 
-class AdditionExpression(Expression):
-    pass
+class AdditionExpression(Node):
+    def ir(self):
+        self.value = unique()
+        return f"{self.value} = {self.children[0].value} + {self.children[1].value}"
 
 
-class SubtractionExpression(Expression):
-    pass
+class SubtractionExpression(Node):
+    def ir(self):
+        self.value = unique()
+        return f"{self.value} = {self.children[0].value} - {self.children[1].value}"
 
 
-class MultiplicationExpression(Expression):
-    pass
+class MultiplicationExpression(Node):
+    def ir(self):
+        self.value = unique()
+        return f"{self.value} = {self.children[0].value} * {self.children[1].value}"
 
 
-class DivisionExpression(Expression):
-    pass
+class DivisionExpression(Node):
+    def ir(self):
+        self.value = unique()
+        return f"{self.value} = {self.children[0].value} / {self.children[1].value}"
 
 
-class ModulusExpression(Expression):
-    pass
+class ModulusExpression(Node):
+    def ir(self):
+        self.value = unique()
+        return f"{self.value} = {self.children[0].value} % {self.children[1].value}"
 
 
 class BooleanAnd(Expression):
@@ -238,23 +336,6 @@ nodes = {
     "eExpr": EqualExpression,
 }
 
-# General Node fallback
-class GeneralNode(Node):
-    """General node (fallback)."""
-
-    def __init__(self, value, children=[]):
-        self.value = value
-        self.children = children
-
-    def print(self, level=0):
-        # if len(self.children) == 0:
-        #    printPrefix(level)
-        #    print(self.value)
-        # else:
-        for child in self.children:
-            child.print(level)
-
-
 # Terminal Nodes
 
 
@@ -302,6 +383,17 @@ class Filename(Node):
         print(f"{self.__class__.__name__}: {self.value}")
 
 
+class String(Node):
+    """String node."""
+
+    def __init__(self, value):
+        self.value = value
+
+    def print(self, level=0):
+        printPrefix(level)
+        print(f"{self.__class__.__name__}: {self.value}")
+
+
 # A dictionary of all the terminal parse tree nodes we recognize
 # Key: string of the grammar rule
 # Value: the associated class
@@ -311,4 +403,5 @@ terminals = {
     "ID": Identifier,
     "constNum": ConstNum,
     "fileName": Filename,
+    "str": String,
 }
