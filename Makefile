@@ -1,4 +1,4 @@
-FILE=samples/undefined_var.c
+FILE=samples/plain.c
 
 main:
 	python3 -m src.main -p -t -i $(FILE)

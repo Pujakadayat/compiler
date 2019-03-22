@@ -7,7 +7,6 @@ Parses the list of tokens using the action and goto tables.
 
 import logging
 import os
-import sys
 import json
 import src.parser.grammar as grammar
 from src.util import readFile, messages, CompilerMessage
@@ -54,7 +53,7 @@ class LRParser:
                 self.closure(i)
                 self.cleanItemSets(i)
                 self.createItemSets(i)
-            self.unique = i+1
+            self.unique = i + 1
             if self.unique == self.setNum:
                 done = True
 
@@ -70,25 +69,25 @@ class LRParser:
         # Save this for testing!
         if printDebug:
             print("--- Items ---")
-            #for itemSetNum, itemSet in sort(self.itemSets.items()):
+            # for itemSetNum, itemSet in sort(self.itemSets.items()):
             i = 0
             while i <= max(self.itemSets.keys()):
                 if self.hasItemSet(i):
-                    print("Item Set %s: "%(i))
+                    print("Item Set %s: " % (i))
                     for item in self.itemSets[i]:
-                        print("\t%s"%(item))
+                        print("\t%s" % (item))
                 i += 1
 
             print("--- Transitions ---")
             for k, v in self.transitions.items():
-                print("%s %s"%(k, v))
+                print("%s %s" % (k, v))
 
             print("--- Actions ---")
             for k, v in self.actions.items():
-                print("%s %s"%(k, v))
+                print("%s %s" % (k, v))
             print("--- Goto ---")
             for k, v in self.goto.items():
-                print("%s %s"%(k, v))
+                print("%s %s" % (k, v))
 
     def parseGrammar(self, grammarText):
         """
@@ -156,11 +155,16 @@ class LRParser:
             while nonTerms:
                 nonTerms = False
                 for itemNum in range(len(self.first[nonTerm])):
-                    # if self.first[nonTerm][term] is a nonTerm then expand the nonTerm into terminal
+                    # if self.first[nonTerm][term] is a nonTerm
+                    # then expand the nonTerm into terminal
                     if self.first[nonTerm][itemNum] in self.nonTerminals:
                         nonTerms = True
                         # for each rule the nonTerminal token expands into:
-                        for ruleNum in range(len(self.rules[self.first[nonTerm][itemNum]])):
+                        # pylint: disable=bad-continuation
+                        for ruleNum in range(
+                            len(self.rules[self.first[nonTerm][itemNum]])
+                        ):
+                            # pylint: enable=bad-continuation
                             newItem = self.rules[self.first[nonTerm][itemNum]][ruleNum]
                             # check to see if new item is new to the set
                             isNew = True
@@ -175,25 +179,24 @@ class LRParser:
                         break
             for rules in self.rules.values():
                 for rule in rules:
-                    for i in range(len(rule)):
+                    for i, _ in enumerate(rule):
                         if rule[i] == nonTerm:
                             if i + 1 < len(rule):
                                 isNew = True
                                 for tempItem in self.first[nonTerm]:
-                                    if rule[i+1] == tempItem:
+                                    if rule[i + 1] == tempItem:
                                         isNew = False
                                 # if it is, add it to the itemSet
-                                if isNew and rule[i+1] not in self.nonTerminals:
-                                    self.first[nonTerm].append(rule[i+1])
+                                if isNew and rule[i + 1] not in self.nonTerminals:
+                                    self.first[nonTerm].append(rule[i + 1])
 
         # used to confirm the the first dict is built correctly
-        """
-        print("\nFIRST")
-        for k in self.first.keys():
-            print(k)
-            for v in self.first[k]:
-                print('\t', v)
-        """
+
+        # print("\nFIRST")
+        # for k in self.first.keys():
+        #     print(k)
+        #     for v in self.first[k]:
+        #         print('\t', v)
 
     def closure(self, setNum):
         """
@@ -237,7 +240,7 @@ class LRParser:
                         if isNew:
                             newSet.append(newItem)
                             new = True
-                        
+
                         for follower in self.first[a]:
                             newItem = Item(a, rhs, 0, follower)
                             # check if item already exists in the itemSet
@@ -282,7 +285,9 @@ class LRParser:
                         if isNew:
                             self.itemSets[setNum].append(newItem)
                             if debug:
-                                logging.debug("added %s", self.itemSets[setNum][itemNum])
+                                logging.debug(
+                                    "added %s", self.itemSets[setNum][itemNum]
+                                )
                     # delete the old rule with the nonTerminal following token
                     if debug:
                         logging.debug("deleted %s", self.itemSets[setNum][itemNum])
@@ -326,7 +331,7 @@ class LRParser:
         # compare the itemSets backwards
         # So compare every set with the sets that came before it
 
-        if self.hasItemSet(setNum): 
+        if self.hasItemSet(setNum):
             for j in range(setNum - 1, -1, -1):
                 if self.hasItemSet(j):
                     # compare set i with set j
@@ -339,16 +344,20 @@ class LRParser:
                         if not inThere:
                             same = False
                             break
-                    # if itemSets i and j are identical delete itemSet i (the itemSet that came later)
+                    # if itemSets i and j are identical,
+                    # delete itemSet i (the itemSet that came later)
                     if same:
                         if debug:
-                            logging.debug("Replacing itemset %s with itemset %s", setNum, j)
+                            logging.debug(
+                                "Replacing itemset %s with itemset %s", setNum, j
+                            )
                         if printDebug:
-                            print("Replacing itemset %s with itemset %s"%(setNum, j))
+                            print("Replacing itemset %s with itemset %s" % (setNum, j))
                         del self.itemSets[setNum]
                         # self.setNum is now the lowest available set number
-                        #self.updateSetNum()
-                        # update the transition table so any reference of itemSet i becomes itemSet j
+                        # self.updateSetNum()
+                        # update the transition table so any
+                        # reference of itemSet i becomes itemSet j
                         for k1, v1 in self.transitions.items():
                             for k2, _ in v1.items():
                                 if self.transitions[k1][k2] == setNum:
@@ -368,14 +377,14 @@ class LRParser:
                                 if item.rhs == " ".join(r):
                                     if itemSetNum not in self.actions.keys():
                                         self.actions[itemSetNum] = {}
-                                    #exist = False
-                                    #if item.following in self.actions[itemSetNum].keys():
+                                    # exist = False
+                                    # if item.following in self.actions[itemSetNum].keys():
                                     #    print("before r", itemSetNum, self.actions[itemSetNum])
                                     #    exist = True
                                     self.actions[itemSetNum][
                                         item.following
                                     ] = "r %s %i" % (k, i)
-                                    #if exist:
+                                    # if exist:
                                     #    print("after  r", itemSetNum, self.actions[itemSetNum])
 
         # go through transition table to get:
@@ -390,12 +399,12 @@ class LRParser:
                 else:
                     if k1 not in self.actions.keys():
                         self.actions[k1] = {}
-                    #exist = False
-                    #if k2 in self.actions[k1].keys():
+                    # exist = False
+                    # if k2 in self.actions[k1].keys():
                     #    print("before s", k1, self.actions[k1])
                     #    exist = True
                     self.actions[k1][k2] = "s %i" % (v2)
-                    #if exist:
+                    # if exist:
                     #    print("after  s", k1, self.actions[k1])
         print("len:", len(self.actions), len(self.goto))
 
@@ -489,13 +498,8 @@ class LRParser:
                 )
             if printDebug:
                 print(
-                    "---\nState: %s\nStates: %s\nlookahead Token: %s\nstack: %s\noutput: %s\n"%(
-                    state,
-                    states,
-                    token,
-                    stack,
-                    output
-                    )
+                    "---\nState: %s\nStates: %s\nlookahead Token: %s\nstack: %s\noutput: %s\n"
+                    % (state, states, token, stack, output)
                 )
 
             try:
@@ -523,7 +527,12 @@ class LRParser:
                         match = True
                         for i, r in enumerate(rule):
                             if r != stack[len(stack) - len(rule) + i]:
-                                print('------\n', r, " != ", stack[len(stack) - len(rule) + i])
+                                print(
+                                    "------\n",
+                                    r,
+                                    " != ",
+                                    stack[len(stack) - len(rule) + i],
+                                )
                                 print(result[1], result[2])
                                 match = False
 
@@ -561,7 +570,7 @@ class LRParser:
                                     "Tried to reduce a rule with invalid tokens on stack."
                                 )
                             )
-                            
+
                             return None
                 else:
                     messages.add(
