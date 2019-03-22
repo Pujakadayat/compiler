@@ -211,6 +211,9 @@ class MinusEqualAssignment(Node):
 class Expression(Node):
     pass
 
+class NestedExpression(Node):
+    pass
+
 
 class AdditionExpression(Node):
     def ir(self):
@@ -321,6 +324,7 @@ nodes = {
     "ifStatement": IfStatement,
     "elseStatement": ElseStatement,
     "expression": Expression,
+    "nestedExpr": NestedExpression,
     "addExpr": AdditionExpression,
     "subExpr": SubtractionExpression,
     "multExpr": MultiplicationExpression,

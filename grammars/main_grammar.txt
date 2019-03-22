@@ -41,9 +41,8 @@ a -> boolAnd | boolOr | c
 boolAnd -> c && a
 boolOr -> c || a
 
-# Not working, overlap with notEqualExpr -> e != d rule?
-#c -> ! c | d
-c -> d
+c -> boolNot | d
+boolNot -> ! d
 
 # Comparisons
 d -> lteExpr | gteExpr | ltExpr | gtExpr | neExpr | eExpr | e
@@ -65,4 +64,5 @@ divExpr -> g / f
 modExpr -> g % f
 
 # Immutables
-g -> constNum | ID | str | ( expression )
+g -> constNum | ID | str | nestedExpr
+nestedExpr -> ( expression )
