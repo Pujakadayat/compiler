@@ -65,5 +65,5 @@ divExpr -> g / f
 modExpr -> g % f
 
 # Immutables
-g -> var
-var -> constNum | ID | str
+g -> constNum | ID | ( expression )
+#g -> constNum | ID

@@ -125,7 +125,7 @@ class Declaration(Node):
 
 
 class FunctionDeclaration(Declaration):
-    def __init__(self, *children):
+    def __init__(self, children):
         self.children = children
         # self.type = children[0][0].value
         self.name = children[0][1].value
@@ -149,10 +149,10 @@ class ReturnStatement(Statement):
 
 
 class VariableDeclaration(Declaration):
-    def __init__(self, *children):
+    def __init__(self, children):
         self.children = children
-        self.type = children[0][0].value
-        self.name = children[0][1].value
+        self.type = children[0].value
+        self.name = children[1].value
 
         # If this VarDec is also assigned
         if len(self.children[0]) == 3:

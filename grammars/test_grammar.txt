@@ -1,0 +1,10 @@
+program -> expressionList
+expressionList -> expressionList expression ; | expression ;
+expression -> ID = expression | simpleExp
+simpleExp -> simpleExp relop addExp | addExp
+relop -> <= | < | > | >= | == | !=
+addExp -> addExp addop term | term
+addop -> + | -
+term -> term mulop factor | factor
+mulop -> * | / | %
+factor -> ID | constNum | ( expression )
