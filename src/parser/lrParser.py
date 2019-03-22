@@ -406,7 +406,6 @@ class LRParser:
                     self.actions[k1][k2] = "s %i" % (v2)
                     # if exist:
                     #    print("after  s", k1, self.actions[k1])
-        print("len:", len(self.actions), len(self.goto))
 
     def loadParseTables(self, grammarFile, force=False):
         """

@@ -7,11 +7,11 @@ declaration -> varDec | functionDeclaration | includeStatement
 # Variable Declarations
 
 varDec -> typeSpecifier ID = expression ; | typeSpecifier ID ;
-assignment -> ID = expression ; | incEqualAssignment | decEqualAssignment | incAssignment | decAssignment
-incEqualAssignment -> ID += expression ;
-decEqualAssignment -> ID -= expression ;
-incAssignment -> ID ++ ;
-decAssignment -> ID -- ;
+assignment -> ID = expression ; | ID incEqualAssignment | ID decEqualAssignment | ID incAssignment | ID decAssignment
+incEqualAssignment -> += expression ;
+decEqualAssignment -> -= expression ;
+incAssignment -> ++ ;
+decAssignment -> -- ;
 
 # Function Declarations
 
@@ -65,5 +65,4 @@ divExpr -> g / f
 modExpr -> g % f
 
 # Immutables
-g -> constNum | ID | ( expression )
-#g -> constNum | ID
+g -> constNum | ID | str | ( expression )

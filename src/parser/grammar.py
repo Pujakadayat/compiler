@@ -124,7 +124,7 @@ class Declaration(Node):
     pass
 
 
-class FunctionDeclaration(Declaration):
+class FunctionDeclaration(Node):
     def __init__(self, children):
         self.children = children
         self.type = children[0].value
@@ -142,24 +142,24 @@ class Statement(Node):
     pass
 
 
-class ReturnStatement(Statement):
+class ReturnStatement(Node):
     def ir(self):
         expr = self.children[0]
         return f"ret {expr.children[0].value}"
 
 
-class VariableDeclaration(Declaration):
+class VariableDeclaration(Node):
     def __init__(self, children):
         self.children = children
         self.type = children[0].value
         self.name = children[1].value
 
         # If this VarDec is also assigned
-        if len(self.children[0]) == 3:
-            self.expr = self.children[0][2]
+        if len(self.children) == 3:
+            self.expr = self.children[2]
 
     def ir(self):
-        if len(self.children[0]) == 3:
+        if len(self.children) == 3:
             return f"{self.name} = {self.expr.children[0].value}"
 
         return f"{self.name} = null"
@@ -168,7 +168,7 @@ class VariableDeclaration(Declaration):
 # Assignments
 
 
-class VariableAssignment(Declaration):
+class VariableAssignment(Node):
     def __init__(self, *children):
         self.children = children
         self.name = children[0][0].value
@@ -178,7 +178,7 @@ class VariableAssignment(Declaration):
         return f"{self.name} = r{recent}"
 
 
-class IncrementAssignment(VariableAssignment):
+class IncrementAssignment(Node):
     def __init__(self, *children):
         self.children = children
         self.name = children[0][0].value
@@ -187,7 +187,7 @@ class IncrementAssignment(VariableAssignment):
         return f"{self.name} = {self.name} + 1"
 
 
-class DecrementAssignment(VariableAssignment):
+class DecrementAssignment(Node):
     def __init__(self, *children):
         self.children = children
         self.name = children[0][0].value
@@ -196,12 +196,12 @@ class DecrementAssignment(VariableAssignment):
         return f"{self.name} = {self.name} - 1"
 
 
-class PlusEqualAssignment(VariableAssignment):
+class PlusEqualAssignment(Node):
     def __init__(self, *children):
         self.children = children
 
 
-class MinusEqualAssignment(VariableAssignment):
+class MinusEqualAssignment(Node):
     pass
 
 
@@ -242,58 +242,58 @@ class ModulusExpression(Node):
         return f"{self.value} = {self.children[0].value} % {self.children[1].value}"
 
 
-class BooleanAnd(Expression):
+class BooleanAnd(Node):
     pass
 
 
-class BooleanOr(Expression):
+class BooleanOr(Node):
     pass
 
 
-class LTOEExpression(Expression):
+class LTOEExpression(Node):
     pass
 
 
-class GTOEExpression(Expression):
+class GTOEExpression(Node):
     pass
 
 
-class LTExpression(Expression):
+class LTExpression(Node):
     pass
 
 
-class GTExpression(Expression):
+class GTExpression(Node):
     pass
 
 
-class NotEqualExpression(Expression):
+class NotEqualExpression(Node):
     pass
 
 
-class EqualExpression(Expression):
+class EqualExpression(Node):
     pass
 
 
 # Statements
 
 
-class ForStatement(Statement):
+class ForStatement(Node):
     pass
 
 
-class IncludeStatement(Statement):
+class IncludeStatement(Node):
     pass
 
 
-class CallStatement(Statement):
+class CallStatement(Node):
     pass
 
 
-class IfStatement(Statement):
+class IfStatement(Node):
     pass
 
 
-class ElseStatement(Statement):
+class ElseStatement(Node):
     pass
 
 
