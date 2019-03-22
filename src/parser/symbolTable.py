@@ -59,7 +59,7 @@ class SymbolTable:
 
         # Search the global table first
         if c == self.table:
-            if name in c["variables"]:
+            if name in c["variables"] or name in c:
                 return self.table["name"]
 
             return None
@@ -67,7 +67,7 @@ class SymbolTable:
             # Search up the tree from our current scope
             # as long as there is a parent
         while ".." in c:
-            if name in c["variables"]:
+            if name in c["variables"] or c["name"] == name:
                 return c["name"]
 
             c = c[".."]
@@ -194,7 +194,5 @@ def updateSymbolTable(node, st, level=0):
     elif isinstance(node, grammar.VariableDeclaration):
         st.declareVariable(node.type, node.name)
     elif isinstance(node, grammar.Identifier):
-        if node.value in st.current["variables"]:
-            raise CompilerMessage(
-                f"The variable {node.value} already exists in this scope."
-            )
+        if st.find(node.value) is None:
+            raise CompilerMessage(f"Identifier {node.value} is undefined.")

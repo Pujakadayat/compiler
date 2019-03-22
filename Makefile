@@ -1,4 +1,4 @@
-FILE=samples/duplicate_var.c
+FILE=samples/undefined_var.c
 
 main:
 	python3 -m src.main -p -t -i $(FILE)
