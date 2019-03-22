@@ -259,8 +259,8 @@ def matchNumber(text):
 
 def matchFloat(text):
     """Check if string matches a floating point number"""
-    if float(text) == True:
-        return text
+    if isinstance(text, float) == True:
+        print('this is a float: ' + text)
 
     return None
 
