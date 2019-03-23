@@ -258,11 +258,16 @@ def matchNumber(text):
     return None
 
 def matchFloat(text):
-    """Check if string matches a floating point number"""
-    if isinstance(text, float) == True:
-        print('this is a float: ' + text)
+    """Check if string matches a floating point number; using RegEx"""
+    floatNums = re.match(r'[+-]?([0-9]*[.])?[0-9]*', text)
+    # still not matching floats correctly
+    # only prints the number before the .
+    if floatNums is not None:
+        # print('These numbers are floats: ')
+        print(floatNums)
 
-    return None
+    else:
+        print('There were not floats recognized within: ' + text)
 
 def combineEscapedLines(lines):
     """Combine escaped lines into a singular line."""
