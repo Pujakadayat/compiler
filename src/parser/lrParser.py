@@ -50,6 +50,7 @@ class LRParser:
             for i in range(self.unique, self.setNum):
                 if debug:
                     logging.debug("i: %i", i)
+                print(i)
                 self.closure(i)
                 self.cleanItemSets(i)
                 self.createItemSets(i)
@@ -146,6 +147,7 @@ class LRParser:
                     if token not in self.nonTerminals and token not in self.terminals:
                         self.terminals.append(token)
 
+        # create the first list that contains the first terminals that could follow any nonTerminal token
         for nonTerm in self.nonTerminals:
             self.first[nonTerm] = []
             for rule in self.rules[nonTerm]:
@@ -191,12 +193,12 @@ class LRParser:
                                     self.first[nonTerm].append(rule[i + 1])
 
         # used to confirm the the first dict is built correctly
-
-        # print("\nFIRST")
-        # for k in self.first.keys():
-        #     print(k)
-        #     for v in self.first[k]:
-        #         print('\t', v)
+        
+        #print("\nFIRST")
+        #for k in self.first.keys():
+        #    print(k)
+        #    for v in self.first[k]:
+        #        print('\t', v)
 
     def closure(self, setNum):
         """
@@ -377,15 +379,9 @@ class LRParser:
                                 if item.rhs == " ".join(r):
                                     if itemSetNum not in self.actions.keys():
                                         self.actions[itemSetNum] = {}
-                                    # exist = False
-                                    # if item.following in self.actions[itemSetNum].keys():
-                                    #    print("before r", itemSetNum, self.actions[itemSetNum])
-                                    #    exist = True
                                     self.actions[itemSetNum][
                                         item.following
                                     ] = "r %s %i" % (k, i)
-                                    # if exist:
-                                    #    print("after  r", itemSetNum, self.actions[itemSetNum])
 
         # go through transition table to get:
         for k1, v1 in self.transitions.items():
@@ -399,13 +395,7 @@ class LRParser:
                 else:
                     if k1 not in self.actions.keys():
                         self.actions[k1] = {}
-                    # exist = False
-                    # if k2 in self.actions[k1].keys():
-                    #    print("before s", k1, self.actions[k1])
-                    #    exist = True
                     self.actions[k1][k2] = "s %i" % (v2)
-                    # if exist:
-                    #    print("after  s", k1, self.actions[k1])
 
     def loadParseTables(self, grammarFile, force=False):
         """
@@ -522,6 +512,9 @@ class LRParser:
                         # Get the corresponding rule from our rules table
                         rule = self.rules[result[1]][int(result[2])]
 
+                        if rule[0] == "EMPTY":
+                            print("here")
+
                         # Check if the tokens on the stack match a grammar rule
                         match = True
                         for i, r in enumerate(rule):
@@ -572,12 +565,23 @@ class LRParser:
 
                             return None
                 else:
-                    messages.add(
-                        CompilerMessage(f"State {state} does not have Token {token}")
-                    )
-                    messages.add(CompilerMessage(self.actions[state]))
-                    messages.add(CompilerMessage(stack))
-                    return None
+                    if "EMPTY" in self.actions[state].keys():
+                        result = self.actions[state]["EMPTY"]
+                        output.append(result)
+                        result = result.split(" ")
+
+                        # If the action table says to shift, shift the next token
+                        if result[0] == "s":
+                            states.append(int(result[1]))
+                            stack.append("EMPTY")
+                        
+                    else:
+                        messages.add(
+                            CompilerMessage(f"State {state} does not have Token {token}")
+                        )
+                        messages.add(CompilerMessage(self.actions[state]))
+                        messages.add(CompilerMessage(stack))
+                        return None
 
             except KeyError:
                 messages.add(

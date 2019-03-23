@@ -7,7 +7,7 @@ declaration -> varDec | functionDeclaration | includeStatement
 # Variable Declarations
 
 varDec -> typeSpecifier ID = expression ; | typeSpecifier ID ;
-assignment -> ID = expression ; | ID incEqualAssignment | ID decEqualAssignment | ID incAssignment | ID decAssignment
+assignment -> ID = callStatement | ID = expression ; | ID incEqualAssignment | ID decEqualAssignment | ID incAssignment | ID decAssignment
 incEqualAssignment -> += expression ;
 decEqualAssignment -> -= expression ;
 incAssignment -> ++ ;
@@ -15,7 +15,9 @@ decAssignment -> -- ;
 
 # Function Declarations
 
-functionDeclaration -> typeSpecifier ID ( ) { statementList }
+functionDeclaration -> typeSpecifier ID ( argList ) { statementList }
+argList -> argList , arg | arg | EMPTY
+arg -> typeSpecifier ID | typeSpecifier
 
 # Statements
 
@@ -23,7 +25,9 @@ statementList -> statementList statement | statement
 statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | callStatement
 returnStatement -> return expression ;
 includeStatement -> fileName
-callStatement -> ID ( str ) ;
+callStatement -> ID ( paramList ) ;
+paramList -> paramList , param | param | EMPTY
+param -> ID | expression | str
 
 # Control Flow
 
