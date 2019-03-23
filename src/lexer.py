@@ -29,6 +29,9 @@ def tokenize(code):
 
     codeTokens.append(Token(tokens.eof, "$"))
 
+    # Check for floating point numbers
+    matchFloat(codeTokens)
+
     return codeTokens
 
 
@@ -257,17 +260,21 @@ def matchNumber(text):
 
     return None
 
-def matchFloat(text):
-    """Check if string matches a floating point number; using RegEx"""
-    floatNums = re.match(r'[+-]?([0-9]*[.])?[0-9]*', text)
-    # still not matching floats correctly
-    # only prints the number before the .
-    if floatNums is not None:
-        # print('These numbers are floats: ')
-        print(floatNums)
+def matchFloat(codeTokens):
+    """Check for floating point number"""
 
-    else:
-        print('There were not floats recognized within: ' + text)
+    # Copy the lines as they change while we iterate
+    combinedLines = codeTokens.copy()
+
+    for i, token in enumerate(codeTokens):
+        if token[i].isdigit() and token[i + 1] is "." and token[i + 2].isdigit():
+            firstNumb = combinedLines[i][:-1]
+            postDot = combinedLines[i + 1]
+            secondNumb = combinedLines[i + 2]
+            combinedLines[i] = firstNumb + postDot + secondNumb
+            del combinedLines[i + 2]
+
+    return combinedLines
 
 def combineEscapedLines(lines):
     """Combine escaped lines into a singular line."""
