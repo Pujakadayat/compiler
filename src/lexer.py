@@ -30,7 +30,7 @@ def tokenize(code):
     codeTokens.append(Token(tokens.eof, "$"))
 
     # Check for floating point numbers
-    matchFloat(codeTokens)
+    parseFloats(l)
 
     return codeTokens
 
@@ -260,21 +260,24 @@ def matchNumber(text):
 
     return None
 
-def matchFloat(codeTokens):
-    """Check for floating point number"""
+def parseFloats(l):
+    tokensWithFloats = l.copy()
 
-    # Copy the lines as they change while we iterate
-    combinedLines = codeTokens.copy()
+    for index, token in enumerate(l):
+        if (
+            token.kind == tokens.number
+            and l[index + 1].kind == tokens.period
+            and l[index + 2].kind == tokens.number
+        ):
+            floatValue = f"{token.content}.{l[index + 2].content}"
+            tokensWithFloats[index] = Token(tokens.number, floatValue)
 
-    for i, token in enumerate(codeTokens):
-        if token[i].isdigit() and token[i + 1] is "." and token[i + 2].isdigit():
-            firstNumb = combinedLines[i][:-1]
-            postDot = combinedLines[i + 1]
-            secondNumb = combinedLines[i + 2]
-            combinedLines[i] = firstNumb + postDot + secondNumb
-            del combinedLines[i + 2]
+            # We delete at the same index here because the
+            # list will have shifted after first deletion
+            del tokensWithFloats[index + 1]
+            del tokensWithFloats[index + 1]
 
-    return combinedLines
+    return tokensWithFloats
 
 def combineEscapedLines(lines):
     """Combine escaped lines into a singular line."""
