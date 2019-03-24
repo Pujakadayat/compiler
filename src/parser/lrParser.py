@@ -147,7 +147,8 @@ class LRParser:
                     if token not in self.nonTerminals and token not in self.terminals:
                         self.terminals.append(token)
 
-        # create the first list that contains the first terminals that could follow any nonTerminal token
+        # create the first list that contains the first
+        # terminals that could follow any nonTerminal token
         for nonTerm in self.nonTerminals:
             self.first[nonTerm] = []
             for rule in self.rules[nonTerm]:
@@ -162,11 +163,9 @@ class LRParser:
                     if self.first[nonTerm][itemNum] in self.nonTerminals:
                         nonTerms = True
                         # for each rule the nonTerminal token expands into:
-                        # pylint: disable=bad-continuation
                         for ruleNum in range(
                             len(self.rules[self.first[nonTerm][itemNum]])
                         ):
-                            # pylint: enable=bad-continuation
                             newItem = self.rules[self.first[nonTerm][itemNum]][ruleNum]
                             # check to see if new item is new to the set
                             isNew = True
@@ -193,9 +192,9 @@ class LRParser:
                                     self.first[nonTerm].append(rule[i + 1])
 
         # used to confirm the the first dict is built correctly
-        
-        #print("\nFIRST")
-        #for k in self.first.keys():
+
+        # print("\nFIRST")
+        # for k in self.first.keys():
         #    print(k)
         #    for v in self.first[k]:
         #        print('\t', v)
@@ -574,10 +573,12 @@ class LRParser:
                         if result[0] == "s":
                             states.append(int(result[1]))
                             stack.append("EMPTY")
-                        
+
                     else:
                         messages.add(
-                            CompilerMessage(f"State {state} does not have Token {token}")
+                            CompilerMessage(
+                                f"State {state} does not have Token {token}"
+                            )
                         )
                         messages.add(CompilerMessage(self.actions[state]))
                         messages.add(CompilerMessage(stack))

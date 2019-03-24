@@ -1,4 +1,4 @@
-FILE=samples/parentheses.c
+FILE=samples/float.c
 
 main:
 	python3 -m src.main -p -t -i $(FILE)

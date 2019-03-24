@@ -16,4 +16,5 @@ disable=invalid-name,
 				too-many-return-statements,
 				too-many-nested-blocks,
 				too-many-locals,
-				too-many-instance-attributes
+				too-many-instance-attributes,
+				bad-continuation
