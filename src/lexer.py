@@ -261,6 +261,9 @@ def matchNumber(text):
     return None
 
 def parseFloats(l):
+    """Check for floating point numbers"""
+    
+    # Copy the tokens as they change while we iterate
     tokensWithFloats = l.copy()
 
     for index, token in enumerate(l):
