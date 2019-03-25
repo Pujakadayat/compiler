@@ -103,6 +103,11 @@ def flattenTree(root, reducer, seen=False):
             if len(root.children) == 1:
                 return root
 
+            # Matched the reducer token but there are no children
+            # i.e. EMPTY arguments
+            # if not isinstance(root, list):
+            #     return root
+
             c = flattenTree(root.children[0], reducer, seen)
 
             root.children = [root.children[1]]
@@ -144,14 +149,15 @@ def flattenTree(root, reducer, seen=False):
             flattenTree(item, reducer, seen)
 
     # Current node is not a DecList,
-    # but we will need to update it's children reference
+    # but we will need to update its children reference
     if hasattr(root, "children"):
         children = []
         for item in root.children:
             children.append(flattenTree(item, reducer, seen))
 
-        if isinstance(children[0], list):
-            children = children[0]
+        if isinstance(children, list) and len(children) >= 1:
+            if isinstance(children[0], list):
+                children = children[0]
 
         root.children = children
         return root
@@ -192,6 +198,8 @@ def updateSymbolTable(node, st, level=0):
             st.endScope()
         st.startScope(node.name, level)
     elif isinstance(node, grammar.VariableDeclaration):
+        st.declareVariable(node.type, node.name)
+    elif isinstance(node, grammar.Argument):
         st.declareVariable(node.type, node.name)
     elif isinstance(node, grammar.Identifier):
         if st.find(node.value) is None:

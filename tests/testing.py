@@ -75,9 +75,7 @@ class ExpressionTestCase(unittest.TestCase):
     def test_lexer(self):
         """Test the result of the lexer."""
 
-        result = (
-            "[int, main, (, ), {, int, x, ;, x, =, 2, +, 2, ;, return, 0, ;, }, $]"
-        )
+        result = "[int, main, (, ), {, int, x, ;, x, =, 2, +, 2, ;, return, 0, ;, }, $]"
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):

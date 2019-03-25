@@ -25,9 +25,10 @@ statementList -> statementList statement | statement
 statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | callStatement
 returnStatement -> return expression ;
 includeStatement -> fileName
-callStatement -> ID ( paramList ) ;
-paramList -> paramList , param | param | EMPTY
-param -> ID | expression | str
+callStatement -> ID ( ) ;
+#callStatement -> ID ( paramList ) ;
+#paramList -> paramList , param | param | EMPTY
+#param -> ID | expression | str
 
 # Control Flow
 

@@ -134,6 +134,17 @@ class FunctionDeclaration(Node):
         return f".{self.name} ()"
 
 
+class Arguments(Node):
+    pass
+
+
+class Argument(Node):
+    def __init__(self, children):
+        self.children = children
+        self.type = children[0].value
+        self.name = children[1].value
+
+
 class StatementList(Node):
     pass
 
@@ -323,6 +334,8 @@ nodes = {
     "incEqualAssignment": PlusEqualAssignment,
     "decEqualAssignment": MinusEqualAssignment,
     "functionDeclaration": FunctionDeclaration,
+    "argList": Arguments,
+    "arg": Argument,
     "statementList": StatementList,
     "statement": Statement,
     "returnStatement": ReturnStatement,

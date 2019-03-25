@@ -50,7 +50,7 @@ class LRParser:
             for i in range(self.unique, self.setNum):
                 if debug:
                     logging.debug("i: %i", i)
-                print(i)
+                print(".", end="")
                 self.closure(i)
                 self.cleanItemSets(i)
                 self.createItemSets(i)
@@ -511,9 +511,6 @@ class LRParser:
                         # Get the corresponding rule from our rules table
                         rule = self.rules[result[1]][int(result[2])]
 
-                        if rule[0] == "EMPTY":
-                            print("here")
-
                         # Check if the tokens on the stack match a grammar rule
                         match = True
                         for i, r in enumerate(rule):
@@ -541,7 +538,8 @@ class LRParser:
                                 tempNode = grammar.parseToken(result[1], children=c)
 
                                 if tempNode:
-                                    del self.parseTree[-len(rule) :]
+                                    if rule != ["EMPTY"]:
+                                        del self.parseTree[-len(rule) :]
                                     self.parseTree.append(tempNode)
 
                             del stack[-len(rule) :]
