@@ -1,4 +1,4 @@
-FILE=samples/float.c
+FILE=samples/parseTest.c
 
 main:
 	python3 -m src.main -p -t -i $(FILE)

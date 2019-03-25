@@ -209,11 +209,13 @@ class MinusEqualAssignment(Node):
 
 
 class Expression(Node):
-    pass
+    def ir(self):
+        self.value = self.children[0].value
 
 
 class NestedExpression(Node):
-    pass
+    def ir(self):
+        self.value = self.children[0].value
 
 
 class AdditionExpression(Node):
