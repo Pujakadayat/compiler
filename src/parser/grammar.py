@@ -181,7 +181,12 @@ class VariableAssignment(Node):
 class IncrementAssignment(Node):
     def __init__(self, *children):
         self.children = children
-        self.name = children[0][0].value
+        print("---")
+        print(children)
+        if len(children[0]) >= 1:
+            self.name = children[0][0].value
+        else:
+            self.name = "++"
 
     def ir(self):
         return f"{self.name} = {self.name} + 1"

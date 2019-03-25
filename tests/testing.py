@@ -21,7 +21,7 @@ class AssignmentTestCase(unittest.TestCase):
     def test_lexer(self):
         """Test the result of the lexer."""
 
-        result = "[int, main, (, ), {, int, x, =, 2, +, 2, ;, int, y, =, 5, ;, int, z, =, y, ;, }, $]"
+        result = "[int, main, (, ), {, int, x, =, 2, +, 2, ;, int, y, =, 5, ;, int, z, =, y, ;, x, =, y, ;, }, $]"
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
@@ -76,7 +76,7 @@ class ExpressionTestCase(unittest.TestCase):
         """Test the result of the lexer."""
 
         result = (
-            "[int, main, (, ), {, int, x, ;, x, =, 2, ==, 2, ;, return, 0, ;, }, $]"
+            "[int, main, (, ), {, int, x, ;, x, =, 2, +, 2, ;, return, 0, ;, }, $]"
         )
         self.assertEqual(str(self.tokens), result)
 
@@ -311,7 +311,7 @@ class MathTestCase(unittest.TestCase):
     def test_lexer(self):
         """Test the result of the lexer."""
 
-        result = "[int, main, (, ), {, int, i, =, 0, ;, i, +=, 25, ;, i, ++, ;, float, y, =, 2, ., 5, ;, return, i, ;, }, $]"
+        result = "[int, main, (, ), {, int, i, =, 0, ;, i, +=, 25, ;, i, ++, ;, float, y, =, 2.5, ;, return, i, ;, }, $]"
         self.assertEqual(str(self.tokens), result)
 
     def test_parser(self):
