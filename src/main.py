@@ -10,7 +10,13 @@ from src.util import readFile
 
 from src.parser.lrParser import LRParser
 import src.lexer as lexer
-from src.parser.grammar import DeclarationList, StatementList, Arguments, generateIr
+from src.parser.grammar import (
+    DeclarationList,
+    StatementList,
+    Arguments,
+    Parameters,
+    generateIr,
+)
 from src.parser.symbolTable import buildSymbolTable, flattenTree
 from src.util import CompilerMessage, messages
 
@@ -89,6 +95,7 @@ class Compiler:
 
         # Flatten the parse tree
         flattenTree(self.parseTree, reducer=Arguments)
+        flattenTree(self.parseTree, reducer=Parameters)
         flattenTree(self.parseTree, reducer=DeclarationList)
         flattenTree(self.parseTree, reducer=StatementList)
 

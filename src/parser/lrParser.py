@@ -9,7 +9,7 @@ import logging
 import os
 import json
 import src.parser.grammar as grammar
-from src.util import readFile, messages, CompilerMessage
+from src.util import readFile, messages, CompilerMessage, spinner
 
 debug = True
 printDebug = False
@@ -50,7 +50,6 @@ class LRParser:
             for i in range(self.unique, self.setNum):
                 if debug:
                     logging.debug("i: %i", i)
-                print(".", end="")
                 self.closure(i)
                 self.cleanItemSets(i)
                 self.createItemSets(i)
@@ -421,8 +420,12 @@ class LRParser:
                 )
             )
 
+            spinner.start()
+
             self.buildTables()
             self.saveTables(tableFile)
+
+            spinner.stop()
 
     def saveTables(self, tableFileName):
         """Dump the action and goto tables as JSON."""

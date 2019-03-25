@@ -57,4 +57,24 @@ class CompilerMessage(Exception):
         return f"{bold}{error}✖ Error:{reset} {self.message}"
 
 
+class Spinner:
+    """A CLI spinner class."""
+
+    def __init__(self):
+        pass
+
+    def start(self):
+        """Start the spinner."""
+
+        # TODO: thread work here...
+        print("Starting the spinner....")
+
+    def stop(self):
+        """Stop the spinner."""
+
+        # TODO: close thread...
+        print("Stopping the spinner....")
+
+
+spinner = Spinner()
 messages = MessageCollector()

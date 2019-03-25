@@ -127,15 +127,22 @@ class Declaration(Node):
 class FunctionDeclaration(Node):
     def __init__(self, children):
         self.children = children
-        self.type = children[0].value
-        self.name = children[1].value
+        self.type = self.children[0].value
+        self.name = self.children[1].value
+        self.arguments = self.children[2]
 
     def ir(self):
-        return f".{self.name} ()"
+        self.arguments.ir()
+        return f".{self.name} ({self.arguments.value})"
 
 
 class Arguments(Node):
-    pass
+    def ir(self):
+        s = []
+        for i in self.children:
+            s.append(i.name)
+
+        self.value = ', '.join(s)
 
 
 class Argument(Node):
@@ -143,6 +150,21 @@ class Argument(Node):
         self.children = children
         self.type = children[0].value
         self.name = children[1].value
+
+
+class Parameters(Node):
+    def ir(self):
+        s = []
+        for i in self.children:
+            s.append(i.value)
+
+        self.value = ', '.join(s)
+
+
+class Parameter(Node):
+    def __init__(self, children):
+        self.children = children
+        self.value = children[0].value
 
 
 class StatementList(Node):
@@ -308,7 +330,13 @@ class IncludeStatement(Node):
 
 
 class CallStatement(Node):
-    pass
+    def __init__(self, children):
+        self.children = children
+        self.value = self.children[0].value
+        self.parameters = self.children[1]
+
+    def ir(self):
+        return f"call {self.value} ({self.parameters.value})"
 
 
 class IfStatement(Node):
@@ -342,6 +370,8 @@ nodes = {
     "forStatement": ForStatement,
     "includeStatement": IncludeStatement,
     "callStatement": CallStatement,
+    "paramList": Parameters,
+    "param": Parameter,
     "ifStatement": IfStatement,
     "elseStatement": ElseStatement,
     "expression": Expression,

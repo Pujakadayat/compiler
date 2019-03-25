@@ -1,4 +1,4 @@
-FILE=samples/plain.c
+FILE=samples/call.c
 
 main:
 	python3 -m src.main -p -t -i $(FILE)
