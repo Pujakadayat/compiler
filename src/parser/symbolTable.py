@@ -100,13 +100,8 @@ def flattenTree(root, reducer, seen=False):
         if not seen:
             seen = True
 
-            if len(root.children) == 1:
+            if len(root.children) <= 1:
                 return root
-
-            # Matched the reducer token but there are no children
-            # i.e. EMPTY arguments
-            # if not isinstance(root, list):
-            #     return root
 
             c = flattenTree(root.children[0], reducer, seen)
 
