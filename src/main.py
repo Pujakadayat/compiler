@@ -10,13 +10,8 @@ from src.util import readFile
 
 from src.parser.lrParser import LRParser
 import src.lexer as lexer
-from src.parser.grammar import (
-    DeclarationList,
-    StatementList,
-    Arguments,
-    Parameters,
-    generateIr,
-)
+from src.parser.grammar import DeclarationList, StatementList, Arguments, Parameters
+from src.parser.ir import generateIr
 from src.parser.symbolTable import buildSymbolTable, flattenTree
 from src.util import CompilerMessage, messages
 

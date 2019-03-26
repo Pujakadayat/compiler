@@ -5,15 +5,15 @@ declarationList -> declarationList declaration | declaration
 declaration -> varDec | functionDeclaration | includeStatement
 
 # Variable Declarations
-# Assignment uses the ID = ___ form so that the ID node is always in the same place in the parse tree.
-# TODO: rework this so ID is first child of the lower level nodes
 
 varDec -> typeSpecifier ID = expression ; | typeSpecifier ID ;
-assignment -> ID = callStatement | ID = expression ; | ID incEqualAssignment | ID decEqualAssignment | ID incAssignment | ID decAssignment
-incEqualAssignment -> += expression ;
-decEqualAssignment -> -= expression ;
-incAssignment -> ++ ;
-decAssignment -> -- ;
+assignment -> callAssignment | exprAssignment | incEqualAssignment | decEqualAssignment | incAssignment | decAssignment
+callAssignment -> ID = callStatement ;
+exprAssignment -> ID = expression ;
+incEqualAssignment -> ID += expression ;
+decEqualAssignment -> ID -= expression ;
+incAssignment -> ID ++ ;
+decAssignment -> ID -- ;
 
 # Function Declarations
 
@@ -27,7 +27,7 @@ statementList -> statementList statement | statement
 statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | callStatement
 returnStatement -> return expression ;
 includeStatement -> fileName
-callStatement -> ID ( paramList ) ;
+callStatement -> ID ( paramList )
 paramList -> paramList , param | param | EMPTY
 
 # Something about param is messed up...
