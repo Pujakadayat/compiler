@@ -8,8 +8,9 @@ Parses the list of tokens using the action and goto tables.
 import logging
 import os
 import json
+from halo import Halo
 import src.parser.grammar as grammar
-from src.util import readFile, messages, CompilerMessage, spinner
+from src.util import readFile, messages, CompilerMessage
 
 debug = True
 printDebug = False
@@ -420,12 +421,14 @@ class LRParser:
                 )
             )
 
+            spinner = Halo(text="Generating hundreds of new tables...", spinner="dots")
             spinner.start()
 
             self.buildTables()
             self.saveTables(tableFile)
 
             spinner.stop()
+            spinner.succeed("Finished generating new tables.")
 
     def saveTables(self, tableFileName):
         """Dump the action and goto tables as JSON."""

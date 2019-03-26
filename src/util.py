@@ -32,7 +32,9 @@ def writeFile(filename, content=None):
             try:
                 with open(filename, "w") as file:
                     file.write(str(content))
-                    messages.add(CompilerMessage(f"Wrote to file: '{filename}'.", "success"))
+                    messages.add(
+                        CompilerMessage(f"Wrote to file: '{filename}'.", "success")
+                    )
             except IOError:
                 raise CompilerMessage(f"Error overwriting file: '{filename}'.")
         else:
@@ -85,24 +87,4 @@ class CompilerMessage(Exception):
         return f"{bold}{error}✖ Error:{reset} {self.message}"
 
 
-class Spinner:
-    """A CLI spinner class."""
-
-    def __init__(self):
-        pass
-
-    def start(self):
-        """Start the spinner."""
-
-        # TODO: thread work here...
-        print("Starting the spinner....")
-
-    def stop(self):
-        """Stop the spinner."""
-
-        # TODO: close thread...
-        print("Stopping the spinner....")
-
-
-spinner = Spinner()
 messages = MessageCollector()

@@ -277,6 +277,10 @@ def main():
     except CompilerMessage as err:
         print(err)
         sys.exit(2)
+    except KeyboardInterrupt:
+        print("")
+        messages.add(CompilerMessage("Compiler was interrupted."))
+        sys.exit(2)
 
 
 if __name__ == "__main__":
