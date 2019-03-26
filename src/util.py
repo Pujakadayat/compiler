@@ -10,7 +10,35 @@ def readFile(filename):
         with open(filename) as file:
             return file.read()
     except IOError:
-        raise CompilerMessage(f"Cannot read file: {filename}")
+        raise CompilerMessage(f"Cannot read file: {filename}.")
+
+
+def writeFile(filename, content=None):
+    """Write a file with specified content."""
+
+    if not content:
+        raise CompilerMessage(f"No content specified to write to file '{filename}'.")
+
+    try:
+        with open(filename, "x") as file:
+            file.write(str(content))
+            messages.add(CompilerMessage(f"Wrote to file: '{filename}'.", "success"))
+    except FileExistsError:
+        messages.add(
+            CompilerMessage(f"The file '{filename}' already exists.", "warning")
+        )
+        choice = input("Overwrite it? [y/n]: ")
+        if choice in ["y", "Y"]:
+            try:
+                with open(filename, "w") as file:
+                    file.write(str(content))
+                    messages.add(CompilerMessage(f"Wrote to file: '{filename}'.", "success"))
+            except IOError:
+                raise CompilerMessage(f"Error overwriting file: '{filename}'.")
+        else:
+            messages.add(
+                CompilerMessage(f"Did not overwrite the file '{filename}'.", "warning")
+            )
 
 
 class MessageCollector:
@@ -49,7 +77,7 @@ class CompilerMessage(Exception):
 
         if self.level == "warning":
             return f"{bold}{warn}⚠  Warning:{reset} {self.message}"
-        if self.level == "message":
+        if self.level == "success":
             return f"{bold}{success}✔ Success:{reset} {self.message}"
         if self.level == "important":
             return f"{bold}{important}✨ {self.message}{reset}"

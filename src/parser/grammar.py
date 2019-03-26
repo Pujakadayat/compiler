@@ -224,6 +224,7 @@ class MinusEqualAssignment(Node):
         self.value = unique()
         return f"{self.value} = {self.name} - {self.expr.value}"
 
+
 class CallAssignment(Node):
     def __init__(self, children):
         self.children = children
@@ -233,6 +234,7 @@ class CallAssignment(Node):
     def ir(self):
         self.value = unique()
         return f"{self.value} = call {self.name} - {self.expr.value}"
+
 
 class ExpressionAssignment(Node):
     def __init__(self, children):

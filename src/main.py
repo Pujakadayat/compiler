@@ -6,7 +6,7 @@ import sys
 import getopt
 import logging
 import os
-from src.util import readFile
+from src.util import readFile, writeFile
 
 from src.parser.lrParser import LRParser
 import src.lexer as lexer
@@ -19,9 +19,10 @@ from src.util import CompilerMessage, messages
 class Compiler:
     """The main compiler class."""
 
-    def __init__(self, filename, grammar=None, flags=None):
+    def __init__(self, filename, grammar=None, flags=None, output=None):
         self.filename = filename
         self.flags = flags
+        self.output = output
         self.tokens = []
         self.parseTree = None
         self.symbolTable = None
@@ -35,6 +36,12 @@ class Compiler:
                 CompilerMessage("No grammar specified, using default.", "warning")
             )
             self.grammar = "grammars/main_grammar.txt"
+
+        # Warn if output flag exists but no filename specified
+        if "-o" in self.flags and output is None:
+            messages.add(
+                CompilerMessage("No output file specified. Not dumping IR.", "warning")
+            )
 
         # Setup empty list for flags if none provided
         if flags is None:
@@ -54,7 +61,7 @@ class Compiler:
         if self.tokens is None:
             raise CompilerMessage("Failed to tokenize the file.")
 
-        messages.add(CompilerMessage("Tokenized the file successfully.", "message"))
+        messages.add(CompilerMessage("Tokenized the file successfully.", "success"))
 
         # Print the tokens
         if "-s" in self.flags:
@@ -86,7 +93,7 @@ class Compiler:
             messages.add(CompilerMessage("Failed to parse the tokens."))
             return None
 
-        messages.add(CompilerMessage("Succesfully parsed the tokens.", "message"))
+        messages.add(CompilerMessage("Succesfully parsed the tokens.", "success"))
 
         # Flatten the parse tree
         flattenTree(self.parseTree, reducer=Arguments)
@@ -115,7 +122,7 @@ class Compiler:
             messages.add(CompilerMessage("Failed to build the symbol table."))
             return None
 
-        messages.add(CompilerMessage("Succesfully built the symbol table.", "message"))
+        messages.add(CompilerMessage("Succesfully built the symbol table.", "success"))
 
         # Print the symbol table if flag is present
         if "-t" in self.flags:
@@ -141,12 +148,15 @@ class Compiler:
             messages.add(CompilerMessage("Failed to generate an IR."))
             return None
 
-        messages.add(CompilerMessage("Succesfully generated an IR.", "message"))
+        messages.add(CompilerMessage("Succesfully generated an IR.", "success"))
 
         if "-i" in self.flags:
             messages.add(CompilerMessage("Intermediate Representation:", "important"))
             for i in self.ir:
                 print(i)
+
+        if "-o" in self.flags and self.output is not None:
+            writeFile(self.output, self.ir)
 
         return self.ir
 
@@ -158,9 +168,9 @@ def printUsage():
     end = "\033[0m"
 
     print(f"\n  {bold}Usage{end}:\n")
-    print("    python3 main.py [<flags>] [-g grammar] filename\n")
+    print("    python3 main.py [<flags>] filename\n")
     print(f"  {bold}Flags{end}:\n")
-    print("     -h, --help                  Output usage information.")
+    print("     -h, --help                  Output this usage information.")
     print("     -v, --verbose               Generate a log file with debug info.")
     print("     -s, --scanner               Convert a source file into tokens.")
     print("     -p, --parser                Convert tokens into a parse tree.")
@@ -171,6 +181,8 @@ def printUsage():
     print(
         "     -f, --force                 Force the Parser to generate a new parse table."
     )
+    print("     -i, --intermediate          Generate an intermediate representation.")
+    print("     -o, --output <filename>     Output the IR to a file.")
     print()
 
 
@@ -180,8 +192,18 @@ def parseArguments():
     try:
         opts, args = getopt.getopt(
             sys.argv[1:],
-            "hvsptfig:",
-            ["help", "verbose", "scanner", "parser", "tree", "force", "grammar="],
+            "hvsptfig:o:",
+            [
+                "help",
+                "verbose",
+                "scanner",
+                "parser",
+                "tree",
+                "force",
+                "intermediate",
+                "grammar=",
+                "output=",
+            ],
         )
     except getopt.GetoptError as err:
         print(err)
@@ -190,6 +212,7 @@ def parseArguments():
 
     flags = []
     grammar = None
+    output = None
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
@@ -205,7 +228,10 @@ def parseArguments():
             flags.append("-t")
         elif opt in ("-f", "--force"):
             flags.append("-f")
-        elif opt == "-i":
+        elif opt in ("-o", "--output"):
+            output = arg
+            flags.append("-o")
+        elif opt in ("-i", "--intermediate"):
             flags.append("-i")
         elif opt in ("-g", "--grammar"):
             grammar = arg
@@ -217,7 +243,7 @@ def parseArguments():
         printUsage()
         sys.exit()
 
-    return filename, grammar, flags
+    return filename, grammar, flags, output
 
 
 def startLog():
@@ -240,8 +266,8 @@ def startLog():
 def main():
     """Run the compiler from the command line."""
 
-    filename, grammar, flags = parseArguments()
-    compiler = Compiler(filename, grammar, flags)
+    filename, grammar, flags, output = parseArguments()
+    compiler = Compiler(filename, grammar, flags, output)
 
     try:
         compiler.tokenize()
