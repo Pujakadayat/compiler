@@ -8,7 +8,7 @@ declaration -> varDec | functionDeclaration | includeStatement
 
 varDec -> typeSpecifier ID = expression ; | typeSpecifier ID ;
 assignment -> callAssignment | exprAssignment | incEqualAssignment | decEqualAssignment | incAssignment | decAssignment
-callAssignment -> ID = callStatement ;
+callAssignment -> ID = callStatement
 exprAssignment -> ID = expression ;
 incEqualAssignment -> ID += expression ;
 decEqualAssignment -> ID -= expression ;
@@ -27,11 +27,11 @@ statementList -> statementList statement | statement
 statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | callStatement
 returnStatement -> return expression ;
 includeStatement -> fileName
-callStatement -> ID ( paramList )
+callStatement -> ID ( paramList ) ;
 paramList -> paramList , param | param | EMPTY
 
 # Something about param is messed up...
-param -> constNum | ID
+param -> constNum | ID | str
 
 # Control Flow
 

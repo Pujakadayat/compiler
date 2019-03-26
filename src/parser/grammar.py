@@ -224,6 +224,26 @@ class MinusEqualAssignment(Node):
         self.value = unique()
         return f"{self.value} = {self.name} - {self.expr.value}"
 
+class CallAssignment(Node):
+    def __init__(self, children):
+        self.children = children
+        self.name = self.children[0].value
+        self.expr = self.children[1]
+
+    def ir(self):
+        self.value = unique()
+        return f"{self.value} = call {self.name} - {self.expr.value}"
+
+class ExpressionAssignment(Node):
+    def __init__(self, children):
+        self.children = children
+        self.name = self.children[0].value
+        self.expr = self.children[1]
+
+    def ir(self):
+        self.value = unique()
+        return f"{self.value} = {self.name} - {self.expr.value}"
+
 
 # Expressions
 
@@ -339,6 +359,8 @@ nodes = {
     "declaration": Declaration,
     "varDec": VariableDeclaration,
     "assignment": VariableAssignment,
+    "exprAssignment": ExpressionAssignment,
+    "callAssignment": CallAssignment,
     "incAssignment": IncrementAssignment,
     "decAssignment": DecrementAssignment,
     "incEqualAssignment": PlusEqualAssignment,
