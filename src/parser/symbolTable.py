@@ -64,11 +64,19 @@ class SymbolTable:
 
             return None
 
-            # Search up the tree from our current scope
-            # as long as there is a parent
+        # Search up the tree from our current scope
+        # as long as there is a parent
         while ".." in c:
             if name in c["variables"] or c["name"] == name:
                 return c["name"]
+
+            # Loop will break without checking global scope
+            # So check if the parent is global scope before exiting
+            if c[".."] == self.table:
+                if name in self.table["variables"] or name in self.table:
+                    return self.table["name"]
+
+                return None
 
             c = c[".."]
 
