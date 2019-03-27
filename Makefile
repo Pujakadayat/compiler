@@ -9,6 +9,9 @@ force:
 test:
 	python3 -m tests.testing -v
 
+install:
+	pip3 install -r requirements.txt
+
 character_count:
 	python3 character_count.py words.txt
 

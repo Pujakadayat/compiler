@@ -12,6 +12,12 @@ Clone the repository:
 $ git clone https://github.com/pacocoursey/compiler.git
 ```
 
+Install the dependencies using [pip3](https://pypi.org/project/pip/):
+
+```bash
+$ make install
+```
+
 ## Overview
 
 Our Python compiler currently meets the standards expected of the first
@@ -85,7 +91,7 @@ In the rules of `grammar.py`, we attempt to break as early as possible to avoid 
 Tokens that we currently recognize:
 
 - [X] Identifiers
-- [X] Numbers (ints)
+- [X] Numbers (ints, floats)
 - [X] Block symbols `(, ), {, }, [, ]`
 - [X] Unary operators `&, |, ^, ~`
 - [X] Equality operators `<, >, <=, >=, ==, !=`
@@ -101,11 +107,6 @@ Tokens that we currently recognize:
 - [X] Boolean keywords `true, false`
 - [X] Misc keywords `static, sizeof, typedef, const, extern, auto`
 
-Tokens that we should recognize in the future:
-
-- [ ] Numbers (floats)
-
-
 ## Grammar Specification
 
 High level AST nodes that we currently recognize:
@@ -116,12 +117,16 @@ High level AST nodes that we currently recognize:
 - [X] Return Statement
 - [X] Number Constant: int
 - [X] Identifiers
+- [X] Variable Declaration
+- [X] If/Else Control Flow
+- [X] For Statements
+- [X] Expressions
+- [X] Assignments (+=, -=, +=, --, etc)
 
 AST nodes that we will recognize in the next few weeks:
 
-- [ ] Variable Declaration
-- [ ] Type Specifier: bool, char, float
-- [ ] More Statement types
+- [ ] While Loops
+- [ ] Function Calls
 
 ## Class-defined Specifications
 
@@ -165,39 +170,10 @@ Extremely extra features.
 - Strings
 - Type Specs
 
-### Proposed Grammar
-
-- program ::= statement; | program statement;
-- statement ::= assign | if | while | print | function
----
-- assign ::= intVariable = numericalExpression | boolVariable = boolExpression
-- if ::= if boolExpression then program endif | if boolExpression then program else program endif
-- while ::= while boolExpression do program endwhile
-- print ::= print int | print bool | print char | print string | print intVariable | print boolVariable |
-- function ::=
----
-- intVariable ::= char string
-- boolVariable ::= char string
----
-- numericalExpression ::= int | intVariable | s
-- s ::= t | s+t | s-t
-- t ::= e | txe | t/e
-- e ::= p | p^e
-- p ::= int | (s)
----
-- boolExpression ::= m | boolExpression & m | boolExpression || m
-- m ::= o | !m
-- o ::= grb | (boolExpression)
-- grb ::= bool | boolVariable | numericalExpression == numericalExpression | numericalExpression > numericalExpression | numericalExpression < numericalExpression
----
-- string ::= char | int | string char | string int
-- char ::= [a - z][A - Z]
-- int ::= [0 - 9] | [0 - 9] int
-- bool ::= True | False
-
 ## Code Style
 
-Using [Black](https://github.com/ambv/black).
+Formatted using [Black](https://github.com/ambv/black).
+Linted using [PyLint](https://www.pylint.org/).
 
 ## Related
 
