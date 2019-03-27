@@ -6,7 +6,7 @@ declaration -> varDec | functionDeclaration | includeStatement
 
 # Variable Declarations
 
-varDec -> typeSpecifier ID = expression ; | typeSpecifier ID ;
+varDec -> typeSpecifier ID = expression ( paramList ) ; | typeSpecifier ID = expression ; | typeSpecifier ID ;
 assignment -> callAssignment | exprAssignment | incEqualAssignment | decEqualAssignment | incAssignment | decAssignment
 callAssignment -> ID = callStatement
 exprAssignment -> ID = expression ;

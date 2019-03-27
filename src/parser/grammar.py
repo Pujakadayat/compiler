@@ -120,8 +120,13 @@ class Arguments(Node):
 class Argument(Node):
     def __init__(self, children):
         self.children = children
+        print(children)
         self.type = children[0].value
-        self.name = children[1].value
+        if len(children) > 1:
+            self.name = children[1].value
+        # added this for the case "main(void)"
+        else:
+            self.name = "None"
 
 
 class Parameters(Node):
