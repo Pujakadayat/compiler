@@ -120,7 +120,6 @@ class Arguments(Node):
 class Argument(Node):
     def __init__(self, children):
         self.children = children
-        print(children)
         self.type = children[0].value
         if len(children) > 1:
             self.name = children[1].value

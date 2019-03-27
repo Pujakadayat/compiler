@@ -6,9 +6,8 @@ declaration -> varDec | functionDeclaration | includeStatement
 
 # Variable Declarations
 
-varDec -> typeSpecifier ID = expression ( paramList ) ; | typeSpecifier ID = expression ; | typeSpecifier ID ;
-assignment -> callAssignment | exprAssignment | incEqualAssignment | decEqualAssignment | incAssignment | decAssignment
-callAssignment -> ID = callStatement
+varDec -> typeSpecifier ID = expression ; | typeSpecifier ID ;
+assignment -> exprAssignment | incEqualAssignment | decEqualAssignment | incAssignment | decAssignment
 exprAssignment -> ID = expression ;
 incEqualAssignment -> ID += expression ;
 decEqualAssignment -> ID -= expression ;
@@ -24,10 +23,10 @@ arg -> typeSpecifier ID | typeSpecifier
 # Statements
 
 statementList -> statementList statement | statement
-statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | callStatement
+statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | callStatement ;
 returnStatement -> return expression ;
 includeStatement -> fileName
-callStatement -> ID ( paramList ) ;
+callStatement -> ID ( paramList )
 paramList -> paramList , param | param | EMPTY
 
 # Something about param is messed up...
@@ -72,5 +71,5 @@ divExpr -> g / f
 modExpr -> g % f
 
 # Immutables
-g -> constNum | ID | str | nestedExpr
+g -> constNum | ID | str | callStatement | nestedExpr
 nestedExpr -> ( expression )
