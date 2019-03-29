@@ -19,10 +19,11 @@ from src.util import CompilerMessage, messages
 class Compiler:
     """The main compiler class."""
 
-    def __init__(self, filename, grammar=None, flags=None, output=None):
+    def __init__(self, filename, grammar=None, flags=None, output=None, inputFile=None):
         self.filename = filename
         self.flags = flags
         self.output = output
+        self.input = inputFile
         self.tokens = []
         self.parseTree = None
         self.symbolTable = None
@@ -134,6 +135,12 @@ class Compiler:
     def generateIr(self):
         """Convert a parse tree to the first intermediate representation."""
 
+        # Read in an IR from a file
+        if "-i" in self.flags and self.input is not None:
+            ir = readFile(self.input)
+            self.ir = ir.split("\n")
+            return None
+
         # Cannot convert to IR without parse tree
         if not self.parseTree:
             raise CompilerMessage("Cannot generate an IR without a parse tree.")
@@ -150,7 +157,7 @@ class Compiler:
 
         messages.add(CompilerMessage("Succesfully generated an IR.", "success"))
 
-        if "-i" in self.flags:
+        if "-r" in self.flags:
             messages.add(CompilerMessage("Intermediate Representation:", "important"))
             for i in self.ir:
                 print(i)
@@ -181,7 +188,8 @@ def printUsage():
     print(
         "     -f, --force                 Force the Parser to generate a new parse table."
     )
-    print("     -i, --intermediate          Generate an intermediate representation.")
+    print("     -r, --representation        Generate an intermediate representation.")
+    print("     -i, --input <filename>      Input an IR file and start from there.")
     print("     -o, --output <filename>     Output the IR to a file.")
     print()
 
@@ -192,7 +200,7 @@ def parseArguments():
     try:
         opts, args = getopt.getopt(
             sys.argv[1:],
-            "hvsptfig:o:",
+            "hvsptfrg:o:i:",
             [
                 "help",
                 "verbose",
@@ -200,9 +208,10 @@ def parseArguments():
                 "parser",
                 "tree",
                 "force",
-                "intermediate",
+                "representation",
                 "grammar=",
                 "output=",
+                "input=",
             ],
         )
     except getopt.GetoptError as err:
@@ -213,6 +222,7 @@ def parseArguments():
     flags = []
     grammar = None
     output = None
+    inputFile = None
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
@@ -231,8 +241,11 @@ def parseArguments():
         elif opt in ("-o", "--output"):
             output = arg
             flags.append("-o")
-        elif opt in ("-i", "--intermediate"):
+        elif opt in ("-i", "--input"):
+            inputFile = arg
             flags.append("-i")
+        elif opt in ("-r", "--representation"):
+            flags.append("-r")
         elif opt in ("-g", "--grammar"):
             grammar = arg
 
@@ -243,7 +256,7 @@ def parseArguments():
         printUsage()
         sys.exit()
 
-    return filename, grammar, flags, output
+    return filename, grammar, flags, output, inputFile
 
 
 def startLog():
@@ -266,8 +279,10 @@ def startLog():
 def main():
     """Run the compiler from the command line."""
 
-    filename, grammar, flags, output = parseArguments()
-    compiler = Compiler(filename, grammar, flags, output)
+    filename, grammar, flags, output, inputFile = parseArguments()
+    compiler = Compiler(filename, grammar, flags, output, inputFile)
+
+    # TODO: define "levels" and only run compiler up to appropriate level
 
     try:
         compiler.tokenize()
@@ -276,11 +291,11 @@ def main():
         compiler.generateIr()
     except CompilerMessage as err:
         print(err)
-        sys.exit(2)
+        sys.exit()
     except KeyboardInterrupt:
         print("")
         messages.add(CompilerMessage("Compiler was interrupted."))
-        sys.exit(2)
+        sys.exit()
 
 
 if __name__ == "__main__":

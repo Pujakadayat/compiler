@@ -1,10 +1,10 @@
 FILE=samples/assignment.c
 
 main:
-	python3 -m src.main -p -t -i $(FILE)
+	python3 -m src.main -ptr  $(FILE)
 
 force:
-	python3 -m src.main -p -t -f $(FILE)
+	python3 -m src.main -ptrf $(FILE)
 
 test:
 	python3 -m tests.testing -v
