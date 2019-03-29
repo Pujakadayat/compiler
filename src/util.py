@@ -2,6 +2,21 @@
 Utility functions to be re-used across modules.
 """
 
+count = {"none": 0}
+
+
+def unique(prefix=None):
+    """Generate a new, unique variable name with optional prefix."""
+
+    if prefix:
+        if prefix not in count:
+            count[prefix] = 0
+        count[prefix] += 1
+        return f"{prefix}{count[prefix]}"
+
+    count["none"] += 1
+    return f"r{count['none']}"
+
 
 def readFile(filename):
     """Read the contents of a file, if it exists."""
