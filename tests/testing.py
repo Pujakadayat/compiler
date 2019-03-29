@@ -15,7 +15,7 @@ class AssignmentTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls,):
         filename = "samples/assignment.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
@@ -43,7 +43,7 @@ class BasicMathTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         filename = "samples/basic_math.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
@@ -69,7 +69,7 @@ class ExpressionTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         filename = "samples/expression.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
@@ -95,7 +95,7 @@ class FloatTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         filename = "samples/float.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
@@ -121,7 +121,7 @@ class ForTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         filename = "samples/for.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
@@ -147,7 +147,7 @@ class FunctionTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         filename = "samples/function.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
@@ -173,7 +173,7 @@ class HelloWorldTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         filename = "samples/hello_world.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
@@ -199,7 +199,7 @@ class IfElseTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         filename = "samples/if_else.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
@@ -225,7 +225,7 @@ class IfTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         filename = "samples/if.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
@@ -251,7 +251,7 @@ class IncludeTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         filename = "samples/include.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
@@ -277,7 +277,7 @@ class LineBreakTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         filename = "samples/linebreak.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
@@ -303,7 +303,7 @@ class MathTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         filename = "samples/math.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
@@ -329,7 +329,7 @@ class MultiLineCommentTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         filename = "samples/multi_line_comment.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
@@ -355,7 +355,7 @@ class PlainTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         filename = "samples/plain.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):
@@ -381,7 +381,7 @@ class SingleLineCommentTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         filename = "samples/single_line_comment.c"
-        cls.compiler = Compiler(filename, grammar=None, flags=None)
+        cls.compiler = Compiler({"filename": filename})
         cls.tokens = cls.compiler.tokenize()
 
     def test_lexer(self):

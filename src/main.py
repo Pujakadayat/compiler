@@ -19,34 +19,33 @@ from src.util import CompilerMessage, messages
 class Compiler:
     """The main compiler class."""
 
-    def __init__(self, filename, grammar=None, flags=None, output=None, inputFile=None):
-        self.filename = filename
-        self.flags = flags
-        self.output = output
-        self.input = inputFile
+    def __init__(self, options):
+        self.filename = options.get("filename")
+        self.grammar = options.get("grammar")
+        self.flags = options.get("flags")
+        self.output = options.get("output")
+        self.input = options.get("input")
         self.tokens = []
         self.parseTree = None
         self.symbolTable = None
         self.ir = None
 
         # Setup default grammar if none provided
-        if grammar:
-            self.grammar = grammar
-        else:
+        if self.grammar is None:
             messages.add(
                 CompilerMessage("No grammar specified, using default.", "warning")
             )
             self.grammar = "grammars/main_grammar.txt"
 
+        # Setup empty list for flags if none provided
+        if self.flags is None:
+            self.flags = []
+
         # Warn if output flag exists but no filename specified
-        if "-o" in self.flags and output is None:
+        if "-o" in self.flags and self.output is None:
             messages.add(
                 CompilerMessage("No output file specified. Not dumping IR.", "warning")
             )
-
-        # Setup empty list for flags if none provided
-        if flags is None:
-            self.flags = []
 
         # Start a log if verbose flag
         if "-v" in self.flags:
@@ -280,7 +279,14 @@ def main():
     """Run the compiler from the command line."""
 
     filename, grammar, flags, output, inputFile = parseArguments()
-    compiler = Compiler(filename, grammar, flags, output, inputFile)
+    options = {
+        "filename": filename,
+        "grammar": grammar,
+        "flags": flags,
+        "output": output,
+        "input": inputFile,
+    }
+    compiler = Compiler(options)
 
     # TODO: define "levels" and only run compiler up to appropriate level
 
