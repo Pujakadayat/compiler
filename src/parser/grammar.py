@@ -248,7 +248,7 @@ class ExpressionAssignment(Node):
 
     def ir(self):
         self.value = unique()
-        return f"{self.value} = {self.name} - {self.expr.value}"
+        return f"{self.value} = {self.expr.value}"
 
 
 # Expressions
@@ -323,7 +323,9 @@ class NotEqualExpression(Node):
 
 
 class EqualExpression(Node):
-    pass
+    def ir(self):
+        self.value = unique()
+        return f"{self.value} = {self.children[0].value} == {self.children[1].value}"
 
 
 # Statements
@@ -348,7 +350,11 @@ class CallStatement(Node):
 
 
 class IfStatement(Node):
-    pass
+    def ir(self):
+        self.value = count["none"]
+        branch1 = unique("branch")
+        branch2 = unique("branch")
+        return f"if r{self.value} GOTO {branch1} ELSE GOTO {branch2}"
 
 
 class ElseStatement(Node):

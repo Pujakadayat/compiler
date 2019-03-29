@@ -1,4 +1,4 @@
-FILE=samples/assignment.c
+FILE=samples/if.c
 
 main:
 	python3 -m src.main -ptr  $(FILE)

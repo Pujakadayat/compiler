@@ -9,10 +9,10 @@ import os
 from src.util import readFile, writeFile
 
 from src.parser.lrParser import LRParser
-import src.lexer as lexer
+import src.lexer.lexer as lexer
 from src.parser.grammar import DeclarationList, StatementList, Arguments, Parameters
-from src.parser.ir import generateIr
-from src.parser.symbolTable import buildSymbolTable, flattenTree
+from src.ir.ir import generateIr
+from src.symbolTable.symbolTable import buildSymbolTable, flattenTree
 from src.util import CompilerMessage, messages
 
 
