@@ -356,23 +356,26 @@ class PlainTestCase(unittest.TestCase):
     def setUpClass(cls):
         filename = "samples/plain.c"
         cls.compiler = Compiler({"filename": filename})
-        cls.tokens = cls.compiler.tokenize()
+        cls.compiler.tokenize()
+        cls.compiler.parse()
+        cls.compiler.buildSymbolTable()
 
     def test_lexer(self):
         """Test the result of the lexer."""
 
         result = "[int, main, (, ), {, return, 1, ;, }, $]"
-        self.assertEqual(str(self.tokens), result)
+        self.assertEqual(str(self.compiler.tokens), result)
 
     def test_parser(self):
         """Test if the tokens were parsed succesfully."""
 
-        parseTree = self.compiler.parse()
-        self.assertTrue(parseTree)
+        self.assertTrue(self.compiler.parseTree)
 
+    def test_symbolTable(self):
+        """Test the result of the symbol table."""
 
-#     # def test_symbolTable(self):
-#     # self.
+        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {}}}"
+        self.assertEqual(str(self.compiler.symbolTable), result)
 
 
 class SingleLineCommentTestCase(unittest.TestCase):

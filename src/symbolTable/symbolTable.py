@@ -96,6 +96,9 @@ class SymbolTable:
             if key not in ["name", "variables", ".."]:
                 self.print(node[key], level + 1)
 
+    def __str__(self):
+        return str(self.table)
+
 
 def flattenTree(root, reducer, seen=False):
     """
