@@ -288,20 +288,39 @@ def main():
     }
     compiler = Compiler(options)
 
-    # TODO: define "levels" and only run compiler up to appropriate level
+    # Define levels for each step of the compiler
+    # Run up to max level
+    level = 0
+    if "-s" in flags:
+        level = 1
+    if "-p" in flags:
+        level = 2
+    if "-t" in flags:
+        level = 3
+    if "-r" in flags:
+        level = 4
 
     try:
-        compiler.tokenize()
-        compiler.parse()
-        compiler.buildSymbolTable()
-        compiler.generateIr()
+        # If not starting from IR
+        if "-i" not in flags:
+            for i in range(level + 1):
+                if i == 1:
+                    compiler.tokenize()
+                elif i == 2:
+                    compiler.parse()
+                elif i == 3:
+                    compiler.buildSymbolTable()
+                elif i == 4:
+                    compiler.generateIr()
+        else:
+            compiler.generateIr()
     except CompilerMessage as err:
         print(err)
-        sys.exit()
+        sys.exit(2)
     except KeyboardInterrupt:
         print("")
         messages.add(CompilerMessage("Compiler was interrupted."))
-        sys.exit()
+        sys.exit(2)
 
 
 if __name__ == "__main__":

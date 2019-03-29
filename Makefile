@@ -1,7 +1,7 @@
 FILE=samples/if.c
 
 main:
-	python3 -m src.main -ptr  $(FILE)
+	python3 -m src.main -r   $(FILE)
 
 force:
 	python3 -m src.main -ptrf $(FILE)

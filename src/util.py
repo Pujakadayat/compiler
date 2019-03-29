@@ -23,6 +23,7 @@ def readFile(filename):
 
     try:
         with open(filename) as file:
+            messages.add(CompilerMessage(f"Read file: '{filename}'.", "success"))
             return file.read()
     except IOError:
         raise CompilerMessage(f"Cannot read file: {filename}.")
