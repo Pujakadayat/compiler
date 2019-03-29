@@ -23,7 +23,7 @@ arg -> typeSpecifier ID | typeSpecifier
 # Statements
 
 statementList -> statementList statement | statement
-statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | callStatement ;
+statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | whileStatement | callStatement ;
 returnStatement -> return expression ;
 includeStatement -> fileName
 callStatement -> ID ( paramList )
@@ -37,6 +37,7 @@ param -> constNum | ID | str
 ifStatement -> if ( expression ) { statementList } | if ( expression ) { statementList } elseStatement
 elseStatement -> else { statementList }
 forStatement -> for ( assignment expression ; ID ++ ) { statementList }
+whileStatement -> while ( expression ) { statementList }
 
 # Expressions
 
