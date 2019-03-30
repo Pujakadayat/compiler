@@ -405,6 +405,15 @@ class LRParser:
         grammarName = grammarFile.split("/")[1].split(".")[0]
         tableFile = "{}{}{}".format("tables/", grammarName, "_table.json")
 
+        # Ensure the /tables directory exists.
+        if not os.path.exists("tables/"):
+            messages.add(
+                CompilerMessage(
+                    "No '/tables' directory found, creating one.", "warning"
+                )
+            )
+            os.makedirs("tables")
+
         # Parse the input grammar
         self.parseGrammar(readFile(grammarFile))
 
