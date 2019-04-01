@@ -62,6 +62,30 @@ class BasicMathTestCase(unittest.TestCase):
 #     # def test_symbolTable(self):
 #     # self.
 
+class ControlFlowTestCase(unittest.TestCase):
+    """Test case for control_flow.c"""
+
+    @classmethod
+    def setUpClass(cls):
+        filename = "samples/control_flow.c"
+        cls.compiler = Compiler({"filename": filename})
+        cls.tokens = cls.compiler.tokenize()
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        result = "[int, main, (, ), {, int, i, =, 0, ;, int, y, =, 0, ;, int, x, =, 0, ;, for, (, i, =, 0, ;, i, <, 10, ;, i, ++, ), {, x, +=, 1, ;, }, while, (, i, >, 0, ), {, y, +=, 2, ;, i, --, ;, }, return, 0, ;, }, $]"
+        self.assertEqual(str(self.tokens), result)
+
+    def test_parser(self):
+        """Test if the tokens were parsed succesfully."""
+
+        parseTree = self.compiler.parse()
+        self.assertTrue(parseTree)
+
+
+#     # def test_symbolTable(self):
+#     # self.
 
 class ExpressionTestCase(unittest.TestCase):
     """Test case for expression.c"""

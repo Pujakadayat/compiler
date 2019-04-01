@@ -501,8 +501,8 @@ class LRParser:
                 )
             if printDebug:
                 print(
-                    "---\nState: %s\nStates: %s\nlookahead Token: %s\nstack: %s\noutput: %s\n"
-                    % (state, states, token, stack, output)
+                    "---\nState: %s\nStates: %s\nlookahead Token: %s\nstack: %s\noutput: %s\nparse Tree: %s\n"
+                    % (state, states, token, stack, output, self.parseTree)
                 )
 
             try:
@@ -552,10 +552,15 @@ class LRParser:
 
                                 tempNode = grammar.parseToken(result[1], children=c)
 
+                                #print(rule)
+                                #print(self.parseTree)
+                                #print(c)
+
                                 if tempNode:
                                     if rule != ["EMPTY"]:
                                         del self.parseTree[-len(rule) :]
                                     self.parseTree.append(tempNode)
+                                    #print(self.parseTree, "\n")
 
                             del stack[-len(rule) :]
                             del states[-len(rule) :]
@@ -576,6 +581,8 @@ class LRParser:
                             )
 
                             return None
+
+                # if actions happens to have EMPTY in the set
                 else:
                     if "EMPTY" in self.actions[state].keys():
                         result = self.actions[state]["EMPTY"]
@@ -612,6 +619,7 @@ class LRParser:
         if debug:
             logging.debug(output)
 
+        print(self.parseTree)
         return self.parseTree
 
     def updateSetNum(self):

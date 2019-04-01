@@ -322,6 +322,9 @@ class ForStatement(Node):
     pass
 
 
+class WhileStatement(Node):
+    pass
+
 class IncludeStatement(Node):
     pass
 
@@ -371,6 +374,7 @@ nodes = {
     "statement": Statement,
     "returnStatement": ReturnStatement,
     "forStatement": ForStatement,
+    "whileStatement": WhileStatement,
     "includeStatement": IncludeStatement,
     "callStatement": CallStatement,
     "paramList": Parameters,
