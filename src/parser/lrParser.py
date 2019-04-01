@@ -405,6 +405,12 @@ class LRParser:
         grammarName = grammarFile.split("/")[1].split(".")[0]
         tableFile = "{}{}{}".format("tables/", grammarName, "_table.json")
 
+        # Check if the path /tables is a file instead of directory
+        if os.path.exists("tables") and not os.path.exists("tables/"):
+            raise CompilerMessage(
+                "Path '/tables' is a file instead of a directory. Please remove or rename the file so that the tables can be saved."
+            )
+
         # Ensure the /tables directory exists.
         if not os.path.exists("tables/"):
             messages.add(

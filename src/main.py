@@ -47,10 +47,6 @@ class Compiler:
                 CompilerMessage("No output file specified. Not dumping IR.", "warning")
             )
 
-        # Start a log if verbose flag
-        if "-v" in self.flags:
-            startLog()
-
     def tokenize(self):
         """Tokenize the input file."""
 
@@ -258,6 +254,19 @@ def parseArguments():
 def startLog():
     """Initialize a new log file."""
 
+    # Check if the path /logs is a file instead of directory
+    if os.path.exists("logs") and not os.path.exists("logs/"):
+        raise CompilerMessage(
+            "Path '/logs' is a file instead of a directory. Please remove or rename the file so that logging output can be saved."
+        )
+
+    # Ensure the /logs directory exists.
+    if not os.path.exists("logs/"):
+        messages.add(
+            CompilerMessage("No '/logs' directory found, creating one.", "warning")
+        )
+        os.makedirs("logs")
+
     logs = os.listdir("logs/")
     biggestLog = 0
     for log in logs:
@@ -298,6 +307,10 @@ def main():
         level = 4
 
     try:
+        # Start a log if verbose flag
+        if "-v" in flags:
+            startLog()
+
         # If not starting from IR
         if "-i" not in flags:
             for i in range(level + 1):
