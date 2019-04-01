@@ -130,7 +130,7 @@ $ python3 -m src.main --ir --output OUTPUT_FILENAME FILENAME
 
 # Design Discussion
 
-###Scanner Implementation
+## Scanner Implementation
 
 Our scanner parses characters in a 'chunk', with a start an and end counter. We iterate through the chunk to match our tokens in the following order: Symbols, Operators, Keywords, Identifiers and Numbers.
 
@@ -138,13 +138,13 @@ We are not focused on speed, which is why we opted not to use regular expression
 
 ## Parser Implementation
 
-Our parser uses action and goto tables generated from the rules in `grammars/main_grammar.txt`. Because generating the tables takes so long, after the first generation they are saved in JSON format in the `tables/` directory for future compiler executions. The parser outputs a parse tree consisting of instances of custom node classes defined in `grammar.py`. The parse tree nodes are highly absracted and do not include unimportant tokens like brackets or parentheses.
+Our parser uses action and goto tables generated from the rules in `grammars/main_grammar.txt`. Because generating the tables takes so long, after the first generation they are saved in JSON format in the `tables/` directory for future compiler executions. The parser outputs a parse tree consisting of instances of custom node classes defined in `grammar.py`. The parse tree nodes are highly abstracted and do not include unimportant tokens like brackets or parentheses.
 
 After the initial creating of the parse tree, it is "flattened" by un-nesting recursive grammar nodes. This makes it easier to generate the symbol table and removes useless duplicate nodes from the tree.
 
 ## Symbol Table Implementation
 
-Our symbol table uses the parse tree to create a new scope for each function declaration. We save each variable declaration inside the appropriate scope, including a global scope. While generating the symbol table we also check for duplicate variable and function declaration and undefined identifiers.
+Our symbol table uses the parse tree to create a new scope for each function declaration. We save each variable declaration inside the appropriate scope, including a global scope. While generating the symbol table we also check for duplicate variable, function declaration and undefined identifiers.
 
 ## IR Implementation
 
