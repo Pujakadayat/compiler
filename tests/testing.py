@@ -183,9 +183,10 @@ class ControlFlowTestCase(unittest.TestCase):
 
 
 class DuplicateFuncTestCase(unittest.TestCase):
-    """Test case for duplicate_func.c"""
-
-    """Returns expected error, because of scope checking"""
+    """
+    Test case for duplicate_func.c"
+    Returns expected error, because of scope checking
+    """
 
     @classmethod
     def setUpClass(cls):
@@ -213,9 +214,10 @@ class DuplicateFuncTestCase(unittest.TestCase):
 
 
 class DuplicateVarTestCase(unittest.TestCase):
-    """Test case for duplicate_var.c"""
-
-    """Returns expected error, because of scope checking"""
+    """
+    Test case for duplicate_var.c
+    Returns expected error, because of scope checking
+    """
 
     @classmethod
     def setUpClass(cls):
@@ -765,9 +767,10 @@ class SingleLineCommentTestCase(unittest.TestCase):
 
 
 class UndefinedVarTestCase(unittest.TestCase):
-    """Test case for undefined_var.c"""
-
-    """Returns expected error, because of undefined variable x"""
+    """
+    Test case for undefined_var.c
+    Returns expected error, because of scope checking
+    """
 
     @classmethod
     def setUpClass(cls):
