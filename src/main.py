@@ -96,10 +96,8 @@ class Compiler:
         messages.add(CompilerMessage("Succesfully parsed the tokens.", "success"))
 
         # Flatten the parse tree
-        flattenTree(self.parseTree, reducer=Arguments)
-        flattenTree(self.parseTree, reducer=Parameters)
-        flattenTree(self.parseTree, reducer=DeclarationList)
-        flattenTree(self.parseTree, reducer=StatementList)
+        for reduce in [Arguments, Parameters, DeclarationList, StatementList]:
+            flattenTree(self.parseTree, reducer=reduce)
 
         # Print the parse tree
         if "-p" in self.flags:
@@ -202,11 +200,11 @@ def parseArguments():
             [
                 "help",
                 "verbose",
-                "scanner",
-                "parser",
-                "tree",
+                "scan",
+                "parse",
+                "table",
                 "force",
-                "representation",
+                "ir",
                 "grammar=",
                 "output=",
                 "input=",
@@ -226,13 +224,13 @@ def parseArguments():
         if opt in ("-h", "--help"):
             printUsage()
             sys.exit()
-        elif opt in ("-s", "--scanner"):
+        elif opt in ("-s", "--scan"):
             flags.append("-s")
-        elif opt in ("-p", "--parser"):
+        elif opt in ("-p", "--parse"):
             flags.append("-p")
         elif opt in ("-v", "--verbose"):
             flags.append("-v")
-        elif opt in ("-t", "--tree"):
+        elif opt in ("-t", "--table"):
             flags.append("-t")
         elif opt in ("-f", "--force"):
             flags.append("-f")
@@ -242,7 +240,7 @@ def parseArguments():
         elif opt in ("-i", "--input"):
             inputFile = arg
             flags.append("-i")
-        elif opt in ("-r", "--representation"):
+        elif opt in ("-r", "--ir"):
             flags.append("-r")
         elif opt in ("-g", "--grammar"):
             grammar = arg

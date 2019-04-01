@@ -552,15 +552,15 @@ class LRParser:
 
                                 tempNode = grammar.parseToken(result[1], children=c)
 
-                                #print(rule)
-                                #print(self.parseTree)
-                                #print(c)
+                                # print(rule)
+                                # print(self.parseTree)
+                                # print(c)
 
                                 if tempNode:
                                     if rule != ["EMPTY"]:
                                         del self.parseTree[-len(rule) :]
                                     self.parseTree.append(tempNode)
-                                    #print(self.parseTree, "\n")
+                                    # print(self.parseTree, "\n")
 
                             del stack[-len(rule) :]
                             del states[-len(rule) :]

@@ -1,7 +1,7 @@
-FILE=samples/math.c
+FILE=samples/control_flow.c
 
 main:
-	python3 -m src.main -sptr   $(FILE)
+	python3 -m src.main -sptr $(FILE)
 
 force:
 	python3 -m src.main -ptrf $(FILE)

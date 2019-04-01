@@ -325,6 +325,7 @@ class ForStatement(Node):
 class WhileStatement(Node):
     pass
 
+
 class IncludeStatement(Node):
     pass
 
