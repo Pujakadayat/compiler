@@ -2,7 +2,7 @@
 
 Group Members: Charles Hermann, Izeah Olguin, Paco Coursey
 
-Last Updated: 02/8/2019
+Last Updated: 03/31/2019
 
 ## Quickstart
 
@@ -20,10 +20,21 @@ $ make install
 
 ## Overview
 
-Our Python compiler currently meets the standards expected of the first
-deliverable. Our scanner reads in a file as a string of characters and produces a list of labeled tokens. These tokens become acquired by the parser and produce an abstract representation.
+Our Python compiler currently meets the standards expected of the second
+deliverable.
 
-As a group, we have met numerous times to discuss our design, implementation and overall expectations of our compiler.
+Our scanner reads in a file as a string of characters and produces a list of labeled tokens. These tokens become acquired by the parser and produce an abstract representation.
+
+We then generate our parse tree, utilizing the list of labeled tokens -- and a recursive function, flattenTree
+which is our implementation of a DFS tree traversal algorithm. This allows us to develop our parse tree structure of parent/children nodes given a collapsable grammar rule.
+
+Once the parse tree has been created:
+
+We are able to employ its structure and data into creating the symbol table. Again, we focused on the DFS tree traversal algorithm by visiting each parent node and traversing to each of its children. With this recursive method, we are able to visualize our scope within the tree, and confidently update the tree after each visit to every node.  
+
+Furthermore, we extend this structure to design our Intermediate Representation and exploit the visitChildren function to return our IR as a list of strings. Reading in an IR instead of a source file, as well as writing out the IR to a file with a specified name have also been developed.
+
+As a group, we have met numerous times to discuss our design, implementation and overall expectations of our compiler, which has lead to overcoming numerous amounts of errors and feats against our design endeavors.
 
 As mentioned during the code review in class, our Python code is a bit extensive, however this contributes to the readability and allows our software to be more dynamic.
 
@@ -57,6 +68,44 @@ $ make main
 $ python3 src/main.py -s -p samples/plain.c
 ```
 
+### Symbol Table
+
+The symbol table uses the parse tree construction and a recursive structure to visit each node and retain its current scope
+Run Using:
+
+```bash
+$ make main
+# or
+$ python3 src/main.py -t samples/plain.c
+```
+
+### Intermediate Representation
+
+The IR uses the parse tree construction and exploits recursion (visitChildren function) to return our IR as a list of strings.
+Run Using:
+
+```bash
+$ make main
+# or
+$ python3 src/main.py -r samples/plain.c
+```
+
+To read in an IR, instead of source file, Run Using:
+
+```bash
+$ make main
+# or
+$ python3 src/main.py -ri tmp.txt
+```
+
+To write out the IR to a file with a specified name, Run Using:
+
+```bash
+$ make main
+# or
+$ python3 src/main.py -ro foo.txt samples/plain.c
+```
+
 ## Design Discussion
 
 ### Scanner Implementation
@@ -73,11 +122,13 @@ The `paser.py` file design is similar to that of Nora Sandler's design. We emplo
 
 In the rules of `grammar.py`, we attempt to break as early as possible to avoid checking more tokens than we have to. This helps speed up the rule searching.
 
+### Symbol Table Implementation
+
+### IR Implementation
+
 ### Limitations
 
 - Large code base
-- Rule searching rather than action/goto tables
-- Small subset of grammar implemented
 - Complex logic on rule specification
 
 ### Benefits
@@ -113,9 +164,9 @@ High level AST nodes that we currently recognize:
 
 - [X] Program
 - [X] Function Declaration
-- [X] Type Specifier: int
+- [X] Type Specifier: int, float
 - [X] Return Statement
-- [X] Number Constant: int
+- [X] Number Constant: int, float
 - [X] Identifiers
 - [X] Variable Declaration
 - [X] If/Else Control Flow
