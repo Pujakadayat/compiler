@@ -1,7 +1,7 @@
-FILE=samples/if.c
+FILE=samples/undefined_var.c
 
 main:
-	python3 -m src.main -r   $(FILE)
+	python3 -m src.main -t   $(FILE)
 
 force:
 	python3 -m src.main -ptrf $(FILE)

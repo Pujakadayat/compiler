@@ -128,7 +128,6 @@ class Compiler:
         if "-t" in self.flags:
             messages.add(CompilerMessage("Symbol Table:", "important"))
             self.symbolTable.print()
-
         return self.symbolTable
 
     def generateIr(self):
