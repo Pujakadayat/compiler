@@ -333,11 +333,12 @@ class IncludeStatement(Node):
 class CallStatement(Node):
     def __init__(self, children):
         self.children = children
-        self.value = self.children[0].value
+        self.name = self.children[0].value
         self.parameters = self.children[1]
 
     def ir(self):
-        return f"call {self.value} ({self.parameters.value})"
+        self.value = unique()
+        return f"{self.value} = call {self.name} ({self.parameters.value})"
 
 
 class IfStatement(Node):

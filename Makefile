@@ -1,10 +1,10 @@
-FILE=samples/control_flow.c
+FILE=samples/call.c
 
 main:
 	python3 -m src.main -sptr $(FILE)
 
 force:
-	python3 -m src.main -ptrf $(FILE)
+	python3 -m src.main -sptrf $(FILE)
 
 test:
 	python3 -m tests.testing -v

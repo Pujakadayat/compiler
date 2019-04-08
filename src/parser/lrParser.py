@@ -625,7 +625,6 @@ class LRParser:
         if debug:
             logging.debug(output)
 
-        print(self.parseTree)
         return self.parseTree
 
     def updateSetNum(self):
