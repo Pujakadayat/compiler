@@ -172,7 +172,6 @@ def tokenizeLine(line, isComment):
     return lineTokens, isComment
 
 
-# TODO: handle hex, octal, escaped characters, etc...
 def parseQuote(line, start, delimeter):
     """Parse the quote value from the line."""
     characters = []
