@@ -1,7 +1,7 @@
-FILE=samples/call.c
+FILE=samples/if.c
 
 main:
-	python3 -m src.main -sptr $(FILE)
+	python3 -m src.main -pr -v $(FILE)
 
 force:
 	python3 -m src.main -sptrf $(FILE)

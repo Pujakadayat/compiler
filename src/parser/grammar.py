@@ -92,7 +92,10 @@ class FunctionDeclaration(Node):
 
     def ir(self):
         self.arguments.ir()
-        return f".{self.name} ({self.arguments.value})"
+        return [
+            "---",
+            f".{self.name} ({self.arguments.value})"
+        ]
 
 
 class Arguments(Node):
@@ -342,11 +345,22 @@ class CallStatement(Node):
 
 
 class IfStatement(Node):
+    def __init__(self, children):
+        self.children = children
+        self.condition = self.children[0]
+        self.body = self.children[1]
+
     def ir(self):
-        self.value = count["none"]
         branch1 = unique("branch")
         branch2 = unique("branch")
-        return f"if r{self.value} GOTO {branch1} ELSE GOTO {branch2}"
+        return [
+            f"if {self.condition.value} GOTO {branch1} ELSE GOTO {branch2}",
+            "- endifblock"
+        ]
+
+class Condition(Node):
+    def ir(self):
+        self.value = self.children[0].value
 
 
 class ElseStatement(Node):
@@ -382,6 +396,7 @@ nodes = {
     "paramList": Parameters,
     "param": Parameter,
     "ifStatement": IfStatement,
+    "condition": Condition,
     "elseStatement": ElseStatement,
     "expression": Expression,
     "nestedExpr": NestedExpression,
