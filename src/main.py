@@ -25,10 +25,12 @@ class Compiler:
         self.flags = options.get("flags")
         self.output = options.get("output")
         self.input = options.get("input")
+        self.asmOutput = options.get("asmOutput")
         self.tokens = []
         self.parseTree = None
         self.symbolTable = None
         self.ir = None
+        self.asm = None
 
         # Setup default grammar if none provided
         if self.grammar is None:
@@ -46,6 +48,7 @@ class Compiler:
             messages.add(
                 CompilerMessage("No output file specified. Not dumping IR.", "warning")
             )
+
 
     def tokenize(self):
         """Tokenize the input file."""
@@ -159,6 +162,23 @@ class Compiler:
 
         return self.ir
 
+    def assemble(self):
+        # Cannot convert to IR without parse tree
+        if not self.ir:
+            raise CompilerMessage("Cannot generate asm without an IR.")
+
+        # Warn if no asm output filename specified
+        if "-n" not in self.flags:
+            self.asmOutput = self.filename[:-1] + "s"
+            self.asmOutput = "assembly/" + self.asmOutput.split("/")[-1]
+            messages.add(
+                CompilerMessage("No assembly output file specified. Dumping to {}.".format(self.asmOutput), "warning")
+            )
+
+        messages.add(CompilerMessage("Succesfully generated the assembly file.", "success"))
+
+        return 0
+
 
 def printUsage():
     """Print a usage statement."""
@@ -183,6 +203,8 @@ def printUsage():
     print("     -r, --representation        Generate an intermediate representation.")
     print("     -i, --input <filename>      Input an IR file and start from there.")
     print("     -o, --output <filename>     Output the IR to a file.")
+    print("     -a, --asm                   Generate assembly instructions from the IR.")
+    print("     -n, --asmOutput <filename>  Output the assembly to a file.")
     print()
 
 
@@ -192,7 +214,7 @@ def parseArguments():
     try:
         opts, args = getopt.getopt(
             sys.argv[1:],
-            "hvsptfrg:o:i:",
+            "hvsptfrag:o:i:n:",
             [
                 "help",
                 "verbose",
@@ -201,9 +223,11 @@ def parseArguments():
                 "table",
                 "force",
                 "ir",
+                "asm",
                 "grammar=",
                 "output=",
                 "input=",
+                "asmOutput="
             ],
         )
     except getopt.GetoptError as err:
@@ -215,6 +239,7 @@ def parseArguments():
     grammar = None
     output = None
     inputFile = None
+    asmOutput = None
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
@@ -240,6 +265,11 @@ def parseArguments():
             flags.append("-r")
         elif opt in ("-g", "--grammar"):
             grammar = arg
+        elif opt in ("-a", "-asm"):
+            flags.append("-a")
+        elif opt in ("-n", "-asmOutput"):
+            flags.append("-n")
+            asmOutput = arg
 
     try:
         filename = args[0]
@@ -248,7 +278,7 @@ def parseArguments():
         printUsage()
         sys.exit()
 
-    return filename, grammar, flags, output, inputFile
+    return filename, grammar, flags, output, inputFile, asmOutput
 
 
 def startLog():
@@ -285,13 +315,14 @@ def startLog():
 def main():
     """Run the compiler from the command line."""
 
-    filename, grammar, flags, output, inputFile = parseArguments()
+    filename, grammar, flags, output, inputFile, asmOutput = parseArguments()
     options = {
         "filename": filename,
         "grammar": grammar,
         "flags": flags,
         "output": output,
         "input": inputFile,
+        "asmOutput": asmOutput,
     }
     compiler = Compiler(options)
 
@@ -306,6 +337,8 @@ def main():
         level = 3
     if "-r" in flags:
         level = 4
+    if "-a" in flags:
+        level = 5
 
     try:
         # Start a log if verbose flag
@@ -323,8 +356,12 @@ def main():
                     compiler.buildSymbolTable()
                 elif i == 4:
                     compiler.generateIr()
+                elif i == 5:
+                    compiler.assemble()
         else:
             compiler.generateIr()
+            if level >= 5:
+                compiler.assemble()
     except CompilerMessage as err:
         print(err)
         sys.exit(2)
