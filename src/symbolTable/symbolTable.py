@@ -12,7 +12,8 @@ class SymbolTable:
     def __init__(self):
         self.table = {}
         self.table["name"] = "global"
-        self.table["variables"] = []
+        self.table["variables"] = {}
+        self.table["labels"] = {}
         self.current = self.table
         self.level = 0
 
@@ -29,6 +30,7 @@ class SymbolTable:
         # Initialize the dict with a .. and variables entry
         self.current[name][".."] = self.current
         self.current[name]["variables"] = {}
+        self.current[name]["labels"] = {}
 
         # Update the current pointer
         self.current = self.current[name]
@@ -45,6 +47,17 @@ class SymbolTable:
         # Add the variable to the current scope
         self.current["variables"][name] = t
 
+    def useLabel(self, name):
+        """Add a new label to the label list as unverified."""
+
+        if name not in self.current["labels"]:
+            self.current["labels"][name] = False
+
+    def declareLabel(self, name):
+        """Add a new label to the label list as verified."""
+
+        self.current["labels"][name] = True
+
     def endScope(self):
         """Finalize a scope and return it's parent scope."""
 
@@ -59,7 +72,7 @@ class SymbolTable:
 
         # Search the global table first
         if c == self.table:
-            if name in c["variables"] or name in c:
+            if name in c["variables"] or name in c or name in c["labels"]:
                 return self.table["name"]
 
             return None
@@ -67,7 +80,7 @@ class SymbolTable:
         # Search up the tree from our current scope
         # as long as there is a parent
         while ".." in c:
-            if name in c["variables"] or c["name"] == name:
+            if name in c["variables"] or c["name"] == name or name in c["labels"]:
                 return c["name"]
 
             # Loop will break without checking global scope
@@ -90,14 +103,29 @@ class SymbolTable:
             node = self.table
 
         grammar.printPrefix(level)
-        print(f"{node['name']}: {node['variables']}")
+        print(f"{node['name']}: {node['variables']}, {node['labels']}")
 
         for key in node:
-            if key not in ["name", "variables", ".."]:
+            if key not in ["name", "variables", "..", "labels"]:
                 self.print(node[key], level + 1)
 
     def __str__(self):
         return str(self.table)
+
+    def verifyLabels(self, c=None):
+        """Check for used but undeclared labels."""
+
+        if c is None:
+            c = self.table
+
+        if c["labels"] is not False:
+            for l in c["labels"]:
+                if c["labels"][l] is False:
+                    raise CompilerMessage(f"The label {l} was used but never declared.")
+
+        for key in c:
+            if key not in ["name", "variables", "..", "labels"]:
+                self.verifyLabels(c[key])
 
 
 def flattenTree(root, reducer, seen=False):
@@ -176,8 +204,12 @@ def flattenTree(root, reducer, seen=False):
 def buildSymbolTable(parseTree):
     """Given the parse tree, build a symbol table."""
 
+    # Build the symbol table
     st = SymbolTable()
     visitChildren(parseTree, st)
+
+    # Verify all labels are valid
+    st.verifyLabels()
 
     return st
 
@@ -207,6 +239,11 @@ def updateSymbolTable(node, st, level=0):
         st.declareVariable(node.type, node.name)
     elif isinstance(node, grammar.Argument):
         st.declareVariable(node.type, node.name)
+    elif isinstance(node, grammar.GotoStatement):
+        st.useLabel(node.children[0].value)
+    elif isinstance(node, grammar.LabelDeclaration):
+        st.declareLabel(node.children[0].value)
     elif isinstance(node, grammar.Identifier):
         if st.find(node.value) is None:
+            # st.print()
             raise CompilerMessage(f"Identifier {node.value} is undefined.")
