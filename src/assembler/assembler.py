@@ -9,6 +9,7 @@ from src.util import readFile, messages, CompilerMessage
 
 debug = True
 
+
 class Assembler:
     """The general assembly class."""
 

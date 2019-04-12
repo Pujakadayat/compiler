@@ -128,6 +128,26 @@ $ python3 -m src.main -r -o OUTPUT_FILENAME FILENAME
 $ python3 -m src.main --ir --output OUTPUT_FILENAME FILENAME
 ```
 
+### `-a` or `--asm`
+
+Generate assembly instructions from the IR. Run using:
+
+```bash
+$ python3 -m src.main -a FILENAME
+# or
+$ python3 -m src.main --asm FILENAME
+```
+
+### `-n` or `--asmOutput`
+
+Write out the assembly to a file. Run using:
+
+```bash
+$ python3 -m src.main -a -n OUTPUT_FILENAME FILENAME
+# or
+$ python3 -m src.main --asm --asmOutput OUTPUT_FILENAME FILENAME
+```
+
 # Design Discussion
 
 ## Scanner Implementation
