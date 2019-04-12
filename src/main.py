@@ -13,7 +13,7 @@ import src.lexer.lexer as lexer
 from src.parser.grammar import DeclarationList, StatementList, Arguments, Parameters
 from src.ir.ir import generateIr
 from src.symbolTable.symbolTable import buildSymbolTable, flattenTree
-from src.assembler.assembler import Assembler
+import src.assembler.assembler as assembler
 from src.util import CompilerMessage, messages
 
 
@@ -163,22 +163,41 @@ class Compiler:
         return self.ir
 
     def assemble(self):
+        """Convert the IR to assembly instructions."""
+
         # Cannot convert to IR without parse tree
         if not self.ir:
             raise CompilerMessage("Cannot generate asm without an IR.")
 
-        # Warn if no asm output filename specified
-        if "-n" not in self.flags:
-            self.asmOutput = self.filename[:-1] + "s"
-            self.asmOutput = "assembly/" + self.asmOutput.split("/")[-1]
+        self.asm = assembler.generate(self.ir)
+
+        if self.ir is None:
+            messages.add(CompilerMessage("Failed to generate the ASM."))
+            return None
+
+        messages.add(CompilerMessage("Successfully generated ASM.", "success"))
+
+        # Print the ASM if "-a" flag
+        if "-a" in self.flags:
+            messages.add(CompilerMessage("ASM:", "important"))
+            assembler.print()
+
+        # The "-n" flag found but no filename specified,
+        # default to input filename with '.s' extension
+        if "-n" in self.flags and not self.asmOutput:
+            # Remove the file extension and add '.s'
+            noExtension = self.filename.rsplit(".", 1)[0]
+            self.asmOutput = f"{noExtension}.s"
+
             messages.add(
                 CompilerMessage(
-                    "No assembly output file specified. Dumping to {}.".format(
-                        self.asmOutput
-                    ),
-                    "warning",
+                    f"No ASM output file specified. Defaulted to '{self.asmOutput}'"
                 )
             )
+
+        # Warn if no asm output filename specified
+        if "-n" in self.flags:
+            assembler.write(self.asmOutput)
 
         messages.add(
             CompilerMessage("Succesfully generated the assembly file.", "success")
@@ -274,9 +293,9 @@ def parseArguments():
             flags.append("-r")
         elif opt in ("-g", "--grammar"):
             grammar = arg
-        elif opt in ("-a", "-asm"):
+        elif opt in ("-a", "--asm"):
             flags.append("-a")
-        elif opt in ("-n", "-asmOutput"):
+        elif opt in ("-n", "--asmOutput"):
             flags.append("-n")
             asmOutput = arg
 
