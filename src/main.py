@@ -288,7 +288,8 @@ def startLog():
     # Check if the path /logs is a file instead of directory
     if os.path.exists("logs") and not os.path.exists("logs/"):
         raise CompilerMessage(
-            "Path '/logs' is a file instead of a directory. Please remove or rename the file so that logging output can be saved."
+            "Path '/logs' is a file instead of a directory. Please remove or rename the file"
+            "so that logging output can be saved."
         )
 
     # Ensure the /logs directory exists.

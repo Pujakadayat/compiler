@@ -408,7 +408,8 @@ class LRParser:
         # Check if the path /tables is a file instead of directory
         if os.path.exists("tables") and not os.path.exists("tables/"):
             raise CompilerMessage(
-                "Path '/tables' is a file instead of a directory. Please remove or rename the file so that the tables can be saved."
+                "Path '/tables' is a file instead of a directory."
+                "Please remove or rename the file so that the tables can be saved."
             )
 
         # Ensure the /tables directory exists.
@@ -507,7 +508,8 @@ class LRParser:
                 )
             if printDebug:
                 print(
-                    "---\nState: %s\nStates: %s\nlookahead Token: %s\nstack: %s\noutput: %s\nparse Tree: %s\n"
+                    "---\nState: %s\nStates: %s\nlookahead Token: %s\n"
+                    "stack: %s\noutput: %s\nparse Tree: %s\n"
                     % (state, states, token, stack, output, self.parseTree)
                 )
 
