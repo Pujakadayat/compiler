@@ -13,6 +13,7 @@ import src.lexer.lexer as lexer
 from src.parser.grammar import DeclarationList, StatementList, Arguments, Parameters
 from src.ir.ir import generateIr
 from src.symbolTable.symbolTable import buildSymbolTable, flattenTree
+from src.assembler.assembler import Assembler
 from src.util import CompilerMessage, messages
 
 
