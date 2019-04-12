@@ -50,7 +50,6 @@ class Compiler:
                 CompilerMessage("No output file specified. Not dumping IR.", "warning")
             )
 
-
     def tokenize(self):
         """Tokenize the input file."""
 
@@ -173,10 +172,17 @@ class Compiler:
             self.asmOutput = self.filename[:-1] + "s"
             self.asmOutput = "assembly/" + self.asmOutput.split("/")[-1]
             messages.add(
-                CompilerMessage("No assembly output file specified. Dumping to {}.".format(self.asmOutput), "warning")
+                CompilerMessage(
+                    "No assembly output file specified. Dumping to {}.".format(
+                        self.asmOutput
+                    ),
+                    "warning",
+                )
             )
 
-        messages.add(CompilerMessage("Succesfully generated the assembly file.", "success"))
+        messages.add(
+            CompilerMessage("Succesfully generated the assembly file.", "success")
+        )
 
         return 0
 
@@ -204,7 +210,9 @@ def printUsage():
     print("     -r, --representation        Generate an intermediate representation.")
     print("     -i, --input <filename>      Input an IR file and start from there.")
     print("     -o, --output <filename>     Output the IR to a file.")
-    print("     -a, --asm                   Generate assembly instructions from the IR.")
+    print(
+        "     -a, --asm                   Generate assembly instructions from the IR."
+    )
     print("     -n, --asmOutput <filename>  Output the assembly to a file.")
     print()
 
@@ -228,7 +236,7 @@ def parseArguments():
                 "grammar=",
                 "output=",
                 "input=",
-                "asmOutput="
+                "asmOutput=",
             ],
         )
     except getopt.GetoptError as err:
