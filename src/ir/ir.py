@@ -11,18 +11,30 @@ class IR:
 
     def __init__(self, parseTree):
         self.parseTree = parseTree
-        self.ir = []
         self.stack = []
-        self.table = {}
+        self.ir = {}
         self.current = None
 
     def generate(self):
         """Generate the IR from the parse tree."""
 
         self.visit(self.parseTree)
-        print(self.table)
 
-        return None
+        for x in self.ir:
+            print("---")
+            print(x)
+            for i in self.ir[x]["blocks"]:
+                print(i)
+
+        return self.ir
+
+    def closeBlock(self):
+        """Save the stack as a block and start a new block."""
+
+        if self.stack:
+            self.ir[self.current]["blocks"].append(self.stack)
+
+        self.stack = []
 
     def visit(self, node):
         """Visit a node of the parse tree and recurse."""
@@ -30,19 +42,15 @@ class IR:
         # Start new basic blocks when we first encounter certain nodes.
         if isinstance(node, grammar.FunctionDeclaration):
             # Start a new function entry
-            self.table[node.name] = {}
-            self.table[node.name]["blocks"] = []
+            self.ir[node.name] = {}
+            self.ir[node.name]["blocks"] = []
             self.current = node.name
         elif isinstance(node, grammar.IfStatement):
-            # Save the stack as a block and start a new one.
-            self.table[self.current]["blocks"].append(self.stack)
-            self.stack = []
+            self.closeBlock()
         elif isinstance(node, grammar.ElseStatement):
-            self.table[self.current]["blocks"].append(self.stack)
-            self.stack = []
+            self.closeBlock()
         elif isinstance(node, grammar.LabelDeclaration):
-            self.table[self.current]["blocks"].append(self.stack)
-            self.stack = []
+            self.closeBlock()
 
         # Slide to the left, slide to the right
         # Recurse recurse, recurse recurse!
@@ -58,19 +66,15 @@ class IR:
             # End the basic blocks we created earlier now that all
             # the node within have been visited.
             if isinstance(node, grammar.FunctionDeclaration):
-                self.table[node.name]["arguments"] = node.arguments.value
-                self.table[node.name]["blocks"].append(self.stack)
-                self.stack = []
+                self.ir[node.name]["arguments"] = node.arguments.value
+                self.closeBlock()
             elif isinstance(node, grammar.IfStatement):
-                self.table[self.current]["blocks"].append(self.stack)
-                self.stack = []
+                self.closeBlock()
             elif isinstance(node, grammar.ElseStatement):
-                self.table[self.current]["blocks"].append(self.stack)
-                self.stack = []
+                self.closeBlock()
             elif isinstance(node, grammar.LabelDeclaration):
                 self.stack.insert(0, node.ir())
-                self.table[self.current]["blocks"].append(self.stack)
-                self.stack = []
+                self.closeBlock()
             else:
                 i = node.ir()
                 if i is not None and not i.isdigit():
@@ -79,5 +83,19 @@ class IR:
     def print(self):
         """Print the intermediate representation as a string."""
 
-        for i in self.ir:
-            print(i)
+        for function in self.ir:
+            print(f".{function} ({self.ir[function]['arguments']})")
+            for block in self.ir[function]["blocks"]:
+                for line in block:
+                    print(line)
+
+    def __str__(self):
+        s = []
+
+        for function in self.ir:
+            s.append(f".{function} ({self.ir[function]['arguments']})")
+            for block in self.ir[function]["blocks"]:
+                for line in block:
+                    s.append(line)
+
+        return '\n'.join(s)

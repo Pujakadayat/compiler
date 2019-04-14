@@ -367,18 +367,9 @@ class IfStatement(Node):
         self.condition = self.children[0]
         self.body = self.children[1]
 
-    def ir(self):
-        branch1 = unique("branch")
-        branch2 = unique("branch")
-        return [
-            f"if {self.condition.value} GOTO {branch1} ELSE GOTO {branch2}",
-            "- endifblock",
-        ]
-
 
 class Condition(Node):
-    def ir(self):
-        self.value = self.children[0].value
+    pass
 
 
 class ElseStatement(Node):
@@ -435,6 +426,7 @@ nodes = {
     "gtExpr": GTExpression,
     "neExpr": NotEqualExpression,
     "eExpr": EqualExpression,
+    "condition": Condition
 }
 
 # Terminal Nodes
