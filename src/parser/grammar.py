@@ -164,6 +164,10 @@ class VariableDeclaration(Node):
         return f"{self.name} = null"
 
 
+class LabelDeclaration(Node):
+    pass
+
+
 # Assignments
 
 
@@ -344,6 +348,10 @@ class CallStatement(Node):
         return f"{self.value} = call {self.name} ({self.parameters.value})"
 
 
+class GotoStatement(Node):
+    pass
+
+
 class IfStatement(Node):
     def __init__(self, children):
         self.children = children
@@ -384,6 +392,7 @@ nodes = {
     "incEqualAssignment": PlusEqualAssignment,
     "decEqualAssignment": MinusEqualAssignment,
     "functionDeclaration": FunctionDeclaration,
+    "labelDeclaration": LabelDeclaration,
     "argList": Arguments,
     "arg": Argument,
     "statementList": StatementList,
@@ -393,6 +402,7 @@ nodes = {
     "whileStatement": WhileStatement,
     "includeStatement": IncludeStatement,
     "callStatement": CallStatement,
+    "gotoStatement": GotoStatement,
     "paramList": Parameters,
     "param": Parameter,
     "ifStatement": IfStatement,
@@ -473,6 +483,17 @@ class String(Node):
         print(f"{self.__class__.__name__}: {self.value}")
 
 
+class Label(Node):
+    """Label node."""
+
+    def __init__(self, value):
+        self.value = value
+
+    def print(self, level=0):
+        printPrefix(level)
+        print(f"{self.__class__.__name__}: {self.value}")
+
+
 # A dictionary of all the terminal parse tree nodes we recognize
 # Key: string of the grammar rule
 # Value: the associated class
@@ -483,4 +504,5 @@ terminals = {
     "constNum": ConstNum,
     "fileName": Filename,
     "str": String,
+    "label": Label,
 }

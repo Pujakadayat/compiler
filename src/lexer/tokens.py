@@ -82,6 +82,7 @@ keywords = []
 
 identifier = TokenType(description="ID")
 number = TokenType(description="constNum")
+label = TokenType(description="label")
 string = TokenType(description="str")
 character = TokenType(description="char")
 filename = TokenType(description="fileName")

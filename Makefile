@@ -1,7 +1,7 @@
-FILE=samples/if.c
+FILE=samples/goto.c
 
 main:
-	python3 -m src.main -pr -v $(FILE)
+	python3 -m src.main -tpr $(FILE)
 
 force:
 	python3 -m src.main -sptrf $(FILE)

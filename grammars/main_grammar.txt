@@ -20,13 +20,18 @@ functionDeclaration -> typeSpecifier ID ( argList ) { statementList }
 argList -> argList , arg | arg | EMPTY
 arg -> typeSpecifier ID | typeSpecifier
 
+# Other Declarations
+
+labelDeclaration -> label
+
 # Statements
 
 statementList -> statementList statement | statement
-statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | whileStatement | callStatement ;
+statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | whileStatement | callStatement ; | gotoStatement | labelDeclaration
 returnStatement -> return expression ;
 includeStatement -> fileName
 callStatement -> ID ( paramList )
+gotoStatement -> goto ID ;
 paramList -> paramList , param | param | EMPTY
 
 # Something about param is messed up...

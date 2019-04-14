@@ -172,7 +172,6 @@ def tokenizeLine(line, isComment):
     return lineTokens, isComment
 
 
-# TODO: handle hex, octal, escaped characters, etc...
 def parseQuote(line, start, delimeter):
     """Parse the quote value from the line."""
     characters = []
@@ -217,6 +216,12 @@ def tokenizeChunk(text):
             logging.debug("Found identifier: %s", text)
         return Token(tokens.identifier, text)
 
+    label = matchLabel(text)
+    if label is not None:
+        if debug is True:
+            logging.debug("Found label: %s", text)
+        return Token(tokens.label, text[:-1])
+
     # If it is none of the above, we do not recognize this type
     raise CompilerMessage(f"Unrecogized token: '{text}'")
 
@@ -248,6 +253,14 @@ def matchKeyword(text):
 def matchIdentifier(text):
     """Check if string matches an identifier"""
     if re.match(r"[_a-zA-Z][_a-zA-Z0-9]*$", text):
+        return text
+
+    return None
+
+
+def matchLabel(text):
+    """Check if string matches a label"""
+    if re.match(r"[_a-zA-Z][_a-zA-Z0-9:]*$", text):
         return text
 
     return None

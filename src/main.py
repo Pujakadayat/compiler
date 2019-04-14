@@ -13,6 +13,7 @@ import src.lexer.lexer as lexer
 from src.parser.grammar import DeclarationList, StatementList, Arguments, Parameters
 from src.ir.ir import generateIr
 from src.symbolTable.symbolTable import buildSymbolTable, flattenTree
+import src.assembler.assembler as assembler
 from src.util import CompilerMessage, messages
 
 
@@ -25,10 +26,12 @@ class Compiler:
         self.flags = options.get("flags")
         self.output = options.get("output")
         self.input = options.get("input")
+        self.asmOutput = options.get("asmOutput")
         self.tokens = []
         self.parseTree = None
         self.symbolTable = None
         self.ir = None
+        self.asm = None
 
         # Setup default grammar if none provided
         if self.grammar is None:
@@ -159,6 +162,49 @@ class Compiler:
 
         return self.ir
 
+    def assemble(self):
+        """Convert the IR to assembly instructions."""
+
+        # Cannot convert to IR without parse tree
+        if not self.ir:
+            raise CompilerMessage("Cannot generate asm without an IR.")
+
+        self.asm = assembler.generate(self.ir)
+
+        if self.ir is None:
+            messages.add(CompilerMessage("Failed to generate the ASM."))
+            return None
+
+        messages.add(CompilerMessage("Successfully generated ASM.", "success"))
+
+        # Print the ASM if "-a" flag
+        if "-a" in self.flags:
+            messages.add(CompilerMessage("ASM:", "important"))
+            assembler.print()
+
+        # The "-n" flag found but no filename specified,
+        # default to input filename with '.s' extension
+        if "-n" in self.flags and not self.asmOutput:
+            # Remove the file extension and add '.s'
+            noExtension = self.filename.rsplit(".", 1)[0]
+            self.asmOutput = f"{noExtension}.s"
+
+            messages.add(
+                CompilerMessage(
+                    f"No ASM output file specified. Defaulted to '{self.asmOutput}'"
+                )
+            )
+
+        # Warn if no asm output filename specified
+        if "-n" in self.flags:
+            assembler.write(self.asmOutput)
+
+        messages.add(
+            CompilerMessage("Succesfully generated the assembly file.", "success")
+        )
+
+        return 0
+
 
 def printUsage():
     """Print a usage statement."""
@@ -183,6 +229,10 @@ def printUsage():
     print("     -r, --representation        Generate an intermediate representation.")
     print("     -i, --input <filename>      Input an IR file and start from there.")
     print("     -o, --output <filename>     Output the IR to a file.")
+    print(
+        "     -a, --asm                   Generate assembly instructions from the IR."
+    )
+    print("     -n, --asmOutput <filename>  Output the assembly to a file.")
     print()
 
 
@@ -192,7 +242,7 @@ def parseArguments():
     try:
         opts, args = getopt.getopt(
             sys.argv[1:],
-            "hvsptfrg:o:i:",
+            "hvsptfrag:o:i:n:",
             [
                 "help",
                 "verbose",
@@ -201,9 +251,11 @@ def parseArguments():
                 "table",
                 "force",
                 "ir",
+                "asm",
                 "grammar=",
                 "output=",
                 "input=",
+                "asmOutput=",
             ],
         )
     except getopt.GetoptError as err:
@@ -215,6 +267,7 @@ def parseArguments():
     grammar = None
     output = None
     inputFile = None
+    asmOutput = None
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
@@ -240,6 +293,11 @@ def parseArguments():
             flags.append("-r")
         elif opt in ("-g", "--grammar"):
             grammar = arg
+        elif opt in ("-a", "--asm"):
+            flags.append("-a")
+        elif opt in ("-n", "--asmOutput"):
+            flags.append("-n")
+            asmOutput = arg
 
     try:
         filename = args[0]
@@ -248,7 +306,7 @@ def parseArguments():
         printUsage()
         sys.exit()
 
-    return filename, grammar, flags, output, inputFile
+    return filename, grammar, flags, output, inputFile, asmOutput
 
 
 def startLog():
@@ -257,7 +315,8 @@ def startLog():
     # Check if the path /logs is a file instead of directory
     if os.path.exists("logs") and not os.path.exists("logs/"):
         raise CompilerMessage(
-            "Path '/logs' is a file instead of a directory. Please remove or rename the file so that logging output can be saved."
+            "Path '/logs' is a file instead of a directory. Please remove or rename the file"
+            "so that logging output can be saved."
         )
 
     # Ensure the /logs directory exists.
@@ -284,13 +343,14 @@ def startLog():
 def main():
     """Run the compiler from the command line."""
 
-    filename, grammar, flags, output, inputFile = parseArguments()
+    filename, grammar, flags, output, inputFile, asmOutput = parseArguments()
     options = {
         "filename": filename,
         "grammar": grammar,
         "flags": flags,
         "output": output,
         "input": inputFile,
+        "asmOutput": asmOutput,
     }
     compiler = Compiler(options)
 
@@ -305,6 +365,8 @@ def main():
         level = 3
     if "-r" in flags:
         level = 4
+    if "-a" in flags:
+        level = 5
 
     try:
         # Start a log if verbose flag
@@ -322,8 +384,12 @@ def main():
                     compiler.buildSymbolTable()
                 elif i == 4:
                     compiler.generateIr()
+                elif i == 5:
+                    compiler.assemble()
         else:
             compiler.generateIr()
+            if level >= 5:
+                compiler.assemble()
     except CompilerMessage as err:
         print(err)
         sys.exit(2)
