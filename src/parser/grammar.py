@@ -92,10 +92,7 @@ class FunctionDeclaration(Node):
 
     def ir(self):
         self.arguments.ir()
-        return [
-            "---",
-            f".{self.name} ({self.arguments.value})"
-        ]
+        return ["---", f".{self.name} ({self.arguments.value})"]
 
 
 class Arguments(Node):
@@ -141,6 +138,14 @@ class Statement(Node):
     pass
 
 
+class StatementListNew(Node):
+    pass
+
+
+class StatementNew(Node):
+    pass
+
+
 class ReturnStatement(Node):
     def ir(self):
         expr = self.children[0]
@@ -165,7 +170,9 @@ class VariableDeclaration(Node):
 
 
 class LabelDeclaration(Node):
-    pass
+    def ir(self):
+        self.value = self.children[0].value
+        return f"label: {self.value}"
 
 
 # Assignments
@@ -349,7 +356,9 @@ class CallStatement(Node):
 
 
 class GotoStatement(Node):
-    pass
+    def ir(self):
+        self.value = self.children[0].value
+        return f"goto {self.value}"
 
 
 class IfStatement(Node):
@@ -363,8 +372,9 @@ class IfStatement(Node):
         branch2 = unique("branch")
         return [
             f"if {self.condition.value} GOTO {branch1} ELSE GOTO {branch2}",
-            "- endifblock"
+            "- endifblock",
         ]
+
 
 class Condition(Node):
     def ir(self):
@@ -396,7 +406,9 @@ nodes = {
     "argList": Arguments,
     "arg": Argument,
     "statementList": StatementList,
+    "statementListNew": StatementListNew,
     "statement": Statement,
+    "stateemntNew": StatementNew,
     "returnStatement": ReturnStatement,
     "forStatement": ForStatement,
     "whileStatement": WhileStatement,

@@ -10,8 +10,14 @@ from src.util import readFile, writeFile
 
 from src.parser.lrParser import LRParser
 import src.lexer.lexer as lexer
-from src.parser.grammar import DeclarationList, StatementList, Arguments, Parameters
-from src.ir.ir import generateIr
+from src.parser.grammar import (
+    DeclarationList,
+    StatementList,
+    Arguments,
+    Parameters,
+    StatementListNew,
+)
+from src.ir.ir import IR
 from src.symbolTable.symbolTable import buildSymbolTable, flattenTree
 import src.assembler.assembler as assembler
 from src.util import CompilerMessage, messages
@@ -95,7 +101,13 @@ class Compiler:
         messages.add(CompilerMessage("Succesfully parsed the tokens.", "success"))
 
         # Flatten the parse tree
-        for reduce in [Arguments, Parameters, DeclarationList, StatementList]:
+        for reduce in [
+            Arguments,
+            Parameters,
+            DeclarationList,
+            StatementList,
+            StatementListNew,
+        ]:
             flattenTree(self.parseTree, reducer=reduce)
 
         # Print the parse tree
@@ -144,9 +156,13 @@ class Compiler:
         if not self.symbolTable:
             raise CompilerMessage("Cannot generate an IR without a symbol table.")
 
-        self.ir = generateIr(self.parseTree)
+        # Create a new instance of IR
+        self.ir = IR(self.parseTree)
 
-        if self.ir is None:
+        # Generate the IR
+        output = self.ir.generate()
+
+        if output is None:
             messages.add(CompilerMessage("Failed to generate an IR."))
             return None
 
@@ -154,8 +170,7 @@ class Compiler:
 
         if "-r" in self.flags:
             messages.add(CompilerMessage("Intermediate Representation:", "important"))
-            for i in self.ir:
-                print(i)
+            self.ir.print()
 
         if "-o" in self.flags and self.output is not None:
             writeFile(self.output, self.ir)
@@ -393,10 +408,10 @@ def main():
     except CompilerMessage as err:
         print(err)
         sys.exit(2)
-    except KeyboardInterrupt:
-        print("")
-        messages.add(CompilerMessage("Compiler was interrupted."))
-        sys.exit(2)
+    # except KeyboardInterrupt:
+    # print("")
+    # messages.add(CompilerMessage("Compiler was interrupted."))
+    # sys.exit(2)
 
 
 if __name__ == "__main__":
