@@ -7,3 +7,4 @@ a.out
 *.log
 /tables
 *.json
+/assembly

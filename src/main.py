@@ -19,7 +19,7 @@ from src.parser.grammar import (
 )
 from src.ir.ir import IR
 from src.symbolTable.symbolTable import buildSymbolTable, flattenTree
-import src.assembler.assembler as assembler
+from src.assembler.assembler import Assembler
 from src.util import CompilerMessage, messages
 
 
@@ -184,9 +184,11 @@ class Compiler:
         if not self.ir:
             raise CompilerMessage("Cannot generate asm without an IR.")
 
-        self.asm = assembler.generate(self.ir)
+        assembler = Assembler(self.ir)
 
-        if self.ir is None:
+        self.asm = assembler.generate() 
+
+        if self.asm is None:
             messages.add(CompilerMessage("Failed to generate the ASM."))
             return None
 
@@ -199,19 +201,21 @@ class Compiler:
 
         # The "-n" flag found but no filename specified,
         # default to input filename with '.s' extension
-        if "-n" in self.flags and not self.asmOutput:
+        if "-n" not in self.flags:
             # Remove the file extension and add '.s'
             noExtension = self.filename.rsplit(".", 1)[0]
-            self.asmOutput = f"{noExtension}.s"
+            # Make sure file goes into assembly dir
+            noPath = noExtension.rsplit("/")[-1]
+            self.asmOutput = f"assembly/{noPath}.s"
 
             messages.add(
                 CompilerMessage(
-                    f"No ASM output file specified. Defaulted to '{self.asmOutput}'"
+                    f"No ASM output file specified. Defaulted to '{self.asmOutput}'", "warning"
                 )
             )
 
         # Warn if no asm output filename specified
-        if "-n" in self.flags:
+        if "-a" in self.flags:
             assembler.write(self.asmOutput)
 
         messages.add(

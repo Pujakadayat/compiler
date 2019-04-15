@@ -13,10 +13,16 @@ debug = True
 class Assembler:
     """The general assembly class."""
 
-    def __init__(self):
+    def __init__(self, ir):
         pass
 
-    def writeFile(self, filename):
+    def generate(self):
+        return "hey"
+
+    def print(self):
+        print("assembly here")
+
+    def write(self, filename):
         """Creates output file for assembly"""
 
         with open(filename, "w") as fileOut:
@@ -24,5 +30,3 @@ class Assembler:
             fileOut.write(
                 "This is just a test for now.\nWill populate this with data later."
             )
-
-        print("Done.")
