@@ -64,14 +64,14 @@ def writeFile(filename, content=None):
 def ensureDirectory(path):
     """Ensure that a path exists as a directory."""
 
-    # Check if the path /logs is a file instead of directory
+    # Check if the path is a file instead of directory
     if os.path.exists(path) and not os.path.exists(f"{path}/"):
         raise CompilerMessage(
             f"Path '{path}' is a file instead of a directory. Please remove or rename the file"
             "so that logging output can be saved."
         )
 
-    # Ensure the /logs directory exists.
+    # Ensure the directory exists.
     if not os.path.exists(f"{path}/"):
         messages.add(
             CompilerMessage(f"No '{path}' directory found, creating one.", "warning")

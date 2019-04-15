@@ -10,7 +10,7 @@ import os
 import json
 from halo import Halo
 import src.parser.grammar as grammar
-from src.util import readFile, messages, CompilerMessage
+from src.util import readFile, messages, CompilerMessage, ensureDirectory
 
 debug = True
 printDebug = False
@@ -405,21 +405,8 @@ class LRParser:
         grammarName = grammarFile.split("/")[1].split(".")[0]
         tableFile = "{}{}{}".format("tables/", grammarName, "_table.json")
 
-        # Check if the path /tables is a file instead of directory
-        if os.path.exists("tables") and not os.path.exists("tables/"):
-            raise CompilerMessage(
-                "Path '/tables' is a file instead of a directory."
-                "Please remove or rename the file so that the tables can be saved."
-            )
-
-        # Ensure the /tables directory exists.
-        if not os.path.exists("tables/"):
-            messages.add(
-                CompilerMessage(
-                    "No '/tables' directory found, creating one.", "warning"
-                )
-            )
-            os.makedirs("tables")
+        # Ensure the tables directory exists
+        ensureDirectory("tables")
 
         # Parse the input grammar
         self.parseGrammar(readFile(grammarFile))

@@ -6,7 +6,7 @@ import sys
 import getopt
 import logging
 import os
-from src.util import readFile, writeFile
+from src.util import readFile, writeFile, ensureDirectory
 
 from src.parser.lrParser import LRParser
 import src.lexer.lexer as lexer
@@ -331,20 +331,8 @@ def parseArguments():
 def startLog():
     """Initialize a new log file."""
 
-    # Check if the path /logs is a file instead of directory
-    if os.path.exists("logs") and not os.path.exists("logs/"):
-        raise CompilerMessage(
-            "Path '/logs' is a file instead of a directory. Please remove or rename the file"
-            "so that logging output can be saved."
-        )
-
-    # Ensure the /logs directory exists.
-    if not os.path.exists("logs/"):
-        messages.add(
-            CompilerMessage("No '/logs' directory found, creating one.", "warning")
-        )
-        os.makedirs("logs")
-
+    # Ensure the logs directory exists
+    ensureDirectory("logs")
     logs = os.listdir("logs/")
     biggestLog = 0
     for log in logs:
