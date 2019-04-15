@@ -3,6 +3,7 @@ Methods and classes related to
 Intermediate Representations of the Parse Tree.
 """
 
+import src.util as util
 import src.parser.grammar as grammar
 
 
@@ -51,6 +52,8 @@ class IR:
             self.closeBlock()
         elif isinstance(node, grammar.LabelDeclaration):
             self.closeBlock()
+        elif isinstance(node, grammar.Condition):
+            self.closeBlock()
 
         # Slide to the left, slide to the right
         # Recurse recurse, recurse recurse!
@@ -63,12 +66,17 @@ class IR:
                 self.visit(child)
 
         if not isinstance(node, list):
+            print(f"checking {node}")
+
             # End the basic blocks we created earlier now that all
             # the node within have been visited.
             if isinstance(node, grammar.FunctionDeclaration):
                 self.ir[node.name]["arguments"] = node.arguments.value
                 self.closeBlock()
             elif isinstance(node, grammar.IfStatement):
+                self.closeBlock()
+            elif isinstance(node, grammar.Condition):
+                self.stack.append(f"if r{util.count['none']} is true")
                 self.closeBlock()
             elif isinstance(node, grammar.ElseStatement):
                 self.closeBlock()
@@ -98,4 +106,4 @@ class IR:
                 for line in block:
                     s.append(line)
 
-        return '\n'.join(s)
+        return "\n".join(s)

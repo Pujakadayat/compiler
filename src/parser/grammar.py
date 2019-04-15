@@ -426,7 +426,6 @@ nodes = {
     "gtExpr": GTExpression,
     "neExpr": NotEqualExpression,
     "eExpr": EqualExpression,
-    "condition": Condition
 }
 
 # Terminal Nodes
