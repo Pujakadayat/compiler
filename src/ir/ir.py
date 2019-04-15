@@ -21,12 +21,6 @@ class IR:
 
         self.visit(self.parseTree)
 
-        for x in self.ir:
-            print("---")
-            print(x)
-            for i in self.ir[x]["blocks"]:
-                print(i)
-
         return self.ir
 
     def closeBlock(self):
@@ -66,8 +60,6 @@ class IR:
                 self.visit(child)
 
         if not isinstance(node, list):
-            print(f"checking {node}")
-
             # End the basic blocks we created earlier now that all
             # the node within have been visited.
             if isinstance(node, grammar.FunctionDeclaration):
@@ -93,9 +85,11 @@ class IR:
 
         for function in self.ir:
             print(f".{function} ({self.ir[function]['arguments']})")
+            print() # Differentiate between basic blocks
             for block in self.ir[function]["blocks"]:
                 for line in block:
                     print(line)
+                print() # Differentiate between basic blocks
 
     def __str__(self):
         s = []
