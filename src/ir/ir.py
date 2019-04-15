@@ -85,11 +85,11 @@ class IR:
 
         for function in self.ir:
             print(f".{function} ({self.ir[function]['arguments']})")
-            print() # Differentiate between basic blocks
+            print()  # Differentiate between basic blocks
             for block in self.ir[function]["blocks"]:
                 for line in block:
                     print(line)
-                print() # Differentiate between basic blocks
+                print()  # Differentiate between basic blocks
 
     def __str__(self):
         s = []

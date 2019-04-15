@@ -186,7 +186,7 @@ class Compiler:
 
         assembler = Assembler(self.ir)
 
-        self.asm = assembler.generate() 
+        self.asm = assembler.generate()
 
         if self.asm is None:
             messages.add(CompilerMessage("Failed to generate the ASM."))
@@ -203,14 +203,14 @@ class Compiler:
         # default to input filename with '.s' extension
         if "-n" not in self.flags:
             # Remove the file extension and add '.s'
-            noExtension = self.filename.rsplit(".", 1)[0]
-            # Make sure file goes into assembly dir
-            noPath = noExtension.rsplit("/")[-1]
-            self.asmOutput = f"assembly/{noPath}.s"
+            basename = os.path.basename(self.filename)
+            noExtension = basename.rsplit(".", 1)[0]
+            self.asmOutput = f"{noExtension}.s"
 
             messages.add(
                 CompilerMessage(
-                    f"No ASM output file specified. Defaulted to '{self.asmOutput}'", "warning"
+                    f"No ASM output file specified. Defaulted to '{self.asmOutput}'",
+                    "warning",
                 )
             )
 

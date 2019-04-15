@@ -2,6 +2,8 @@
 Utility functions to be re-used across modules.
 """
 
+import os
+
 count = {"none": 0}
 
 
@@ -57,6 +59,24 @@ def writeFile(filename, content=None):
             messages.add(
                 CompilerMessage(f"Did not overwrite the file '{filename}'.", "warning")
             )
+
+
+def ensureDirectory(path):
+    """Ensure that a path exists as a directory."""
+
+    # Check if the path /logs is a file instead of directory
+    if os.path.exists(path) and not os.path.exists(f"{path}/"):
+        raise CompilerMessage(
+            f"Path '{path}' is a file instead of a directory. Please remove or rename the file"
+            "so that logging output can be saved."
+        )
+
+    # Ensure the /logs directory exists.
+    if not os.path.exists(f"{path}/"):
+        messages.add(
+            CompilerMessage(f"No '{path}' directory found, creating one.", "warning")
+        )
+        os.makedirs(path)
 
 
 class MessageCollector:
