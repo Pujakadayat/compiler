@@ -14,13 +14,32 @@ class Assembler:
     """The general assembly class."""
 
     def __init__(self, ir):
-        pass
+        self.ir = ir
+        self.asm = []
 
     def generate(self):
-        return "hey"
+        """Generate the ASM from our intermediate assembly."""
+
+        for function in self.ir:
+            self.generateFunction(function)
+            for block in self.ir[function]["blocks"]:
+                for line in block:
+                    pass
+                    # Parse instruction to ASM
+
+        return self.asm
+
+    def generateFunction(self, name):
+        self.asm.append(f"{name}:")
+        self.asm.append("pushq %rbp")
+        self.asm.append("movq %rsp, %rbp")
+        self.asm.append("BLOCK CONTENTS GO HERE...")
+        self.asm.append("popq %rbp")
+        self.asm.append("ret")
 
     def print(self):
-        print("assembly here")
+        for i in self.asm:
+            print(i)
 
     def write(self, filename):
         """Creates output file for assembly"""

@@ -71,6 +71,7 @@ class IR:
                 self.stack.append(f"if r{util.count['none']} is true")
                 self.closeBlock()
             elif isinstance(node, grammar.ElseStatement):
+                self.stack.insert(0, "ELSE LABEL")
                 self.closeBlock()
             elif isinstance(node, grammar.LabelDeclaration):
                 self.stack.insert(0, node.ir())
@@ -82,6 +83,8 @@ class IR:
 
     def print(self):
         """Print the intermediate representation as a string."""
+
+        print(self.ir)
 
         for function in self.ir:
             print(f".{function} ({self.ir[function]['arguments']})")

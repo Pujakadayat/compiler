@@ -184,7 +184,7 @@ class Compiler:
         if not self.ir:
             raise CompilerMessage("Cannot generate asm without an IR.")
 
-        assembler = Assembler(self.ir)
+        assembler = Assembler(self.ir.ir)
 
         self.asm = assembler.generate()
 

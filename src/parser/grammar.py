@@ -92,7 +92,7 @@ class FunctionDeclaration(Node):
 
     def ir(self):
         self.arguments.ir()
-        return ["---", f".{self.name} ({self.arguments.value})"]
+        return f".{self.name} ({self.arguments.value})"
 
 
 class Arguments(Node):
@@ -166,7 +166,7 @@ class VariableDeclaration(Node):
         if len(self.children) == 3:
             return f"{self.name} = {self.expr.children[0].value}"
 
-        return f"{self.name} = null"
+        return None
 
 
 class LabelDeclaration(Node):

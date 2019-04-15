@@ -1,4 +1,4 @@
-FILE=samples/if_else.c
+FILE=samples/plain.c
 
 main:
 	python3 -m src.main -tpr -a $(FILE)
