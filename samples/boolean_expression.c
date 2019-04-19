@@ -1,5 +1,5 @@
 int main() {
-	return 1 && 1;
-	return 1 || 1;
-	return !1;
+	int a = 1 && 1;
+	int b = 1 || 1;
+	int c = !1;
 }

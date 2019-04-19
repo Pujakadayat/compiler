@@ -1,10 +1,15 @@
-FILE=samples/binary.c
+FILE=plain
+CFILE=samples/$(FILE).c
+SFILE=assembly/$(FILE).s
 
 main:
-	python3 -m src.main -tpr $(FILE)
+	python3 -m src.main -tpr -a $(CFILE)
 
 force:
-	python3 -m src.main -sptrf $(FILE)
+	python3 -m src.main -sptrf $(CFILE)
+
+asm:
+	gcc $(SFILE) -o assembly/$(FILE)
 
 test:
 	python3 -m tests.testing -v

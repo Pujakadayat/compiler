@@ -162,7 +162,7 @@ class ReturnStatement(Node):
         self.expr = self.children[0]
 
     def ir(self):
-        return f"ret {self.expr.value}"
+        return ("ret", "movl", self.expr.value, ",", "%eax")
 
 
 class VariableDeclaration(Node):

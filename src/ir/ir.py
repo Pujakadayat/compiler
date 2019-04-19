@@ -111,17 +111,19 @@ class IR:
                 self.closeBlock()
             else:
                 i = node.ir()
-                if i is not None and not i.isdigit():
+                if i is not None:
                     self.stack.append(i)
 
     def print(self):
         """Print the intermediate representation as a string."""
 
+        print("```")
         for function in self.ir:
             print(f".{function} ({self.ir[function]['arguments']})")
             print()  # Differentiate between basic blocks
             for block in self.ir[function]["blocks"]:
                 block.print()
+        print("```")
 
     def __str__(self):
         s = []
