@@ -5,5 +5,7 @@ int main() {
 	i += 2;
 	i -= 2;
 
+	i += i;
+
 	return i;
 }

@@ -1,15 +1,18 @@
-FILE=plain
+FILE=assignments
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 
 main:
-	python3 -m src.main -tpr -a $(CFILE)
+	python3 -m src.main -tr -a $(CFILE)
 
 force:
 	python3 -m src.main -sptrf $(CFILE)
 
 asm:
 	gcc $(SFILE) -o assembly/$(FILE)
+
+make run:
+	./assembly/$(FILE)
 
 test:
 	python3 -m tests.testing -v
