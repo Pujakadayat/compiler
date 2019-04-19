@@ -1,4 +1,4 @@
-FILE=assignments
+FILE=basic_math
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 
@@ -11,8 +11,11 @@ force:
 asm:
 	gcc $(SFILE) -o assembly/$(FILE)
 
-make run:
+run:
 	./assembly/$(FILE)
+
+gcc:
+	gcc -O0 -S $(CFILE)
 
 test:
 	python3 -m tests.testing -v
