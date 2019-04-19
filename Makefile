@@ -1,7 +1,7 @@
-FILE=samples/plain.c
+FILE=samples/if_else.c
 
 main:
-	python3 -m src.main -tpr -a $(FILE)
+	python3 -m src.main -tpr $(FILE)
 
 force:
 	python3 -m src.main -sptrf $(FILE)

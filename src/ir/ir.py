@@ -7,6 +7,23 @@ import src.util as util
 import src.parser.grammar as grammar
 
 
+class BasicBlock:
+    """Defines a set of instructions and data that compose a Basic Block."""
+
+    def __init__(self, instructions, label=None):
+        self.instructions = instructions
+        self.label = label
+
+    def print(self):
+        """Print this basic block."""
+
+        if self.label:
+            print(self.label)
+        for i in self.instructions:
+            print(i)
+        print()
+
+
 class IR:
     """Intermediate Representation class to hold IR data."""
 
@@ -27,7 +44,8 @@ class IR:
         """Save the stack as a block and start a new block."""
 
         if self.stack:
-            self.ir[self.current]["blocks"].append(self.stack)
+            bb = BasicBlock(self.stack, util.unique("_L"))
+            self.ir[self.current]["blocks"].append(bb)
 
         self.stack = []
 
@@ -68,10 +86,13 @@ class IR:
             elif isinstance(node, grammar.IfStatement):
                 self.closeBlock()
             elif isinstance(node, grammar.Condition):
-                self.stack.append(f"if r{util.count['none']} is true")
+                i = (
+                    f"if r{util.count['none']} GOTO _L{util.count['_L'] + 2}"
+                    f" else GOTO _L{util.count['_L'] + 3}"
+                )
+                self.stack.append(i)
                 self.closeBlock()
             elif isinstance(node, grammar.ElseStatement):
-                self.stack.insert(0, "ELSE LABEL")
                 self.closeBlock()
             elif isinstance(node, grammar.LabelDeclaration):
                 self.stack.insert(0, node.ir())
@@ -84,15 +105,11 @@ class IR:
     def print(self):
         """Print the intermediate representation as a string."""
 
-        print(self.ir)
-
         for function in self.ir:
             print(f".{function} ({self.ir[function]['arguments']})")
             print()  # Differentiate between basic blocks
             for block in self.ir[function]["blocks"]:
-                for line in block:
-                    print(line)
-                print()  # Differentiate between basic blocks
+                block.print()
 
     def __str__(self):
         s = []
