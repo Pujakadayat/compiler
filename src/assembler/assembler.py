@@ -116,7 +116,10 @@ class Assembler:
 
             # If both operators are plain digits, pre-compute it
             if lhs.isdigit() and rhs.isdigit():
+                # pylint: disable=eval-used
                 result = eval(f"{lhs} {op} {rhs}")
+                # pylint: enable=eval-used
+
                 self.asm.append(f"movl ${result}, {loc}")
             else:
                 # Otherwise there needs to be assembly logic
@@ -133,6 +136,8 @@ class Assembler:
                 self.table[lhs] = loc
 
     def mathAssignment(self, ins):
+        """Parse various math assignments."""
+
         lhs = ins[2]
         op = ins[3]
         rhs = ins[4]
@@ -167,4 +172,6 @@ class Assembler:
             self.move("%eax", dest)
 
     def move(self, src, dest):
+        """ASM instruction to move from src to dest."""
+
         self.asm.append(f"movl {src}, {dest}")
