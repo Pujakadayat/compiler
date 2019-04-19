@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring
+# pylint: disable=missing-docstring, attribute-defined-outside-init
 
 """
 Classes that represent grammar rules for our Parse Tree.
@@ -69,6 +69,7 @@ class Node:
 
     def prepare(self):
         return None
+
     # pylint: enable=no-self-use
 
     def visit(self):
@@ -77,7 +78,6 @@ class Node:
                 child.visit()
 
         self.prepare()
-
 
 
 # Parse Tree Node Classes
@@ -309,11 +309,22 @@ class ModulusExpression(Node):
 
 
 class BooleanAnd(Node):
-    pass
+    def ir(self):
+        self.value = unique()
+        return f"{self.value} = {self.children[0].value} && {self.children[1].value}"
 
 
 class BooleanOr(Node):
-    pass
+    def ir(self):
+        self.value = unique()
+        return f"{self.value} = {self.children[0].value} || {self.children[1].value}"
+
+
+class BooleanNot(Node):
+    def ir(self):
+        self.value = unique()
+        return f"{self.value} = !{self.children[0].value}"
+
 
 class ComparisonExpression(Node):
     def prepare(self):
@@ -322,20 +333,24 @@ class ComparisonExpression(Node):
         self.b = self.children[1].value
 
 
-class LTOEExpression(Node):
-    pass
+class LTOEExpression(ComparisonExpression):
+    def ir(self):
+        return f"{self.value} = {self.a} <= {self.b}"
 
 
-class GTOEExpression(Node):
-    pass
+class GTOEExpression(ComparisonExpression):
+    def ir(self):
+        return f"{self.value} = {self.a} >= {self.b}"
 
 
-class LTExpression(Node):
-    pass
+class LTExpression(ComparisonExpression):
+    def ir(self):
+        return f"{self.value} = {self.a} < {self.b}"
 
 
-class GTExpression(Node):
-    pass
+class GTExpression(ComparisonExpression):
+    def ir(self):
+        return f"{self.value} = {self.a} > {self.b}"
 
 
 class NotEqualExpression(ComparisonExpression):
@@ -445,6 +460,7 @@ nodes = {
     "modExpr": ModulusExpression,
     "boolAnd": BooleanAnd,
     "boolOr": BooleanOr,
+    "boolNot": BooleanNot,
     "lteExpr": LTOEExpression,
     "gteExpr": GTOEExpression,
     "ltExpr": LTExpression,

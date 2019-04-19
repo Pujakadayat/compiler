@@ -97,9 +97,9 @@ class Compiler:
         if self.parseTree is None:
             messages.add(CompilerMessage("Failed to parse the tokens."))
             return None
-        else:
-            # Change [Program] to Program
-            self.parseTree = self.parseTree[0]
+
+        # Change [Program] to Program
+        self.parseTree = self.parseTree[0]
 
         messages.add(CompilerMessage("Succesfully parsed the tokens.", "success"))
 

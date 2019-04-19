@@ -1,4 +1,4 @@
-FILE=samples/while.c
+FILE=samples/binary.c
 
 main:
 	python3 -m src.main -tpr $(FILE)

@@ -105,7 +105,9 @@ class IR:
             elif isinstance(node, grammar.WhileStatement):
                 self.closeBlock()
             elif isinstance(node, grammar.WhileCondition):
-                self.stack.append(f"while r{util.count['none']} GOTO _L{util.count['_L'] + 2}")
+                self.stack.append(
+                    f"while r{util.count['none']} GOTO _L{util.count['_L'] + 2}"
+                )
                 self.closeBlock()
             else:
                 i = node.ir()
