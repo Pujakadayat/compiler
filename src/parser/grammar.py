@@ -102,9 +102,6 @@ class FunctionDeclaration(Node):
         self.name = self.children[1].value
         self.arguments = self.children[2]
 
-    def ir(self):
-        return f".{self.name} ({self.arguments.value})"
-
 
 class Arguments(Node):
     def prepare(self):
@@ -162,7 +159,7 @@ class ReturnStatement(Node):
         self.expr = self.children[0]
 
     def ir(self):
-        return ("ret", "movl", self.expr.value, ",", "%eax")
+        return ("ret", self.expr.value)
 
 
 class VariableDeclaration(Node):
@@ -177,15 +174,14 @@ class VariableDeclaration(Node):
 
     def ir(self):
         if len(self.children) == 3:
-            return f"{self.name} = {self.expr.children[0].value}"
+            return (self.name, "=", self.expr.children[0].value)
 
         return None
 
 
 class LabelDeclaration(Node):
-    def ir(self):
+    def prepare(self):
         self.value = self.children[0].value
-        return f"label: {self.value}"
 
 
 # Assignments
@@ -198,7 +194,7 @@ class VariableAssignment(Node):
 
     def ir(self):
         recent = count["none"]
-        return f"{self.name} = r{recent}"
+        return (self.name, "=", f"r{recent}")
 
 
 class IncrementAssignment(Node):
@@ -208,7 +204,7 @@ class IncrementAssignment(Node):
 
     def ir(self):
         self.value = unique()
-        return f"{self.value} = {self.name} + 1"
+        return (self.value, "=", self.name, "+", 1)
 
 
 class DecrementAssignment(Node):
@@ -218,7 +214,7 @@ class DecrementAssignment(Node):
 
     def ir(self):
         self.value = unique()
-        return f"{self.value} = {self.name} - 1"
+        return (self.value, "=", self.name, "-", 1)
 
 
 class PlusEqualAssignment(Node):
@@ -229,7 +225,7 @@ class PlusEqualAssignment(Node):
 
     def ir(self):
         self.value = unique()
-        return f"{self.value} = {self.name} + {self.expr.value}"
+        return (self.value, "=", self.name, "+", self.expr.value)
 
 
 class MinusEqualAssignment(Node):
@@ -240,7 +236,7 @@ class MinusEqualAssignment(Node):
 
     def ir(self):
         self.value = unique()
-        return f"{self.value} = {self.name} - {self.expr.value}"
+        return (self.value, "=", self.name, "-", self.expr.value)
 
 
 class CallAssignment(Node):
@@ -262,7 +258,7 @@ class ExpressionAssignment(Node):
 
     def ir(self):
         self.value = unique()
-        return f"{self.value} = {self.expr.value}"
+        return (self.value, "=", self.expr.value)
 
 
 # Expressions
@@ -278,52 +274,58 @@ class NestedExpression(Node):
         self.value = self.children[0].value
 
 
-class AdditionExpression(Node):
+class MathExpression(Node):
+    def prepare(self):
+        self.value = unique()
+        self.a = self.children[0].value
+        self.b = self.children[1].value
+
+
+class AdditionExpression(MathExpression):
+    def ir(self):
+        return (self.value, "=", self.a, "+", self.b)
+
+
+class SubtractionExpression(MathExpression):
     def ir(self):
         self.value = unique()
-        return f"{self.value} = {self.children[0].value} + {self.children[1].value}"
+        return (self.value, "=", self.a, "-", self.b)
 
 
-class SubtractionExpression(Node):
+class MultiplicationExpression(MathExpression):
     def ir(self):
         self.value = unique()
-        return f"{self.value} = {self.children[0].value} - {self.children[1].value}"
+        return (self.value, "=", self.a, "*", self.b)
 
 
-class MultiplicationExpression(Node):
+class DivisionExpression(MathExpression):
     def ir(self):
         self.value = unique()
-        return f"{self.value} = {self.children[0].value} * {self.children[1].value}"
+        return (self.value, "=", self.a, "/", self.b)
 
 
-class DivisionExpression(Node):
+class ModulusExpression(MathExpression):
     def ir(self):
         self.value = unique()
-        return f"{self.value} = {self.children[0].value} / {self.children[1].value}"
+        return (self.value, "=", self.a, "%", self.b)
 
 
-class ModulusExpression(Node):
+class BooleanAnd(MathExpression):
     def ir(self):
         self.value = unique()
-        return f"{self.value} = {self.children[0].value} % {self.children[1].value}"
+        return (self.value, "=", self.a, "&&", self.b)
 
 
-class BooleanAnd(Node):
+class BooleanOr(MathExpression):
     def ir(self):
         self.value = unique()
-        return f"{self.value} = {self.children[0].value} && {self.children[1].value}"
-
-
-class BooleanOr(Node):
-    def ir(self):
-        self.value = unique()
-        return f"{self.value} = {self.children[0].value} || {self.children[1].value}"
+        return (self.value, "=", self.a, "||", self.b)
 
 
 class BooleanNot(Node):
     def ir(self):
         self.value = unique()
-        return f"{self.value} = !{self.children[0].value}"
+        return (self.value, "=", "!", self.children[0].value)
 
 
 class ComparisonExpression(Node):
@@ -335,32 +337,32 @@ class ComparisonExpression(Node):
 
 class LTOEExpression(ComparisonExpression):
     def ir(self):
-        return f"{self.value} = {self.a} <= {self.b}"
+        return (self.value, "=", self.a, "<=", self.b)
 
 
 class GTOEExpression(ComparisonExpression):
     def ir(self):
-        return f"{self.value} = {self.a} >= {self.b}"
+        return (self.value, "=", self.a, ">=", self.b)
 
 
 class LTExpression(ComparisonExpression):
     def ir(self):
-        return f"{self.value} = {self.a} < {self.b}"
+        return (self.value, "=", self.a, "<", self.b)
 
 
 class GTExpression(ComparisonExpression):
     def ir(self):
-        return f"{self.value} = {self.a} > {self.b}"
+        return (self.value, "=", self.a, ">", self.b)
 
 
 class NotEqualExpression(ComparisonExpression):
     def ir(self):
-        return f"{self.value} = {self.a} != {self.b}"
+        return (self.value, "=", self.a, "!=", self.b)
 
 
 class EqualExpression(ComparisonExpression):
     def ir(self):
-        return f"{self.value} = {self.a} == {self.b}"
+        return (self.value, "=", self.a, "==", self.b)
 
 
 # Statements
@@ -372,7 +374,7 @@ class ForStatement(Node):
 
 class WhileStatement(Node):
     def ir(self):
-        return f"while {self.children[0].ir()} is true"
+        return ("while", self.children[0].ir())
 
 
 class WhileCondition(Node):
@@ -391,13 +393,13 @@ class CallStatement(Node):
 
     def ir(self):
         self.value = unique()
-        return f"{self.value} = call {self.name} ({self.parameters.value})"
+        return ("call", self.value, "=", self.name, self.parameters.value)
 
 
 class GotoStatement(Node):
     def ir(self):
         self.value = self.children[0].value
-        return f"goto {self.value}"
+        return ("goto", self.value)
 
 
 class IfStatement(Node):
