@@ -36,6 +36,7 @@ class IR:
     def generate(self):
         """Generate the IR from the parse tree."""
 
+        self.parseTree.visit()
         self.visit(self.parseTree)
 
         return self.ir
@@ -65,6 +66,10 @@ class IR:
         elif isinstance(node, grammar.LabelDeclaration):
             self.closeBlock()
         elif isinstance(node, grammar.Condition):
+            self.closeBlock()
+        elif isinstance(node, grammar.WhileStatement):
+            self.closeBlock()
+        elif isinstance(node, grammar.WhileCondition):
             self.closeBlock()
 
         # Slide to the left, slide to the right
@@ -96,6 +101,11 @@ class IR:
                 self.closeBlock()
             elif isinstance(node, grammar.LabelDeclaration):
                 self.stack.insert(0, node.ir())
+                self.closeBlock()
+            elif isinstance(node, grammar.WhileStatement):
+                self.closeBlock()
+            elif isinstance(node, grammar.WhileCondition):
+                self.stack.append(f"while r{util.count['none']} GOTO _L{util.count['_L'] + 2}")
                 self.closeBlock()
             else:
                 i = node.ir()

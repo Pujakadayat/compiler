@@ -45,7 +45,8 @@ ifStatement -> if ( condition ) { statementList } | if ( condition ) { statement
 condition -> expression
 elseStatement -> else { statementList }
 forStatement -> for ( assignment expression ; ID ++ ) { statementList }
-whileStatement -> while ( expression ) { statementList }
+whileStatement -> while ( whileCondition ) { statementList }
+whileCondition -> expression
 
 # Expressions
 

@@ -67,6 +67,18 @@ class Node:
     def ir(self):
         return None
 
+    def prepare(self):
+        return None
+    # pylint: enable=no-self-use
+
+    def visit(self):
+        if hasattr(self, "children"):
+            for child in self.children:
+                child.visit()
+
+        self.prepare()
+
+
 
 # Parse Tree Node Classes
 
@@ -91,12 +103,11 @@ class FunctionDeclaration(Node):
         self.arguments = self.children[2]
 
     def ir(self):
-        self.arguments.ir()
         return f".{self.name} ({self.arguments.value})"
 
 
 class Arguments(Node):
-    def ir(self):
+    def prepare(self):
         s = []
         for i in self.children:
             s.append(i.name)
@@ -116,7 +127,7 @@ class Argument(Node):
 
 
 class Parameters(Node):
-    def ir(self):
+    def prepare(self):
         s = []
         for i in self.children:
             s.append(i.value)
@@ -147,9 +158,11 @@ class StatementNew(Node):
 
 
 class ReturnStatement(Node):
+    def prepare(self):
+        self.expr = self.children[0]
+
     def ir(self):
-        expr = self.children[0]
-        return f"ret {expr.children[0].value}"
+        return f"ret {self.expr.value}"
 
 
 class VariableDeclaration(Node):
@@ -302,6 +315,12 @@ class BooleanAnd(Node):
 class BooleanOr(Node):
     pass
 
+class ComparisonExpression(Node):
+    def prepare(self):
+        self.value = unique()
+        self.a = self.children[0].value
+        self.b = self.children[1].value
+
 
 class LTOEExpression(Node):
     pass
@@ -319,14 +338,14 @@ class GTExpression(Node):
     pass
 
 
-class NotEqualExpression(Node):
-    pass
-
-
-class EqualExpression(Node):
+class NotEqualExpression(ComparisonExpression):
     def ir(self):
-        self.value = unique()
-        return f"{self.value} = {self.children[0].value} == {self.children[1].value}"
+        return f"{self.value} = {self.a} != {self.b}"
+
+
+class EqualExpression(ComparisonExpression):
+    def ir(self):
+        return f"{self.value} = {self.a} == {self.b}"
 
 
 # Statements
@@ -337,6 +356,11 @@ class ForStatement(Node):
 
 
 class WhileStatement(Node):
+    def ir(self):
+        return f"while {self.children[0].ir()} is true"
+
+
+class WhileCondition(Node):
     pass
 
 
@@ -403,6 +427,7 @@ nodes = {
     "returnStatement": ReturnStatement,
     "forStatement": ForStatement,
     "whileStatement": WhileStatement,
+    "whileCondition": WhileCondition,
     "includeStatement": IncludeStatement,
     "callStatement": CallStatement,
     "gotoStatement": GotoStatement,

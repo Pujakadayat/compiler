@@ -1,4 +1,4 @@
-FILE=samples/if_else.c
+FILE=samples/while.c
 
 main:
 	python3 -m src.main -tpr $(FILE)
