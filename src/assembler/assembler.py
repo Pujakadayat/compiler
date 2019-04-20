@@ -40,9 +40,6 @@ class Assembler:
             self.returnStatement(ins)
         elif ins[1] == "=":
             self.assignment(ins)
-        elif ins[0] == "call":
-            if ins[3] == "printf":
-                self.printStatement(ins)
 
     def setupFunction(self, name):
         """Instructions that appear at the beginning of every function."""
