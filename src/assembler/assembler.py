@@ -1,3 +1,5 @@
+# pylint: disable=eval-used
+
 """
 The main assembler module.
 Reads in the IR and generates assembly instructions (x86).
@@ -111,17 +113,28 @@ class Assembler:
         if loc is None:
             loc = self.store(operand)
 
-        if len(ins) > 3:
+        if ins[2] == "!":
+            # Not expression i.e. i = !1
+            result = eval(f"not {ins[3]}")
+            if result is True:
+                result = 1
+            else:
+                result = 0
+            self.asm.append(f"movl ${result}, {loc}")
+        elif len(ins) > 3:
             # Expression assignment i.e. i = 2 + 2
             lhs = ins[2]
             op = ins[3]
             rhs = ins[4]
 
+            if op == "&&":
+                op = "and"
+            if op == "||":
+                op = "or"
+
             # If both operators are plain digits, pre-compute it
             if lhs.isdigit() and rhs.isdigit():
-                # pylint: disable=eval-used
                 result = eval(f"{lhs} {op} {rhs}")
-                # pylint: enable=eval-used
 
                 self.asm.append(f"movl ${result}, {loc}")
             else:
@@ -149,6 +162,12 @@ class Assembler:
             op = "addl"
         elif op == "-":
             op = "subl"
+        elif op == "*":
+            op = "mult"
+        elif op == "/":
+            op = "divl"
+        elif op == "&&":
+            op = "and"
 
         # rhs is the thing being added to lhs
         dest = self.get(lhs)
