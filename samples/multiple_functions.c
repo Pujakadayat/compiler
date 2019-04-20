@@ -13,3 +13,7 @@ int foobar() {
 int foobiz() {
 	return 0;
 }
+
+int main() {
+	return 0;
+}
