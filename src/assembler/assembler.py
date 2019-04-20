@@ -38,6 +38,9 @@ class Assembler:
             self.returnStatement(ins)
         elif ins[1] == "=":
             self.assignment(ins)
+        elif ins[0] == "call":
+            if ins[3] == "printf":
+                self.printStatement(ins)
 
     def setupFunction(self, name):
         """Instructions that appear at the beginning of every function."""
@@ -170,6 +173,15 @@ class Assembler:
 
             # Move %eax back to dest
             self.move("%eax", dest)
+
+    def printStatement(self, ins):
+        """ Parse various print options """
+
+        #TODO This line needs to change because what is args is a string like "Hello, World".
+        args = ins[4].split(", ")
+
+        if len(args) == 0:
+            pass
 
     def move(self, src, dest):
         """ASM instruction to move from src to dest."""
