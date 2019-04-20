@@ -246,4 +246,7 @@ def updateSymbolTable(node, st, level=0):
     elif isinstance(node, grammar.Identifier):
         if st.find(node.value) is None:
             # st.print()
-            raise CompilerMessage(f"Identifier {node.value} is undefined.")
+            if node.value == "printf":
+                pass
+            else:
+                raise CompilerMessage(f"Identifier {node.value} is undefined.")
