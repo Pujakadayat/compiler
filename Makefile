@@ -1,18 +1,16 @@
-FILE=parseTest
+FILE=simple_goto
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 
 main:
-	python3 -m src.main -tr -a $(CFILE)
+	python3 -m src.main -ra $(CFILE)
 
 force:
 	python3 -m src.main -sptrf $(CFILE)
 
 asm:
 	gcc $(SFILE) -o assembly/$(FILE)
-
-run:
-	./assembly/$(FILE)
+	./assembly/$(FILE); echo $$?
 
 gcc:
 	gcc -O0 -S $(CFILE)

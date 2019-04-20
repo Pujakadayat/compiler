@@ -36,8 +36,12 @@ class Assembler:
     def parse(self, ins):
         """Parse an IR instruction."""
 
+        if ins[0] == "label":
+            self.label(ins)
         if ins[0] == "ret":
             self.returnStatement(ins)
+        elif ins[0] == "goto":
+            self.goto(ins)
         elif ins[1] == "=":
             self.assignment(ins)
 
@@ -97,6 +101,26 @@ class Assembler:
         self.table[name] = value
 
         return value
+
+    def resolve(self, name):
+        """
+        Resolves an identifier to either a memory address or a constant.
+        Example:
+            resolve("2") returns "$2"
+            resolve("r1") returns "-8(%rbp)"
+        """
+
+        if name.isdigit():
+            return f"${name}"
+
+        return self.get(name)
+
+    def move(self, src, dest):
+        """ASM instruction to move from src to dest."""
+
+        self.asm.append(f"movl {src}, {dest}")
+
+    # Parsing for specific types of instructions
 
     def returnStatement(self, ins):
         """Parse a return statements."""
@@ -176,20 +200,8 @@ class Assembler:
         self.asm.append(f"{op} {lhs}, %eax")
         self.move("%eax", dest)
 
-    def resolve(self, name):
-        """
-        Resolves an identifier to either a memory address or a constant.
-        Example:
-            resolve("2") returns "$2"
-            resolve("r1") returns "-8(%rbp)"
-        """
+    def label(self, ins):
+        self.asm.append(f"{ins[1]}:")
 
-        if name.isdigit():
-            return f"${name}"
-
-        return self.get(name)
-
-    def move(self, src, dest):
-        """ASM instruction to move from src to dest."""
-
-        self.asm.append(f"movl {src}, {dest}")
+    def goto(self, ins):
+        self.asm.append(f"jmp {ins[1]}")
