@@ -204,7 +204,7 @@ class IncrementAssignment(Node):
 
     def ir(self):
         self.value = unique()
-        return (self.value, "=", self.name, "+", 1)
+        return (self.value, "=", self.name, "+", "1")
 
 
 class DecrementAssignment(Node):
@@ -214,7 +214,7 @@ class DecrementAssignment(Node):
 
     def ir(self):
         self.value = unique()
-        return (self.value, "=", self.name, "-", 1)
+        return (self.value, "=", self.name, "-", "1")
 
 
 class PlusEqualAssignment(Node):
@@ -265,12 +265,12 @@ class ExpressionAssignment(Node):
 
 
 class Expression(Node):
-    def ir(self):
+    def prepare(self):
         self.value = self.children[0].value
 
 
 class NestedExpression(Node):
-    def ir(self):
+    def prepare(self):
         self.value = self.children[0].value
 
 
@@ -288,37 +288,31 @@ class AdditionExpression(MathExpression):
 
 class SubtractionExpression(MathExpression):
     def ir(self):
-        self.value = unique()
         return (self.value, "=", self.a, "-", self.b)
 
 
 class MultiplicationExpression(MathExpression):
     def ir(self):
-        self.value = unique()
         return (self.value, "=", self.a, "*", self.b)
 
 
 class DivisionExpression(MathExpression):
     def ir(self):
-        self.value = unique()
         return (self.value, "=", self.a, "/", self.b)
 
 
 class ModulusExpression(MathExpression):
     def ir(self):
-        self.value = unique()
         return (self.value, "=", self.a, "%", self.b)
 
 
 class BooleanAnd(MathExpression):
     def ir(self):
-        self.value = unique()
         return (self.value, "=", self.a, "&&", self.b)
 
 
 class BooleanOr(MathExpression):
     def ir(self):
-        self.value = unique()
         return (self.value, "=", self.a, "||", self.b)
 
 

@@ -1,4 +1,4 @@
-FILE=basic_math
+FILE=parseTest
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 

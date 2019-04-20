@@ -5,7 +5,7 @@ The main assembler module.
 Reads in the IR and generates assembly instructions (x86).
 """
 
-from src.util import ensureDirectory
+from src.util import ensureDirectory, CompilerMessage
 
 
 class Assembler:
@@ -75,15 +75,21 @@ class Assembler:
             fileOut.write("\n".join(self.asm))
 
     def get(self, name):
-        """Lookup a name in our table of memory addresses."""
+        """
+        Lookup a name in our table of memory addresses.
+        If it does not exist, we allocate a new spot in memory.
+        """
 
         try:
             return self.table[name]
         except KeyError:
-            return None
+            return self.store(name)
 
     def store(self, name):
         """Store a variable at a new memory address and record it."""
+
+        if name in self.table:
+            raise CompilerMessage(f"Memory address already exists for {name}")
 
         # Increment memory by 4 bytes
         self.memory += 4
@@ -109,9 +115,7 @@ class Assembler:
         """Parse various assignment statements."""
 
         operand = ins[0]
-        loc = self.get(operand)
-        if loc is None:
-            loc = self.store(operand)
+        dest = self.get(operand)
 
         if ins[2] == "!":
             # Not expression i.e. i = !1
@@ -120,7 +124,7 @@ class Assembler:
                 result = 1
             else:
                 result = 0
-            self.asm.append(f"movl ${result}, {loc}")
+            self.asm.append(f"movl ${result}, {dest}")
         elif len(ins) > 3:
             # Expression assignment i.e. i = 2 + 2
             lhs = ins[2]
@@ -134,29 +138,30 @@ class Assembler:
 
             # If both operators are plain digits, pre-compute it
             if lhs.isdigit() and rhs.isdigit():
-                result = eval(f"{lhs} {op} {rhs}")
+                result = int(eval(f"{lhs} {op} {rhs}"))
 
-                self.asm.append(f"movl ${result}, {loc}")
+                self.asm.append(f"movl ${result}, {dest}")
             else:
                 # Otherwise there needs to be assembly logic
-                self.mathAssignment(ins)
+                self.mathAssignment(dest, lhs, op, rhs)
         else:
             # Single assignment i.e. i = 2
             lhs = ins[2]
 
             if lhs.isdigit():
                 # If assignment of digit, do a literal
-                self.asm.append(f"movl ${lhs}, {loc}")
+                self.asm.append(f"movl ${lhs}, {dest}")
             else:
-                # Otherwise change the memory reference
-                self.table[lhs] = loc
+                # Otherwise change the memory reference of operand
+                # to point at the memory address of LHS.
+                # This does not generate an ASM instruction, just updates
+                # our internal data structure so when we see operand again
+                # it uses the correct memory address.
+                lhs = self.resolve(lhs)
+                self.table[operand] = lhs
 
-    def mathAssignment(self, ins):
+    def mathAssignment(self, dest, lhs, op, rhs):
         """Parse various math assignments."""
-
-        lhs = ins[2]
-        op = ins[3]
-        rhs = ins[4]
 
         if op == "+":
             op = "addl"
@@ -166,41 +171,26 @@ class Assembler:
             op = "mult"
         elif op == "/":
             op = "divl"
-        elif op == "&&":
-            op = "and"
 
-        # rhs is the thing being added to lhs
-        dest = self.get(lhs)
+        lhs = self.resolve(lhs)
+        rhs = self.resolve(rhs)
 
-        if isinstance(rhs, int) or rhs.isdigit():
-            # Move dest to %eax
-            self.move(dest, "%eax")
+        self.move(rhs, "%eax")
+        self.asm.append(f"{op} {lhs}, %eax")
+        self.move("%eax", dest)
 
-            # Add src to %eax
-            self.asm.append(f"{op} ${rhs}, %eax")
+    def resolve(self, name):
+        """
+        Resolves an identifier to either a memory address or a constant.
+        Example:
+            resolve("2") returns "$2"
+            resolve("r1") returns "-8(%rbp)"
+        """
 
-            # Move %eax to dest
-            self.move("%eax", dest)
-        else:
-            src = self.get(rhs)
+        if name.isdigit():
+            return f"${name}"
 
-            # Move dest to %eax
-            self.move(dest, "%eax")
-
-            # Add src to %eax
-            self.asm.append(f"{op} {src}, %eax")
-
-            # Move %eax back to dest
-            self.move("%eax", dest)
-
-    def printStatement(self, ins):
-        """ Parse various print options """
-
-        #TODO This line needs to change because what is args is a string like "Hello, World".
-        args = ins[4].split(", ")
-
-        if len(args) == 0:
-            pass
+        return self.get(name)
 
     def move(self, src, dest):
         """ASM instruction to move from src to dest."""
