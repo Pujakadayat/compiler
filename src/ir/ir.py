@@ -112,10 +112,21 @@ class IR:
                 self.stack.insert(0, node.ir())
                 self.closeBlock()
             elif isinstance(node, grammar.WhileStatement):
+                # Must have a goto at the end of while statements
+                # to revisit the condition
+                self.stack.append(("goto", f"_L{util.count['_L']}"))
                 self.closeBlock()
             elif isinstance(node, grammar.WhileCondition):
                 self.stack.append(
-                    f"while r{util.count['none']} GOTO _L{util.count['_L'] + 2}"
+                    (
+                        "if",
+                        f"r{util.count['none']}",
+                        "GOTO",
+                        f"_L{util.count['_L'] + 2}",
+                        "else",
+                        "GOTO",
+                        f"_L{util.count['_L'] + 3}",
+                    )
                 )
                 self.closeBlock()
             else:

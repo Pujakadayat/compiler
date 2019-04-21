@@ -1,4 +1,4 @@
-FILE=comparison
+FILE=while
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 
@@ -14,6 +14,8 @@ asm:
 
 gcc:
 	gcc -O0 -S $(CFILE)
+	gcc $(FILE).s -o $(FILE)
+	./$(FILE); echo $$?
 
 test:
 	python3 -m tests.testing -v
