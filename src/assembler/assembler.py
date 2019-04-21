@@ -194,6 +194,7 @@ class Assembler:
                 # it uses the correct memory address.
                 lhs = self.resolve(lhs)
                 self.table[operand] = lhs
+                self.asm.append(f"#  Updated memory reference of {operand} to {lhs}")
 
     def mathAssignment(self, dest, lhs, op, rhs):
         # Handle comparison assignments separately
@@ -234,4 +235,39 @@ class Assembler:
         self.asm.append(f"je {elseLabel}")
 
     def comparisonAssignment(self, dest, lhs, op, rhs):
+        lhs = self.resolve(lhs)
+        rhs = self.resolve(rhs)
+
+        if op == "==":
+            op = "sete"
+        elif op == "!=":
+            op = "setne"
+        elif op == ">":
+            op = "setg"
+        elif op == "<":
+            op = "setl"
+        elif op == ">=":
+            op = "setge"
+        elif op == "<=":
+            op = "setle"
+
+        if not isNumber(lhs) and not isNumber(rhs):
+            # If both comparators are memory addresses
+            # one of them must be moved into %eax
+            self.move(lhs, "%eax")
+            lhs = "%eax"
+
+        if isNumber(rhs):
+            # RHS is a number, must be the LHS of the comparison
+            # i.e. the instruction `cmpl -4(%rbp), $1` is invalid
+            # it must be `cmpl $1, -4(%rbp)`
+            self.asm.append(f"cmpl {lhs}, {rhs}")
+        else:
+            self.asm.append(f"cmpl {rhs}, {lhs}")
+
+        self.asm.append(f"{op} %cl")
+        self.asm.append("andb $1, %cl")
+        self.asm.append("movzbl %cl, %edx")
+        self.asm.append(f"movl %edx, {dest}")
+
         print(dest, lhs, op, rhs)

@@ -1,9 +1,9 @@
-FILE=negative_number
+FILE=comparison
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 
 main:
-	python3 -m src.main -rtap $(CFILE)
+	python3 -m src.main -ra $(CFILE)
 
 force:
 	python3 -m src.main -sptrf $(CFILE)
