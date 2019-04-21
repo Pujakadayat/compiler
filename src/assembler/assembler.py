@@ -42,6 +42,8 @@ class Assembler:
             self.returnStatement(ins)
         elif ins[0] == "goto":
             self.goto(ins)
+        elif ins[0] == "if":
+            self.ifStatement(ins)
         elif ins[1] == "=":
             self.assignment(ins)
 
@@ -118,7 +120,10 @@ class Assembler:
     def move(self, src, dest):
         """ASM instruction to move from src to dest."""
 
-        self.asm.append(f"movl {src}, {dest}")
+        if isinstance(src, int) or src.isdigit():
+            self.asm.append(f"movl ${src}, {dest}")
+        else:
+            self.asm.append(f"movl {src}, {dest}")
 
     # Parsing for specific types of instructions
 
@@ -127,10 +132,10 @@ class Assembler:
 
         if ins[1].isdigit():
             # If returning a digit, do a literal
-            self.asm.append(f"movl ${ins[1]}, %eax")
+            self.move(ins[1], "%eax")
         else:
             # Otherwise look up the memory address
-            self.asm.append(f"movl {self.get(ins[1])}, %eax")
+            self.move(self.get(ins[1]), "%eax")
 
     def assignment(self, ins):
         """Parse various assignment statements."""
@@ -145,7 +150,8 @@ class Assembler:
                 result = 1
             else:
                 result = 0
-            self.asm.append(f"movl ${result}, {dest}")
+
+            self.move(result, dest)
         elif len(ins) > 3:
             # Expression assignment i.e. i = 2 + 2
             lhs = ins[2]
@@ -160,8 +166,7 @@ class Assembler:
             # If both operators are plain digits, pre-compute it
             if lhs.isdigit() and rhs.isdigit():
                 result = int(eval(f"{lhs} {op} {rhs}"))
-
-                self.asm.append(f"movl ${result}, {dest}")
+                self.move(result, dest)
             else:
                 # Otherwise there needs to be assembly logic
                 self.mathAssignment(dest, lhs, op, rhs)
@@ -171,7 +176,7 @@ class Assembler:
 
             if lhs.isdigit():
                 # If assignment of digit, do a literal
-                self.asm.append(f"movl ${lhs}, {dest}")
+                self.move(lhs, dest)
             else:
                 # Otherwise change the memory reference of operand
                 # to point at the memory address of LHS.
@@ -205,3 +210,14 @@ class Assembler:
 
     def goto(self, ins):
         self.asm.append(f"jmp {ins[1]}")
+
+    def ifStatement(self, ins):
+        condition = self.resolve(ins[1])
+        ifLabel = ins[3]
+        elseLabel = ins[6]
+
+        # If the condition is false, we jump to the elseBody
+        # Otherwise, we automatically continue to the ifBody
+        # as it is the next assembly instruction.
+        self.asm.append(f"cmpl $0, {condition}")
+        self.asm.append(f"je {elseLabel}")
