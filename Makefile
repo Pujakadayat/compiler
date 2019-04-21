@@ -1,4 +1,4 @@
-FILE=duplicate_label
+FILE=negativeTest
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 

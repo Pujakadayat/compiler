@@ -163,6 +163,23 @@ def tokenizeLine(line, isComment):
 
         # If next character is a symbol
         if symbol is not None:
+
+            ## TODO: fix negative numbers
+            number = "1"
+            # If current token is a minus and next token is a number, parse as negative number
+            if symbol == tokens.minus and nextSymbol == number:
+                if debug is True:
+                    logging.debug("Found a negative number.")
+                # Tokenize whatever we found up to this point, and skip whitespace
+                if start != end:
+                    previousTokens = tokenizeChunk(line[start:end])
+                    lineTokens.append(previousTokens)
+
+                start = end + 1
+                end = start
+                continue
+            lineTokens.append(Token(symbol))
+
             # Tokenize whatever we found up to this point
             if start != end:
                 previousTokens = tokenizeChunk(line[start:end])
@@ -216,7 +233,7 @@ def parseInclude(text, start):
 
 def tokenizeChunk(text):
     """Check if the given text is a keyword, number, or identifier"""
-    # Check if it a keyword first
+    # Check if its a keyword first
     keyword = matchKeyword(text)
     if keyword is not None:
         if debug is True:
