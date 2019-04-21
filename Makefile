@@ -1,4 +1,4 @@
-FILE=simple_goto
+FILE=negativeTest
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 
