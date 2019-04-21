@@ -42,7 +42,7 @@ class SymbolTable:
         """Declare a new variable in the current scope."""
 
         if name in self.current["variables"]:
-            raise CompilerMessage(f"Variable with name {name} already exists.")
+            raise CompilerMessage(f"Variable with name '{name}' already exists.")
 
         # Add the variable to the current scope
         self.current["variables"][name] = t
@@ -55,6 +55,9 @@ class SymbolTable:
 
     def declareLabel(self, name):
         """Add a new label to the label list as verified."""
+
+        if name in self.current["labels"] and self.current["labels"][name] is True:
+            raise CompilerMessage(f"Label with name '{name}' already exists.")
 
         self.current["labels"][name] = True
 
@@ -245,8 +248,4 @@ def updateSymbolTable(node, st, level=0):
         st.declareLabel(node.children[0].value)
     elif isinstance(node, grammar.Identifier):
         if st.find(node.value) is None:
-            # st.print()
-            if node.value == "printf":
-                pass
-            else:
-                raise CompilerMessage(f"Identifier {node.value} is undefined.")
+            raise CompilerMessage(f"Identifier {node.value} is undefined.")

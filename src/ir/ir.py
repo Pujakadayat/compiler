@@ -13,12 +13,11 @@ class BasicBlock:
     def __init__(self, instructions, label=None):
         self.instructions = instructions
         self.label = label
+        self.instructions.insert(0, ("label", label))
 
     def print(self):
         """Print this basic block."""
 
-        if self.label:
-            print(self.label)
         for i in self.instructions:
             print(i)
         print()
@@ -91,9 +90,19 @@ class IR:
             elif isinstance(node, grammar.IfStatement):
                 self.closeBlock()
             elif isinstance(node, grammar.Condition):
+                if "_L" in util.count:
+                    c = util.count["_L"]
+                else:
+                    c = 0
+
                 i = (
-                    f"if r{util.count['none']} GOTO _L{util.count['_L'] + 2}"
-                    f" else GOTO _L{util.count['_L'] + 3}"
+                    "if",
+                    f"r{util.count['none']}",
+                    "GOTO",
+                    f"_L{c + 2}",
+                    "else",
+                    "GOTO",
+                    f"_L{c + 3}",
                 )
                 self.stack.append(i)
                 self.closeBlock()
