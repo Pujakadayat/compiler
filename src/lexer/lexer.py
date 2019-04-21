@@ -140,6 +140,27 @@ def tokenizeLine(line, isComment):
             start = end
             continue
 
+        if symbol == tokens.minus:
+            tmp = start + 1
+            tmpe = end + 2
+
+            num = ""
+
+            while line[tmp:tmpe].isdigit():
+                num += line[tmp:tmpe]
+                tmp += 1
+                tmpe += 1
+
+            start = tmp
+            end = start
+
+            if num != "":
+                lineTokens.append(Token(tokens.number, f"-{num}"))
+            else:
+                lineTokens.append(Token(tokens.minus, "-"))
+
+            continue
+
         # If next character is a symbol
         if symbol is not None:
             # Tokenize whatever we found up to this point
