@@ -8,6 +8,7 @@ Reads in the IR and generates assembly instructions (x86).
 import re
 from src.util import ensureDirectory, CompilerMessage
 
+
 def isNumber(s):
     if re.match(r"^-?[0-9]+$", s):
         return True
@@ -67,9 +68,9 @@ class Assembler:
 
         # If there was no return statement in the function
         # we automatically append one.
-        if self.asm[-1] != "ret":
+        if self.asm[-1] != "retq":
             self.asm.append("popq %rbp")
-            self.asm.append("ret")
+            self.asm.append("retq")
 
     def print(self):
         """Print the ASM instructions."""
@@ -146,7 +147,7 @@ class Assembler:
             self.move(self.get(ins[1]), "%eax")
 
         self.asm.append("popq %rbp")
-        self.asm.append("ret")
+        self.asm.append("retq")
 
     def assignment(self, ins):
         operand = ins[0]
@@ -187,14 +188,11 @@ class Assembler:
                 # If assignment of digit, do a literal
                 self.move(lhs, dest)
             else:
-                # Otherwise change the memory reference of operand
-                # to point at the memory address of LHS.
-                # This does not generate an ASM instruction, just updates
-                # our internal data structure so when we see operand again
-                # it uses the correct memory address.
+                # Move the value of LHS into the destination
+                dest = self.resolve(operand)
                 lhs = self.resolve(lhs)
-                self.table[operand] = lhs
-                self.asm.append(f"#  Updated memory reference of {operand} to {lhs}")
+                self.move(lhs, "%eax")
+                self.move("%eax", dest)
 
     def mathAssignment(self, dest, lhs, op, rhs):
         # Handle comparison assignments separately
@@ -211,11 +209,19 @@ class Assembler:
         elif op == "/":
             op = "divl"
 
-        lhs = self.resolve(lhs)
-        rhs = self.resolve(rhs)
+        if isNumber(rhs):
+            lhs = self.resolve(lhs)
+            rhs = self.resolve(rhs)
+            self.move(lhs, "%eax")
+            self.asm.append(f"{op} {rhs}, %eax")
+        else:
+            lhs = self.resolve(lhs)
+            rhs = self.resolve(rhs)
+            self.move(rhs, "%eax")
+            self.asm.append(f"{op} {lhs}, %eax")
 
-        self.move(rhs, "%eax")
-        self.asm.append(f"{op} {lhs}, %eax")
+        # self.move(rhs, "%eax")
+        # self.asm.append(f"{op} {lhs}, %eax")
         self.move("%eax", dest)
 
     def label(self, ins):
