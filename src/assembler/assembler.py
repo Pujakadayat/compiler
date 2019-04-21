@@ -65,8 +65,11 @@ class Assembler:
     def teardownFunction(self):
         """Instructions that appear at the end of every function."""
 
-        self.asm.append("popq %rbp")
-        self.asm.append("ret")
+        # If there was no return statement in the function
+        # we automatically append one.
+        if self.asm[-1] != "ret":
+            self.asm.append("popq %rbp")
+            self.asm.append("ret")
 
     def print(self):
         """Print the ASM instructions."""
@@ -141,6 +144,9 @@ class Assembler:
         else:
             # Otherwise look up the memory address
             self.move(self.get(ins[1]), "%eax")
+
+        self.asm.append("popq %rbp")
+        self.asm.append("ret")
 
     def assignment(self, ins):
         operand = ins[0]
