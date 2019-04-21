@@ -1,11 +1,18 @@
-# pylint: disable=eval-used
+# pylint: disable=eval-used, missing-docstring
 
 """
 The main assembler module.
 Reads in the IR and generates assembly instructions (x86).
 """
 
+import re
 from src.util import ensureDirectory, CompilerMessage
+
+def isNumber(s):
+    if re.match(r"^-?[0-9]+$", s):
+        return True
+
+    return False
 
 
 class Assembler:
@@ -112,7 +119,7 @@ class Assembler:
             resolve("r1") returns "-8(%rbp)"
         """
 
-        if name.isdigit():
+        if isNumber(name):
             return f"${name}"
 
         return self.get(name)
@@ -120,7 +127,7 @@ class Assembler:
     def move(self, src, dest):
         """ASM instruction to move from src to dest."""
 
-        if isinstance(src, int) or src.isdigit():
+        if isinstance(src, int) or isNumber(src):
             self.asm.append(f"movl ${src}, {dest}")
         else:
             self.asm.append(f"movl {src}, {dest}")
@@ -128,9 +135,7 @@ class Assembler:
     # Parsing for specific types of instructions
 
     def returnStatement(self, ins):
-        """Parse a return statements."""
-
-        if ins[1].isdigit():
+        if isNumber(ins[1]):
             # If returning a digit, do a literal
             self.move(ins[1], "%eax")
         else:
@@ -138,8 +143,6 @@ class Assembler:
             self.move(self.get(ins[1]), "%eax")
 
     def assignment(self, ins):
-        """Parse various assignment statements."""
-
         operand = ins[0]
         dest = self.get(operand)
 
@@ -164,7 +167,7 @@ class Assembler:
                 op = "or"
 
             # If both operators are plain digits, pre-compute it
-            if lhs.isdigit() and rhs.isdigit():
+            if isNumber(lhs) and isNumber(rhs):
                 result = int(eval(f"{lhs} {op} {rhs}"))
                 self.move(result, dest)
             else:
@@ -174,7 +177,7 @@ class Assembler:
             # Single assignment i.e. i = 2
             lhs = ins[2]
 
-            if lhs.isdigit():
+            if isNumber(lhs):
                 # If assignment of digit, do a literal
                 self.move(lhs, dest)
             else:
@@ -187,7 +190,10 @@ class Assembler:
                 self.table[operand] = lhs
 
     def mathAssignment(self, dest, lhs, op, rhs):
-        """Parse various math assignments."""
+        # Handle comparison assignments separately
+        if op in [">=", "<=", ">", "<", "!=", "=="]:
+            self.comparisonAssignment(dest, lhs, op, rhs)
+            return
 
         if op == "+":
             op = "addl"
@@ -213,7 +219,6 @@ class Assembler:
 
     def ifStatement(self, ins):
         condition = self.resolve(ins[1])
-        ifLabel = ins[3]
         elseLabel = ins[6]
 
         # If the condition is false, we jump to the elseBody
@@ -221,3 +226,6 @@ class Assembler:
         # as it is the next assembly instruction.
         self.asm.append(f"cmpl $0, {condition}")
         self.asm.append(f"je {elseLabel}")
+
+    def comparisonAssignment(self, dest, lhs, op, rhs):
+        print(dest, lhs, op, rhs)
