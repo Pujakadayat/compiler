@@ -110,7 +110,7 @@ def tokenizeLine(line, isComment):
             break
 
         ## TODO: fix negative numbers
-        number = '1'
+        number = "1"
         # If current token is a minus and next token is a number, parse as negative number
         if symbol == tokens.minus and nextSymbol == number:
             if debug is True:
