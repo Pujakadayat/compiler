@@ -1,4 +1,4 @@
-FILE=negativeTest
+FILE=negative_number
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 
