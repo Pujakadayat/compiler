@@ -6,6 +6,7 @@ Reads in the IR and generates assembly instructions (x86).
 """
 
 import re
+import platform
 from src.util import ensureDirectory, CompilerMessage
 
 order = ["%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d", "%r14d", "%r15d"]
@@ -66,6 +67,14 @@ class Function:
         self.table = {}
         self.asm = []
 
+        # Ubuntu gcc expects the entry function to be named "main"
+        # whereas macOS gcc (clang) expects the entry function to be "_main"
+        if platform.system() == "Linux":
+            if name != "main":
+                self.name = f"_{self.name}"
+        else:
+            self.name = f"_{self.name}"
+
         if declarations:
             self.align = declarations * 4
         else:
@@ -98,8 +107,8 @@ class Function:
     def setup(self):
         """Instructions that appear at the beginning of every function."""
 
-        self.asm.append(f".globl\t_{self.name}")
-        self.asm.append(f"_{self.name}:")
+        self.asm.append(f".globl\t{self.name}")
+        self.asm.append(f"{self.name}:")
         self.asm.append("pushq %rbp")
         self.asm.append("movq %rsp, %rbp")
 
