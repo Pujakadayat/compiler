@@ -1,4 +1,4 @@
-FILE=call
+FILE=modulo
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 

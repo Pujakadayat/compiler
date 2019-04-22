@@ -230,7 +230,10 @@ class Function:
 
             # If both operators are plain digits, pre-compute it
             if isNumber(lhs) and isNumber(rhs):
-                result = int(eval(f"{lhs} {op} {rhs}"))
+                try:
+                    result = int(eval(f"{lhs} {op} {rhs}"))
+                except ZeroDivisionError:
+                    raise CompilerMessage(f"Cannot divide by zero: {lhs} {op} {rhs}")
                 self.move(result, dest)
             else:
                 # Otherwise there needs to be assembly logic
@@ -256,6 +259,10 @@ class Function:
             self.comparisonAssignment(dest, lhs, op, rhs)
             return
 
+        if op == "%":
+            self.modulo(dest, lhs, op, rhs)
+            return
+
         if op == "+":
             op = "addl"
         elif op == "-":
@@ -276,9 +283,19 @@ class Function:
             self.move(rhs, "%eax")
             self.asm.append(f"{op} {lhs}, %eax")
 
-        # self.move(rhs, "%eax")
-        # self.asm.append(f"{op} {lhs}, %eax")
         self.move("%eax", dest)
+
+    def modulo(self, dest, lhs, op, rhs):
+        lhs = self.resolve(lhs)
+        rhs = self.resolve(rhs)
+
+        self.comment(f"Modulo expression {lhs} % {rhs}")
+
+        self.move(lhs, "%eax")
+        self.asm.append("cltd")
+        self.move(rhs, "%ecx")
+        self.asm.append("idivl %ecx")
+        self.move("%edx", dest)
 
     def label(self, ins):
         self.asm.append(f"{ins[1]}:")
