@@ -29,13 +29,6 @@ class Assembler:
     def generate(self):
         """Generate the ASM from our intermediate assembly."""
 
-        # Setup .s file
-        if platform.system() == "Linux":
-            self.asm.append(".text")
-        elif platform.system() == "Darwin":
-            self.asm.append(".section\t__TEXT,__text,regular,pure_instructions")
-        else:
-            raise CompilerMessage(f"Unsupported system: {platform.system()}")
 
         # Loop through every basic block
         for function in self.ir:
@@ -132,8 +125,6 @@ class Function:
                 self.asm.append(f"addq ${self.align}, %rsp")
             self.asm.append("popq %rbp")
             self.asm.append("retq")
-
-        print(self.table)
 
     def print(self):
         """Print the ASM instructions."""
