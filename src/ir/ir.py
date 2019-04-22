@@ -156,9 +156,6 @@ class IR:
                 block.print()
         print("```")
 
-    def write(self):
-        JSON.dump()
-
     def __str__(self):
         s = []
 

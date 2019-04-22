@@ -6,7 +6,6 @@ Reads in the IR and generates assembly instructions (x86).
 """
 
 import re
-import platform
 from src.util import ensureDirectory, CompilerMessage
 
 order = ["%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d", "%r14d", "%r15d"]
@@ -28,7 +27,6 @@ class Assembler:
 
     def generate(self):
         """Generate the ASM from our intermediate assembly."""
-
 
         # Loop through every basic block
         for function in self.ir:

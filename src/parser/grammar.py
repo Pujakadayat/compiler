@@ -181,7 +181,6 @@ class VariableDeclaration(Node):
 
 class LabelDeclaration(Node):
     def prepare(self):
-        # TODO: transform goto labels to something unique using dictionary?
         self.value = self.children[0].value
 
     def ir(self):
