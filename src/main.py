@@ -17,7 +17,7 @@ from src.parser.grammar import (
     Parameters,
     StatementListNew,
 )
-from src.ir.ir import IR
+from src.ir.ir import IR, readJson
 from src.symbolTable.symbolTable import buildSymbolTable, flattenTree
 from src.assembler.assembler import Assembler
 from src.util import CompilerMessage, messages
@@ -147,29 +147,31 @@ class Compiler:
 
         # Read in an IR from a file
         if "-i" in self.flags and self.input is not None:
-            ir = readFile(self.input)
-            self.ir = ir.split("\n")
-            return None
+            # ir = readFile(self.input)
+            # self.ir = ir.split("\n")
+            # return None
+            self.ir = readJson(self.input)
 
-        # Cannot convert to IR without parse tree
-        if not self.parseTree:
-            raise CompilerMessage("Cannot generate an IR without a parse tree.")
+        else:
+            # Cannot convert to IR without parse tree
+            if not self.parseTree:
+                raise CompilerMessage("Cannot generate an IR without a parse tree.")
 
-        # Cannot convert to IR without symbol table
-        if not self.symbolTable:
-            raise CompilerMessage("Cannot generate an IR without a symbol table.")
+            # Cannot convert to IR without symbol table
+            if not self.symbolTable:
+                raise CompilerMessage("Cannot generate an IR without a symbol table.")
 
-        # Create a new instance of IR
-        self.ir = IR(self.parseTree, self.symbolTable)
+            # Create a new instance of IR
+            self.ir = IR(self.parseTree, self.symbolTable)
 
-        # Generate the IR
-        output = self.ir.generate()
+            # Generate the IR
+            output = self.ir.generate()
 
-        if output is None:
-            messages.add(CompilerMessage("Failed to generate an IR."))
-            return None
+            if output is None:
+                messages.add(CompilerMessage("Failed to generate an IR."))
+                return None
 
-        messages.add(CompilerMessage("Succesfully generated an IR.", "success"))
+            messages.add(CompilerMessage("Succesfully generated an IR.", "success"))
 
         if "-r" in self.flags:
             messages.add(CompilerMessage("Intermediate Representation:", "important"))
