@@ -3,7 +3,7 @@ CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 
 main:
-	python3 -m src.main -ri test.json $(CFILE)
+	python3 -m src.main -ri 1234Test.json $(CFILE)
 
 force:
 	python3 -m src.main -sptrf $(CFILE)

@@ -6,7 +6,7 @@ import sys
 import getopt
 import logging
 import os
-from src.util import readFile, writeFile, ensureDirectory
+from src.util import readFile, ensureDirectory
 
 from src.parser.lrParser import LRParser
 import src.lexer.lexer as lexer
