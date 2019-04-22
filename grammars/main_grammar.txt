@@ -39,7 +39,8 @@ param -> constNum | ID | str
 
 # Control Flow
 
-ifStatement -> if ( condition ) { statementList } | if ( condition ) { statementList } elseStatement
+ifStatement -> if ( condition ) { ifBody } | if ( condition ) { ifBody } elseStatement
+ifBody -> statementList
 condition -> expression
 elseStatement -> else { statementList }
 forStatement -> for ( assignment expression ; ID ++ ) { statementList }

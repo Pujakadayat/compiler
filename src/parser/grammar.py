@@ -408,6 +408,15 @@ class IfStatement(Node):
         self.condition = self.children[0]
         self.body = self.children[1]
 
+        if len(self.children) > 2:
+            self.body.hasElse = True
+        else:
+            self.body.hasElse = False
+
+
+class IfBody(Node):
+    pass
+
 
 class Condition(Node):
     pass
@@ -451,6 +460,7 @@ nodes = {
     "paramList": Parameters,
     "param": Parameter,
     "ifStatement": IfStatement,
+    "ifBody": IfBody,
     "condition": Condition,
     "elseStatement": ElseStatement,
     "expression": Expression,

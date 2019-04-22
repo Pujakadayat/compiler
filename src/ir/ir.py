@@ -91,6 +91,10 @@ class IR:
             if isinstance(node, grammar.FunctionDeclaration):
                 self.ir[node.name]["arguments"] = node.arguments.value
                 self.closeBlock()
+            elif isinstance(node, grammar.IfBody):
+                if node.hasElse:
+                    self.stack.append(("goto", f"_L{util.count['_L'] + 3}"))
+                self.closeBlock()
             elif isinstance(node, grammar.IfStatement):
                 self.closeBlock()
             elif isinstance(node, grammar.Condition):
