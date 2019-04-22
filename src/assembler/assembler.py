@@ -127,6 +127,8 @@ class Function:
             self.asm.append("popq %rbp")
             self.asm.append("retq")
 
+        print(self.table)
+
     def print(self):
         """Print the ASM instructions."""
 

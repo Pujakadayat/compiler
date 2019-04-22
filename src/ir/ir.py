@@ -91,6 +91,9 @@ class IR:
             if isinstance(node, grammar.FunctionDeclaration):
                 self.ir[node.name]["arguments"] = node.arguments.value
                 self.closeBlock()
+            elif isinstance(node, grammar.ReturnStatement):
+                self.stack.append(node.ir())
+                self.closeBlock()
             elif isinstance(node, grammar.IfBody):
                 if node.hasElse:
                     self.stack.append(("goto", f"_L{util.count['_L'] + 3}"))
@@ -128,7 +131,7 @@ class IR:
                 self.stack.append(
                     (
                         "if",
-                        f"r{util.count['none']}",
+                        node.value,
                         "GOTO",
                         f"_L{util.count['_L'] + 2}",
                         "else",

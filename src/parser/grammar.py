@@ -376,7 +376,8 @@ class WhileStatement(Node):
 
 
 class WhileCondition(Node):
-    pass
+    def prepare(self):
+        self.value = self.children[0].value
 
 
 class IncludeStatement(Node):

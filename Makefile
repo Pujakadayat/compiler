@@ -1,4 +1,4 @@
-FILE=modulo
+FILE=complex
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 
