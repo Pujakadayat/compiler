@@ -13,7 +13,7 @@ class BasicBlock:
     def __init__(self, instructions, label=None):
         self.instructions = instructions
         self.label = label
-        self.instructions.insert(0, ("label", label))
+        self.instructions.insert(0, ["label", label])
 
     def print(self):
         """Print this basic block."""
@@ -96,7 +96,7 @@ class IR:
                 self.closeBlock()
             elif isinstance(node, grammar.IfBody):
                 if node.hasElse:
-                    self.stack.append(("goto", f"_L{util.count['_L'] + 3}"))
+                    self.stack.append(["goto", f"_L{util.count['_L'] + 3}"])
                 self.closeBlock()
             elif isinstance(node, grammar.IfStatement):
                 self.closeBlock()
@@ -106,7 +106,7 @@ class IR:
                 else:
                     c = 0
 
-                i = (
+                i = [
                     "if",
                     node.value,
                     "GOTO",
@@ -114,7 +114,7 @@ class IR:
                     "else",
                     "GOTO",
                     f"_L{c + 3}",
-                )
+                ]
                 self.stack.append(i)
                 self.closeBlock()
             elif isinstance(node, grammar.ElseStatement):
@@ -125,11 +125,11 @@ class IR:
             elif isinstance(node, grammar.WhileStatement):
                 # Must have a goto at the end of while statements
                 # to revisit the condition
-                self.stack.append(("goto", f"_L{util.count['_L']}"))
+                self.stack.append(["goto", f"_L{util.count['_L']}"])
                 self.closeBlock()
             elif isinstance(node, grammar.WhileCondition):
                 self.stack.append(
-                    (
+                    [
                         "if",
                         node.value,
                         "GOTO",
@@ -137,7 +137,7 @@ class IR:
                         "else",
                         "GOTO",
                         f"_L{util.count['_L'] + 3}",
-                    )
+                    ]
                 )
                 self.closeBlock()
             else:
