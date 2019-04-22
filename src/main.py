@@ -176,7 +176,7 @@ class Compiler:
             self.ir.print()
 
         if "-o" in self.flags and self.output is not None:
-            writeFile(self.output, self.ir)
+            self.ir.write(self.output)
 
         return self.ir
 
@@ -375,7 +375,11 @@ def main():
         level = 3
     if "-r" in flags:
         level = 4
+    if "-o" in flags:
+        level = 4
     if "-a" in flags:
+        level = 5
+    if "-n" in flags:
         level = 5
 
     try:

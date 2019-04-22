@@ -156,6 +156,7 @@ class IR:
                 block.print()
         print("```")
 
+
     def __str__(self):
         s = []
 
