@@ -3,8 +3,47 @@ Methods and classes related to
 Intermediate Representations of the Parse Tree.
 """
 
+import json
 import src.util as util
 import src.parser.grammar as grammar
+
+
+def readJson(name):
+    """Read in JSON file"""
+    try:
+        with open(name, "r") as fileIn:
+            lines = fileIn.read()
+            # List of Lists
+            prettyLines = json.loads(lines)
+            currentNewBasicBlock = None
+            currentFunctionBlocks = None
+            ir = IR(None, None)
+            for entry in prettyLines:
+                command = entry[0]
+
+                if command.startswith("."):
+                    name = command[1:]
+                    ir.ir[name] = {}
+                    func = ir.ir[name]
+                    func["blocks"] = []
+                    args = entry[1]
+                    func["arguments"] = args
+                    func["declarations"] = entry[2]
+                    currentFunctionBlocks = func
+
+                elif command == "label":
+                    instructions = []
+                    label = entry[1]
+                    new = BasicBlock(instructions, label)
+                    currentNewBasicBlock = new
+                    currentFunctionBlocks["blocks"].append(new)
+                else:
+                    currentNewBasicBlock.instructions.append(entry)
+
+            return ir
+
+    except FileNotFoundError:
+        raise util.CompilerMessage("File cannot be read.")
 
 
 class BasicBlock:
@@ -156,6 +195,23 @@ class IR:
                 block.print()
         print("```")
 
+    def write(self, name):
+        """Dump to JSON file"""
+        s = []
+        for function in self.ir:
+            s.append(
+                [
+                    f".{function}",
+                    self.ir[function]["arguments"],
+                    len(self.symbolTable.table[function]["variables"]),
+                ]
+            )
+            for block in self.ir[function]["blocks"]:
+                for instruction in block.instructions:
+                    s.append(instruction)
+        print(s)
+        with open(name, "w") as fileout:
+            fileout.write(json.dumps(s))
 
     def __str__(self):
         s = []
