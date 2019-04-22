@@ -1,4 +1,4 @@
-FILE=while
+FILE=call
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 

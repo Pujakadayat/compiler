@@ -22,8 +22,6 @@ class Assembler:
     def __init__(self, ir):
         self.ir = ir
         self.asm = []
-        self.table = {}
-        self.memory = 0
 
     def generate(self):
         """Generate the ASM from our intermediate assembly."""
@@ -33,33 +31,66 @@ class Assembler:
 
         # Loop through every basic block
         for function in self.ir:
-            self.setupFunction(function)
-            for block in self.ir[function]["blocks"]:
-                for instruction in block.instructions:
-                    self.parse(instruction)
-            self.teardownFunction()
+            f = Function(name=function, blocks=self.ir[function]["blocks"])
+            self.asm.extend(f.asm)
 
         return self.asm
+
+    def print(self):
+        """Print the ASM instructions."""
+
+        for i in self.asm:
+            print(i)
+
+    def write(self, filename):
+        """Creates output file for assembly"""
+
+        # Ensure the assembly directory exists
+        prefix = "assembly"
+        ensureDirectory(prefix)
+
+        with open(f"{prefix}/{filename}", "w") as fileOut:
+            fileOut.write("\n".join(self.asm))
+
+
+class Function:
+    def __init__(self, name, blocks):
+        self.name = name
+        self.blocks = blocks
+        self.memory = 0
+        self.table = {}
+        self.asm = []
+
+        self.setupFunction()
+        for block in blocks:
+            for instruction in block.instructions:
+                self.parse(instruction)
+        self.teardownFunction()
+
 
     def parse(self, ins):
         """Parse an IR instruction."""
 
-        if ins[0] == "label":
+        op = ins[0]
+
+        if op == "label":
             self.label(ins)
-        if ins[0] == "ret":
+        if op == "ret":
             self.returnStatement(ins)
-        elif ins[0] == "goto":
+        elif op == "goto":
             self.goto(ins)
-        elif ins[0] == "if":
+        elif op == "if":
             self.ifStatement(ins)
+        elif op == "call":
+            self.call(ins)
         elif ins[1] == "=":
             self.assignment(ins)
 
-    def setupFunction(self, name):
+    def setupFunction(self):
         """Instructions that appear at the beginning of every function."""
 
-        self.asm.append(f".globl\t_{name}")
-        self.asm.append(f"_{name}:")
+        self.asm.append(f".globl\t_{self.name}")
+        self.asm.append(f"_{self.name}:")
         self.asm.append("pushq %rbp")
         self.asm.append("movq %rsp, %rbp")
 
@@ -77,16 +108,6 @@ class Assembler:
 
         for i in self.asm:
             print(i)
-
-    def write(self, filename):
-        """Creates output file for assembly"""
-
-        # Ensure the assembly directory exists
-        prefix = "assembly"
-        ensureDirectory(prefix)
-
-        with open(f"{prefix}/{filename}", "w") as fileOut:
-            fileOut.write("\n".join(self.asm))
 
     def get(self, name):
         """
@@ -136,9 +157,16 @@ class Assembler:
         else:
             self.asm.append(f"movl {src}, {dest}")
 
+    def comment(self, c):
+        """Add a comment to the ASM instructions."""
+
+        self.asm.append(f"\t\t # {c}")
+
     # Parsing for specific types of instructions
 
     def returnStatement(self, ins):
+        self.comment(f"Return {ins[1]}")
+
         if isNumber(ins[1]):
             # If returning a digit, do a literal
             self.move(ins[1], "%eax")
@@ -189,6 +217,7 @@ class Assembler:
                 self.move(lhs, dest)
             else:
                 # Move the value of LHS into the destination
+                self.comment(f"Moving {lhs} into {operand}")
                 dest = self.resolve(operand)
                 lhs = self.resolve(lhs)
                 self.move(lhs, "%eax")
@@ -276,4 +305,20 @@ class Assembler:
         self.asm.append("movzbl %cl, %edx")
         self.asm.append(f"movl %edx, {dest}")
 
-        print(dest, lhs, op, rhs)
+    def call(self, ins):
+        dest = ins[1]
+        name = ins[3]
+        arguments = ins[4]
+
+        order = ["%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d", "%r14d", "%r15d"]
+
+        self.comment("Moving arguments into registers")
+        for index, argument in enumerate(arguments):
+            self.move(self.resolve(argument), order[index])
+
+        self.asm.append(f"callq _{name}")
+
+        self.comment("Saving the return value")
+        self.move("%eax", self.resolve(dest))
+
+        print(name, dest, arguments)

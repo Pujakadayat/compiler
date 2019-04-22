@@ -129,7 +129,7 @@ class Parameters(Node):
         for i in self.children:
             s.append(i.value)
 
-        self.value = ", ".join(s)
+        self.value = tuple(s)
 
 
 class Parameter(Node):
@@ -389,8 +389,10 @@ class CallStatement(Node):
         self.name = self.children[0].value
         self.parameters = self.children[1]
 
-    def ir(self):
+    def prepare(self):
         self.value = unique()
+
+    def ir(self):
         return ("call", self.value, "=", self.name, self.parameters.value)
 
 
