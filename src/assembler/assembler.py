@@ -8,6 +8,8 @@ Reads in the IR and generates assembly instructions (x86).
 import re
 from src.util import ensureDirectory, CompilerMessage
 
+order = ["%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d", "%r14d", "%r15d"]
+
 
 def isNumber(s):
     if re.match(r"^-?[0-9]+$", s):
@@ -31,7 +33,12 @@ class Assembler:
 
         # Loop through every basic block
         for function in self.ir:
-            f = Function(name=function, blocks=self.ir[function]["blocks"])
+            f = Function(
+                function,
+                self.ir[function]["blocks"],
+                self.ir[function]["arguments"],
+                self.ir[function]["declarations"]
+            )
             self.asm.extend(f.asm)
 
         return self.asm
@@ -54,19 +61,24 @@ class Assembler:
 
 
 class Function:
-    def __init__(self, name, blocks):
+    def __init__(self, name, blocks, arguments, declarations):
         self.name = name
         self.blocks = blocks
+        self.arguments = arguments
         self.memory = 0
         self.table = {}
         self.asm = []
 
-        self.setupFunction()
+        if declarations:
+            self.align = declarations * 4
+        else:
+            self.align = None
+
+        self.setup()
         for block in blocks:
             for instruction in block.instructions:
                 self.parse(instruction)
-        self.teardownFunction()
-
+        self.teardown()
 
     def parse(self, ins):
         """Parse an IR instruction."""
@@ -86,7 +98,7 @@ class Function:
         elif ins[1] == "=":
             self.assignment(ins)
 
-    def setupFunction(self):
+    def setup(self):
         """Instructions that appear at the beginning of every function."""
 
         self.asm.append(f".globl\t_{self.name}")
@@ -94,12 +106,24 @@ class Function:
         self.asm.append("pushq %rbp")
         self.asm.append("movq %rsp, %rbp")
 
-    def teardownFunction(self):
+        # Add space on the stack according to the number of arguments
+        if self.align:
+            self.asm.append(f"subq ${self.align}, %rsp")
+
+        if self.arguments:
+            self.comment("Moving parameters out of registers")
+            for i, arg in enumerate(self.arguments):
+                memory = self.store(arg)
+                self.move(order[i], memory)
+
+    def teardown(self):
         """Instructions that appear at the end of every function."""
 
         # If there was no return statement in the function
         # we automatically append one.
         if self.asm[-1] != "retq":
+            if self.align:
+                self.asm.append(f"addq ${self.align}, %rsp")
             self.asm.append("popq %rbp")
             self.asm.append("retq")
 
@@ -173,6 +197,9 @@ class Function:
         else:
             # Otherwise look up the memory address
             self.move(self.get(ins[1]), "%eax")
+
+        if self.align:
+            self.asm.append(f"addq ${self.align}, %rsp")
 
         self.asm.append("popq %rbp")
         self.asm.append("retq")
@@ -310,8 +337,6 @@ class Function:
         name = ins[3]
         arguments = ins[4]
 
-        order = ["%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d", "%r14d", "%r15d"]
-
         self.comment("Moving arguments into registers")
         for index, argument in enumerate(arguments):
             self.move(self.resolve(argument), order[index])
@@ -320,5 +345,3 @@ class Function:
 
         self.comment("Saving the return value")
         self.move("%eax", self.resolve(dest))
-
-        print(name, dest, arguments)

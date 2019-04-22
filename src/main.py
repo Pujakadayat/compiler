@@ -160,7 +160,7 @@ class Compiler:
             raise CompilerMessage("Cannot generate an IR without a symbol table.")
 
         # Create a new instance of IR
-        self.ir = IR(self.parseTree)
+        self.ir = IR(self.parseTree, self.symbolTable)
 
         # Generate the IR
         output = self.ir.generate()

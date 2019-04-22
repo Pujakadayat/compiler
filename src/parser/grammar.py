@@ -109,7 +109,7 @@ class Arguments(Node):
         for i in self.children:
             s.append(i.name)
 
-        self.value = ", ".join(s)
+        self.value = tuple(s)
 
 
 class Argument(Node):

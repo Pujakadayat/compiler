@@ -26,8 +26,9 @@ class BasicBlock:
 class IR:
     """Intermediate Representation class to hold IR data."""
 
-    def __init__(self, parseTree):
+    def __init__(self, parseTree, symbolTable):
         self.parseTree = parseTree
+        self.symbolTable = symbolTable
         self.stack = []
         self.ir = {}
         self.current = None
@@ -57,6 +58,9 @@ class IR:
             # Start a new function entry
             self.ir[node.name] = {}
             self.ir[node.name]["blocks"] = []
+            self.ir[node.name]["declarations"] = len(
+                self.symbolTable.table[node.name]["variables"]
+            )
             self.current = node.name
         elif isinstance(node, grammar.IfStatement):
             self.closeBlock()
@@ -139,7 +143,7 @@ class IR:
 
         print("```")
         for function in self.ir:
-            print(f".{function} ({self.ir[function]['arguments']})")
+            print(f".{function} {self.ir[function]['arguments']}")
             print()  # Differentiate between basic blocks
             for block in self.ir[function]["blocks"]:
                 block.print()
