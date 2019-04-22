@@ -35,8 +35,6 @@ includeStatement -> fileName
 callStatement -> ID ( paramList )
 gotoStatement -> goto ID ;
 paramList -> paramList , param | param | EMPTY
-
-# Something about param is messed up...
 param -> constNum | ID | str
 
 # Control Flow

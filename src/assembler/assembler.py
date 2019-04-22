@@ -37,7 +37,7 @@ class Assembler:
                 function,
                 self.ir[function]["blocks"],
                 self.ir[function]["arguments"],
-                self.ir[function]["declarations"]
+                self.ir[function]["declarations"],
             )
             self.asm.extend(f.asm)
 
@@ -260,7 +260,11 @@ class Function:
             return
 
         if op == "%":
-            self.modulo(dest, lhs, op, rhs)
+            self.modulo(dest, lhs, rhs)
+            return
+
+        if op == "/":
+            self.division(dest, lhs, rhs)
             return
 
         if op == "+":
@@ -268,24 +272,16 @@ class Function:
         elif op == "-":
             op = "subl"
         elif op == "*":
-            op = "mult"
-        elif op == "/":
-            op = "divl"
+            op = "imull"
 
-        if isNumber(rhs):
-            lhs = self.resolve(lhs)
-            rhs = self.resolve(rhs)
-            self.move(lhs, "%eax")
-            self.asm.append(f"{op} {rhs}, %eax")
-        else:
-            lhs = self.resolve(lhs)
-            rhs = self.resolve(rhs)
-            self.move(rhs, "%eax")
-            self.asm.append(f"{op} {lhs}, %eax")
+        lhs = self.resolve(lhs)
+        rhs = self.resolve(rhs)
 
+        self.move(lhs, "%eax")
+        self.asm.append(f"{op} {rhs}, %eax")
         self.move("%eax", dest)
 
-    def modulo(self, dest, lhs, op, rhs):
+    def modulo(self, dest, lhs, rhs):
         lhs = self.resolve(lhs)
         rhs = self.resolve(rhs)
 
@@ -296,6 +292,17 @@ class Function:
         self.move(rhs, "%ecx")
         self.asm.append("idivl %ecx")
         self.move("%edx", dest)
+
+    def division(self, dest, lhs, rhs):
+        lhs = self.resolve(lhs)
+        rhs = self.resolve(rhs)
+
+        self.comment(f"Division expression {lhs} / {rhs}")
+
+        self.move(lhs, "%eax")
+        self.asm.append("cltd")
+        self.asm.append(f"idivl {rhs}")
+        self.move("%eax", dest)
 
     def label(self, ins):
         self.asm.append(f"{ins[1]}:")
