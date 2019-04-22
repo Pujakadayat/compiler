@@ -28,6 +28,7 @@ def readJson(name):
                     func["blocks"] = []
                     args = entry[1]
                     func["arguments"] = args
+                    func["declarations"] = entry[2]
                     currentFunctionBlocks = func
 
                 elif command == "label":
@@ -198,7 +199,13 @@ class IR:
         """Dump to JSON file"""
         s = []
         for function in self.ir:
-            s.append([f".{function}", self.ir[function]["arguments"]])
+            s.append(
+                [
+                    f".{function}",
+                    self.ir[function]["arguments"],
+                    len(self.symbolTable.table[function]["variables"]),
+                ]
+            )
             for block in self.ir[function]["blocks"]:
                 for instruction in block.instructions:
                     s.append(instruction)
