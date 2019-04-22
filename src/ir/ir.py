@@ -108,7 +108,7 @@ class IR:
 
                 i = (
                     "if",
-                    f"r{util.count['none']}",
+                    node.value,
                     "GOTO",
                     f"_L{c + 2}",
                     "else",
@@ -155,6 +155,9 @@ class IR:
             for block in self.ir[function]["blocks"]:
                 block.print()
         print("```")
+
+    def write(self):
+        JSON.dump()
 
     def __str__(self):
         s = []

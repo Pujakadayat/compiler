@@ -420,7 +420,8 @@ class IfBody(Node):
 
 
 class Condition(Node):
-    pass
+    def prepare(self):
+        self.value = self.children[0].value
 
 
 class ElseStatement(Node):

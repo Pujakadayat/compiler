@@ -15,8 +15,8 @@ int sub(int a, int b) {
 }
 
 int main() {
-	int a = sum(2, 2);
-	int b = 4;
+	int a = sum(3, 2);
+	int b = a;
 
 	if (b == 4) {
 		b = 20;
