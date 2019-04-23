@@ -34,7 +34,7 @@ class ArgumentsTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'sum': {'name': 'sum', '..': {...}, 'variables': {'a': 'int', 'b': 'int'}}, 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int'}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'sum': {'name': 'sum', '..': {...}, 'variables': {'a': 'int', 'b': 'int'}, 'labels': {}}, 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -63,7 +63,7 @@ class AssignmentTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {'x': 'int', 'y': 'int', 'z': 'int'}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'x': 'int', 'y': 'int', 'z': 'int'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -79,7 +79,7 @@ class AssignmentsTestCase(unittest.TestCase):
         """Test the result of the lexer."""
 
         self.compiler.tokenize()
-        result = "[int, main, (, ), {, int, i, =, 0, ;, i, ++, ;, i, --, ;, i, +=, 2, ;, i, -=, 2, ;, return, i, ;, }, $]"
+        result = "[int, main, (, ), {, int, i, =, 0, ;, i, ++, ;, i, --, ;, i, +=, 2, ;, i, -=, 2, ;, i, +=, i, ;, return, i, ;, }, $]"
         self.assertEqual(str(self.compiler.tokens), result)
 
     def test_parser(self):
@@ -92,7 +92,7 @@ class AssignmentsTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int'}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -121,7 +121,7 @@ class BasicMathTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -137,7 +137,7 @@ class CallTestCase(unittest.TestCase):
         """Test the result of the lexer."""
 
         self.compiler.tokenize()
-        result = "[int, main, (, ), {, main, (, 2, ,, 3, ,, 5, ,, 6, ), ;, }, $]"
+        result = "[int, sum, (, int, x, ,, int, y, ), {, return, x, +, y, ;, }, int, main, (, ), {, int, a, =, 2, ;, int, b, =, 3, ;, int, c, =, sum, (, a, ,, b, ), ;, return, c, ;, }, $]"
         self.assertEqual(str(self.compiler.tokens), result)
 
     def test_parser(self):
@@ -150,7 +150,7 @@ class CallTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'sum': {'name': 'sum', '..': {...}, 'variables': {'x': 'int', 'y': 'int'}, 'labels': {}}, 'main': {'name': 'main', '..': {...}, 'variables': {'a': 'int', 'b': 'int', 'c': 'int'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -270,7 +270,7 @@ class ExpressionTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {'x': 'int'}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'x': 'int'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -299,7 +299,7 @@ class FloatTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {'x': 'float'}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'x': 'float'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -328,7 +328,7 @@ class ForTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {'number': 'int', 'i': 'int', 'y': 'int'}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'number': 'int', 'i': 'int', 'y': 'int'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -400,7 +400,7 @@ class IfElseTestCase(unittest.TestCase):
         """Test the result of the lexer."""
 
         self.compiler.tokenize()
-        result = "[int, main, (, ), {, int, number, =, 0, ;, if, (, number, ==, 0, ), {, number, =, 1, ;, }, else, {, number, =, 2, ;, }, return, 0, ;, }, $]"
+        result = "[int, main, (, ), {, int, number, =, 0, ;, if, (, number, ==, 0, ), {, number, =, 1, ;, }, else, {, number, =, 2, ;, }, return, number, ;, }, $]"
         self.assertEqual(str(self.compiler.tokens), result)
 
     def test_parser(self):
@@ -413,7 +413,7 @@ class IfElseTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {'number': 'int'}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'number': 'int'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -442,7 +442,7 @@ class IfTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {'number': 'int'}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'number': 'int'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -471,7 +471,7 @@ class IncludeTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -500,7 +500,7 @@ class IRFuncTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int', 'j': 'int'}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int', 'j': 'int'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -529,7 +529,7 @@ class LineBreakTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {'string': 'char'}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'string': 'char'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -558,7 +558,7 @@ class MathTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int', 'y': 'float'}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int', 'y': 'float'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -587,7 +587,7 @@ class MultiLineCommentTestCase(unittest.TestCase):
         """Test the result of the symbol table."""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -603,7 +603,7 @@ class MultiFunctionsTestCase(unittest.TestCase):
         """Test the result of the lexer."""
 
         self.compiler.tokenize()
-        result = "[int, foo, (, ), {, return, 0, ;, }, int, bar, (, ), {, return, 0, ;, }, int, foobar, (, ), {, return, 0, ;, }, int, foobiz, (, ), {, return, 0, ;, }, $]"
+        result = "[int, foo, (, ), {, return, 0, ;, }, int, bar, (, ), {, return, 0, ;, }, int, foobar, (, ), {, return, 0, ;, }, int, foobiz, (, ), {, return, 0, ;, }, int, main, (, ), {, return, 0, ;, }, $]"
         self.assertEqual(str(self.compiler.tokens), result)
 
     def test_parser(self):
@@ -616,7 +616,7 @@ class MultiFunctionsTestCase(unittest.TestCase):
         """Test the result of the symbol table."""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'foo': {'name': 'foo', '..': {...}, 'variables': {}}, 'bar': {'name': 'bar', '..': {...}, 'variables': {}}, 'foobar': {'name': 'foobar', '..': {...}, 'variables': {}}, 'foobiz': {'name': 'foobiz', '..': {...}, 'variables': {}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'foo': {'name': 'foo', '..': {...}, 'variables': {}, 'labels': {}}, 'bar': {'name': 'bar', '..': {...}, 'variables': {}, 'labels': {}}, 'foobar': {'name': 'foobar', '..': {...}, 'variables': {}, 'labels': {}}, 'foobiz': {'name': 'foobiz', '..': {...}, 'variables': {}, 'labels': {}}, 'main': {'name': 'main', '..': {...}, 'variables': {}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -645,7 +645,7 @@ class MultiStatementsTestCase(unittest.TestCase):
         """Test the result of the symbol table."""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {'x': 'int', 'y': 'int', 'z': 'int'}}, 'foo': {'name': 'foo', '..': {...}, 'variables': {}}, 'bar': {'name': 'bar', '..': {...}, 'variables': {}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'x': 'int', 'y': 'int', 'z': 'int'}, 'labels': {}}, 'foo': {'name': 'foo', '..': {...}, 'variables': {}, 'labels': {}}, 'bar': {'name': 'bar', '..': {...}, 'variables': {}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -674,7 +674,7 @@ class ParenthesesTestCase(unittest.TestCase):
         """Test the result of the symbol table."""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int'}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -703,7 +703,7 @@ class ParseTestCase(unittest.TestCase):
         """Test the result of the symbol table."""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int'}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -732,7 +732,7 @@ class PlainTestCase(unittest.TestCase):
         """Test the result of the symbol table."""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -761,7 +761,7 @@ class SingleLineCommentTestCase(unittest.TestCase):
         """Test the result of the symbol table."""
 
         self.compiler.buildSymbolTable()
-        result = "{'name': 'global', 'variables': [], 'main': {'name': 'main', '..': {...}, 'variables': {}}}"
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
