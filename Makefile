@@ -1,9 +1,9 @@
-FILE=break
+FILE=simple_if
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 
 main:
-	python3 -m src.main -r $(CFILE)
+	python3 -m src.main -ra $(CFILE)
 
 force:
 	python3 -m src.main -sptrf $(CFILE)

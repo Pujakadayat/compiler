@@ -31,6 +31,7 @@ class Unique:
         self.count["none"] += 1
         return f"r{self.count['none']}"
 
+
 unique = Unique()
 
 

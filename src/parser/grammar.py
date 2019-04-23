@@ -414,8 +414,10 @@ class IfStatement(Node):
         self.body = self.children[1]
 
         if len(self.children) > 2:
+            self.hasElse = True
             self.body.hasElse = True
         else:
+            self.hasElse = False
             self.body.hasElse = False
 
 

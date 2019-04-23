@@ -8,14 +8,6 @@ from src.util import unique, CompilerMessage
 import src.parser.grammar as grammar
 
 
-def find(l, label):
-    for index, ins in enumerate(l):
-        if ins == ["break"]:
-            l[index] = ["goto", label]
-
-    return l
-
-
 def readJson(name):
     """Read in JSON file"""
 
@@ -87,17 +79,20 @@ class IR:
         self.parseTree.visit()
         self.visit(self.parseTree)
 
+        # This ensures there is always a final basic block in the program
+        bb = BasicBlock(self.stack, unique.new("_L"))
+        self.ir[self.current]["blocks"].append(bb)
+
         return self.ir
 
-    def closeBlock(self, erase=True):
+    def closeBlock(self):
         """Save the stack as a block and start a new block."""
 
         if self.stack:
             bb = BasicBlock(self.stack, unique.new("_L"))
             self.ir[self.current]["blocks"].append(bb)
 
-        if erase:
-            self.stack = []
+        self.stack = []
 
     def visit(self, node):
         """Visit a node of the parse tree and recurse."""
@@ -113,6 +108,7 @@ class IR:
             self.current = node.name
         elif isinstance(node, grammar.IfStatement):
             self.closeBlock()
+            node.savedLabel = unique.get("_L")
         elif isinstance(node, grammar.ElseStatement):
             self.closeBlock()
         elif isinstance(node, grammar.LabelDeclaration):
@@ -150,17 +146,32 @@ class IR:
                 self.closeBlock()
             elif isinstance(node, grammar.IfStatement):
                 self.closeBlock()
+
+                if node.hasElse:
+                    elseLabel = f"_L{unique.get('_L')}"
+                else:
+                    elseLabel = f"_L{unique.get('_L') + 1}"
+
+                # Replace the placeholder of the if condition with the else label
+                x = self.ir[self.current]["blocks"][node.savedLabel].instructions
+                for index, ins in enumerate(x):
+                    if ins[0] == "REPLACEME":
+                        ins[-1] = elseLabel
+                        x[index] = ins[1:]
+
             elif isinstance(node, grammar.Condition):
-                i = [
-                    "if",
-                    node.value,
-                    "GOTO",
-                    f"_L{unique.get('_L') + 2}",
-                    "else",
-                    "GOTO",
-                    f"_L{unique.get('_L') + 3}",
-                ]
-                self.stack.append(i)
+                self.stack.append(
+                    [
+                        "REPLACEME",
+                        "if",
+                        node.value,
+                        "GOTO",
+                        f"_L{unique.get('_L') + 2}",
+                        "else",
+                        "GOTO",
+                        "UNKNOWN",
+                    ]
+                )
                 self.closeBlock()
             elif isinstance(node, grammar.ElseStatement):
                 self.closeBlock()
@@ -184,7 +195,7 @@ class IR:
                         x[index] = ins[1:]
 
                 # Replace any break statements with a goto to the breakLabel
-                for block in self.ir[self.current]["blocks"][node.savedLabel:]:
+                for block in self.ir[self.current]["blocks"][node.savedLabel :]:
                     for index, ins in enumerate(block.instructions):
                         if ins == ["break"]:
                             block.instructions[index] = ["goto", breakLabel]
@@ -199,7 +210,7 @@ class IR:
                         f"_L{unique.get('_L') + 2}",
                         "else",
                         "GOTO",
-                        f"UNKNOWN",
+                        "UNKNOWN",
                     ]
                 )
                 self.closeBlock()
