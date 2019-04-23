@@ -1,4 +1,4 @@
-FILE=simple_if
+FILE=break
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 

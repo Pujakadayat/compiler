@@ -147,11 +147,12 @@ class Compiler:
 
         # Read in an IR from a file
         if "-i" in self.flags and self.input is not None:
-            # ir = readFile(self.input)
-            # self.ir = ir.split("\n")
-            # return None
             self.ir = readJson(self.input)
-
+            messages.add(
+                CompilerMessage(
+                    f"Succesfully parsed the IR in '{self.input}'.", "success"
+                )
+            )
         else:
             # Cannot convert to IR without parse tree
             if not self.parseTree:

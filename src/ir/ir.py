@@ -4,7 +4,7 @@ Intermediate Representations of the Parse Tree.
 """
 
 import json
-from src.util import unique, CompilerMessage
+from src.util import unique, CompilerMessage, writeFile
 import src.parser.grammar as grammar
 
 
@@ -13,33 +13,29 @@ def readJson(name):
 
     try:
         with open(name, "r") as fileIn:
-            lines = fileIn.read()
-            # List of Lists
-            prettyLines = json.loads(lines)
-            currentNewBasicBlock = None
-            currentFunctionBlocks = None
+            # Read the data into a string and parse the string as JSON
+            data = fileIn.read()
+            lines = json.loads(data)
+
+            # Setup an empty IR instance that we will populate
             ir = IR(None, None)
-            for entry in prettyLines:
+
+            for entry in lines:
                 command = entry[0]
 
+                # Start a new function and add it to the IR
                 if command.startswith("."):
                     name = command[1:]
                     ir.ir[name] = {}
-                    func = ir.ir[name]
-                    func["blocks"] = []
-                    args = entry[1]
-                    func["arguments"] = args
-                    func["declarations"] = entry[2]
-                    currentFunctionBlocks = func
-
+                    ir.ir[name]["blocks"] = []
+                    ir.ir[name]["arguments"] = entry[1]
+                    ir.ir[name]["declarations"] = entry[2]
+                    currentFunction = ir.ir[name]
                 elif command == "label":
-                    instructions = []
-                    label = entry[1]
-                    new = BasicBlock(instructions, label)
-                    currentNewBasicBlock = new
-                    currentFunctionBlocks["blocks"].append(new)
+                    currentBlock = BasicBlock([], entry[1])
+                    currentFunction["blocks"].append(currentBlock)
                 else:
-                    currentNewBasicBlock.instructions.append(entry)
+                    currentBlock.instructions.append(entry)
 
             return ir
 
@@ -230,8 +226,8 @@ class IR:
                 block.print()
         print("```")
 
-    def write(self, name):
-        """Dump to JSON file"""
+    def write(self, filename):
+        """Write the ASM to a JSON file."""
 
         s = []
         for function in self.ir:
@@ -245,9 +241,8 @@ class IR:
             for block in self.ir[function]["blocks"]:
                 for instruction in block.instructions:
                     s.append(instruction)
-        print(s)
-        with open(name, "w") as fileout:
-            fileout.write(json.dumps(s))
+
+        writeFile(filename, json.dumps(s))
 
     def __str__(self):
         s = []
