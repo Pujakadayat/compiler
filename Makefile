@@ -1,4 +1,4 @@
-FILE=break
+FILE=continue
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 

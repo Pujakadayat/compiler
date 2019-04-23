@@ -195,6 +195,8 @@ class IR:
                     for index, ins in enumerate(block.instructions):
                         if ins == ["break"]:
                             block.instructions[index] = ["goto", breakLabel]
+                        elif ins == ["continue"]:
+                            block.instructions[index] = ["goto", f"_L{node.savedLabel + 1}"]
 
             elif isinstance(node, grammar.WhileCondition):
                 self.stack.append(

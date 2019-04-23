@@ -384,6 +384,11 @@ class BreakStatement(Node):
         return ["break"]
 
 
+class ContinueStatement(Node):
+    def ir(self):
+        return ["continue"]
+
+
 class IncludeStatement(Node):
     pass
 
@@ -488,6 +493,7 @@ nodes = {
     "neExpr": NotEqualExpression,
     "eExpr": EqualExpression,
     "breakStatement": BreakStatement,
+    "continueStatement": ContinueStatement,
 }
 
 # Terminal Nodes
