@@ -1,9 +1,9 @@
-FILE=plain
+FILE=break
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 
 main:
-	python3 -m src.main -rai 1234Test.json $(CFILE)
+	python3 -m src.main -r $(CFILE)
 
 force:
 	python3 -m src.main -sptrf $(CFILE)

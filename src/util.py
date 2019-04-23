@@ -4,20 +4,49 @@ Utility functions to be re-used across modules.
 
 import os
 
-count = {"none": 0}
+
+class Unique:
+    """Class to contain unique values."""
+
+    def __init__(self):
+        self.count = {"none": 0}
+
+    def get(self, k):
+        """Get a count for a unique value."""
+
+        try:
+            return self.count[k]
+        except KeyError:
+            return 0
+
+    def new(self, prefix=None):
+        """Generate a new unique value."""
+
+        if prefix:
+            if prefix not in self.count:
+                self.count[prefix] = 0
+            self.count[prefix] += 1
+            return f"{prefix}{self.count[prefix]}"
+
+        self.count["none"] += 1
+        return f"r{self.count['none']}"
+
+unique = Unique()
 
 
-def unique(prefix=None):
-    """Generate a new, unique variable name with optional prefix."""
+# count = {"none": 0}
 
-    if prefix:
-        if prefix not in count:
-            count[prefix] = 0
-        count[prefix] += 1
-        return f"{prefix}{count[prefix]}"
+# def unique(prefix=None):
+#     """Generate a new, unique variable name with optional prefix."""
 
-    count["none"] += 1
-    return f"r{count['none']}"
+#     if prefix:
+#         if prefix not in count:
+#             count[prefix] = 0
+#         count[prefix] += 1
+#         return f"{prefix}{count[prefix]}"
+
+#     count["none"] += 1
+#     return f"r{count['none']}"
 
 
 def readFile(filename):

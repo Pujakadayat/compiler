@@ -138,6 +138,8 @@ def flattenTree(root, reducer, seen=False):
     i.e. DeclarationList or StatementList.
     """
 
+    # TODO: fix collapsing nested recursive rules
+
     if isinstance(root, reducer):
         if not seen:
             seen = True

@@ -24,12 +24,13 @@ arg -> typeSpecifier ID | typeSpecifier
 
 labelDeclaration -> label statementListNew
 statementListNew -> statementListNew statementNew | statementNew
-statementNew -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | whileStatement | callStatement ; | gotoStatement
+statementNew -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | whileStatement | callStatement ; | gotoStatement | breakStatement
 
 # Statements
 
 statementList -> statementList statement | statement
-statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | whileStatement | callStatement ; | gotoStatement | labelDeclaration
+statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | whileStatement | callStatement ; | gotoStatement | labelDeclaration | breakStatement
+breakStatement -> break ;
 returnStatement -> return expression ;
 includeStatement -> fileName
 callStatement -> ID ( paramList )

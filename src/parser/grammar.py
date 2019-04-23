@@ -4,7 +4,7 @@
 Classes that represent grammar rules for our Parse Tree.
 """
 
-from src.util import count, unique
+from src.util import unique
 
 
 def parseToken(desc, content="", children=None):
@@ -196,7 +196,7 @@ class VariableAssignment(Node):
         self.name = children[0].name
 
     def ir(self):
-        recent = count["none"]
+        recent = unique.count["none"]
         return [self.name, "=", f"r{recent}"]
 
 
@@ -206,7 +206,7 @@ class IncrementAssignment(Node):
         self.name = self.children[0].value
 
     def ir(self):
-        self.value = unique()
+        self.value = unique.new()
         return [self.value, "=", self.name, "+", "1"]
 
 
@@ -216,7 +216,7 @@ class DecrementAssignment(Node):
         self.name = self.children[0].value
 
     def ir(self):
-        self.value = unique()
+        self.value = unique.new()
         return [self.value, "=", self.name, "-", "1"]
 
 
@@ -227,7 +227,7 @@ class PlusEqualAssignment(Node):
         self.expr = self.children[1]
 
     def ir(self):
-        self.value = unique()
+        self.value = unique.new()
         return [self.value, "=", self.name, "+", self.expr.value]
 
 
@@ -238,7 +238,7 @@ class MinusEqualAssignment(Node):
         self.expr = self.children[1]
 
     def ir(self):
-        self.value = unique()
+        self.value = unique.new()
         return [self.value, "=", self.name, "-", self.expr.value]
 
 
@@ -249,7 +249,7 @@ class CallAssignment(Node):
         self.expr = self.children[1]
 
     def ir(self):
-        self.value = unique()
+        self.value = unique.new()
         return f"{self.value} = call {self.name} - {self.expr.value}"
 
 
@@ -260,7 +260,7 @@ class ExpressionAssignment(Node):
         self.expr = self.children[1]
 
     def ir(self):
-        self.value = unique()
+        self.value = unique.new()
         return [self.value, "=", self.expr.value]
 
 
@@ -279,7 +279,7 @@ class NestedExpression(Node):
 
 class MathExpression(Node):
     def prepare(self):
-        self.value = unique()
+        self.value = unique.new()
         self.a = self.children[0].value
         self.b = self.children[1].value
 
@@ -321,13 +321,13 @@ class BooleanOr(MathExpression):
 
 class BooleanNot(Node):
     def ir(self):
-        self.value = unique()
+        self.value = unique.new()
         return [self.value, "=", "!", self.children[0].value]
 
 
 class ComparisonExpression(Node):
     def prepare(self):
-        self.value = unique()
+        self.value = unique.new()
         self.a = self.children[0].value
         self.b = self.children[1].value
 
@@ -379,6 +379,11 @@ class WhileCondition(Node):
         self.value = self.children[0].value
 
 
+class BreakStatement(Node):
+    def ir(self):
+        return ["break"]
+
+
 class IncludeStatement(Node):
     pass
 
@@ -390,7 +395,7 @@ class CallStatement(Node):
         self.parameters = self.children[1]
 
     def prepare(self):
-        self.value = unique()
+        self.value = unique.new()
 
     def ir(self):
         return ["call", self.value, "=", self.name, self.parameters.value]
@@ -448,9 +453,9 @@ nodes = {
     "argList": Arguments,
     "arg": Argument,
     "statementList": StatementList,
-    "statementListNew": StatementListNew,
+    "statementListNew": StatementList,
     "statement": Statement,
-    "stateemntNew": StatementNew,
+    "statementNew": Statement,
     "returnStatement": ReturnStatement,
     "forStatement": ForStatement,
     "whileStatement": WhileStatement,
@@ -480,6 +485,7 @@ nodes = {
     "gtExpr": GTExpression,
     "neExpr": NotEqualExpression,
     "eExpr": EqualExpression,
+    "breakStatement": BreakStatement,
 }
 
 # Terminal Nodes

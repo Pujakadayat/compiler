@@ -4,12 +4,21 @@ Intermediate Representations of the Parse Tree.
 """
 
 import json
-import src.util as util
+from src.util import unique, CompilerMessage
 import src.parser.grammar as grammar
+
+
+def find(l, label):
+    for index, ins in enumerate(l):
+        if ins == ["break"]:
+            l[index] = ["goto", label]
+
+    return l
 
 
 def readJson(name):
     """Read in JSON file"""
+
     try:
         with open(name, "r") as fileIn:
             lines = fileIn.read()
@@ -43,7 +52,7 @@ def readJson(name):
             return ir
 
     except FileNotFoundError:
-        raise util.CompilerMessage("File cannot be read.")
+        raise CompilerMessage("File cannot be read.")
 
 
 class BasicBlock:
@@ -80,14 +89,15 @@ class IR:
 
         return self.ir
 
-    def closeBlock(self):
+    def closeBlock(self, erase=True):
         """Save the stack as a block and start a new block."""
 
         if self.stack:
-            bb = BasicBlock(self.stack, util.unique("_L"))
+            bb = BasicBlock(self.stack, unique.new("_L"))
             self.ir[self.current]["blocks"].append(bb)
 
-        self.stack = []
+        if erase:
+            self.stack = []
 
     def visit(self, node):
         """Visit a node of the parse tree and recurse."""
@@ -111,6 +121,7 @@ class IR:
             self.closeBlock()
         elif isinstance(node, grammar.WhileStatement):
             self.closeBlock()
+            node.savedLabel = unique.get("_L")
         elif isinstance(node, grammar.WhileCondition):
             self.closeBlock()
 
@@ -135,24 +146,19 @@ class IR:
                 self.closeBlock()
             elif isinstance(node, grammar.IfBody):
                 if node.hasElse:
-                    self.stack.append(["goto", f"_L{util.count['_L'] + 3}"])
+                    self.stack.append(["goto", f"_L{unique.get('_L') + 3}"])
                 self.closeBlock()
             elif isinstance(node, grammar.IfStatement):
                 self.closeBlock()
             elif isinstance(node, grammar.Condition):
-                if "_L" in util.count:
-                    c = util.count["_L"]
-                else:
-                    c = 0
-
                 i = [
                     "if",
                     node.value,
                     "GOTO",
-                    f"_L{c + 2}",
+                    f"_L{unique.get('_L') + 2}",
                     "else",
                     "GOTO",
-                    f"_L{c + 3}",
+                    f"_L{unique.get('_L') + 3}",
                 ]
                 self.stack.append(i)
                 self.closeBlock()
@@ -162,20 +168,38 @@ class IR:
                 self.stack.insert(0, node.ir())
                 self.closeBlock()
             elif isinstance(node, grammar.WhileStatement):
-                # Must have a goto at the end of while statements
-                # to revisit the condition
-                self.stack.append(["goto", f"_L{util.count['_L']}"])
+                # Must have a goto at the end of while statements to revisit the condition
+                # The label of the condition is one after what was saved.
+                self.stack.append(["goto", f"_L{node.savedLabel + 1}"])
                 self.closeBlock()
+
+                # breakLabel is the basic block that comes after the while statement
+                breakLabel = f"_L{unique.get('_L') - node.savedLabel + 2}"
+
+                # Replace the placeholder of the while condition with break label
+                x = self.ir[self.current]["blocks"][node.savedLabel].instructions
+                for index, ins in enumerate(x):
+                    if ins[0] == "REPLACEME":
+                        ins[-1] = breakLabel
+                        x[index] = ins[1:]
+
+                # Replace any break statements with a goto to the breakLabel
+                for block in self.ir[self.current]["blocks"][node.savedLabel:]:
+                    for index, ins in enumerate(block.instructions):
+                        if ins == ["break"]:
+                            block.instructions[index] = ["goto", breakLabel]
+
             elif isinstance(node, grammar.WhileCondition):
                 self.stack.append(
                     [
+                        "REPLACEME",
                         "if",
                         node.value,
                         "GOTO",
-                        f"_L{util.count['_L'] + 2}",
+                        f"_L{unique.get('_L') + 2}",
                         "else",
                         "GOTO",
-                        f"_L{util.count['_L'] + 3}",
+                        f"UNKNOWN",
                     ]
                 )
                 self.closeBlock()
@@ -197,6 +221,7 @@ class IR:
 
     def write(self, name):
         """Dump to JSON file"""
+
         s = []
         for function in self.ir:
             s.append(
