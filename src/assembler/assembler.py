@@ -7,7 +7,7 @@ Reads in the IR and generates assembly instructions (x86).
 
 import re
 import platform
-from src.util import ensureDirectory, CompilerMessage
+from src.util import CompilerMessage, writeFile
 
 order = ["%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d", "%r14d", "%r15d"]
 
@@ -50,12 +50,7 @@ class Assembler:
     def write(self, filename):
         """Creates output file for assembly"""
 
-        # Ensure the assembly directory exists
-        prefix = "assembly"
-        ensureDirectory(prefix)
-
-        with open(f"{prefix}/{filename}", "w") as fileOut:
-            fileOut.write("\n".join(self.asm))
+        writeFile(filename, "\n".join(self.asm))
 
 
 class Function:

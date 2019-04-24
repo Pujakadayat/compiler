@@ -205,28 +205,14 @@ class Compiler:
             messages.add(CompilerMessage("ASM:", "important"))
             assembler.print()
 
-        # The "-n" flag found but no filename specified,
-        # default to input filename with '.s' extension
-        if "-n" not in self.flags:
-            # Remove the file extension and add '.s'
-            basename = os.path.basename(self.filename)
-            noExtension = basename.rsplit(".", 1)[0]
-            self.asmOutput = f"{noExtension}.s"
-
+        if "-n" in self.flags:
+            assembler.write(self.asmOutput)
             messages.add(
                 CompilerMessage(
-                    f"No ASM output file specified. Defaulted to '{self.asmOutput}'",
-                    "warning",
+                    f"Succesfully wrote ASM the to the file '{self.asmOutput}'.",
+                    "success",
                 )
             )
-
-        # Warn if no asm output filename specified
-        if "-a" in self.flags:
-            assembler.write(self.asmOutput)
-
-        messages.add(
-            CompilerMessage("Succesfully generated the assembly file.", "success")
-        )
 
         return 0
 
@@ -327,9 +313,11 @@ def parseArguments():
     try:
         filename = args[0]
     except IndexError:
-        print("No filename found.")
-        printUsage()
-        sys.exit()
+        filename = None
+        if "-i" not in flags:
+            print("No filename found.")
+            printUsage()
+            sys.exit()
 
     return filename, grammar, flags, output, inputFile, asmOutput
 
@@ -410,10 +398,10 @@ def main():
     except CompilerMessage as err:
         print(err)
         sys.exit(2)
-    # except KeyboardInterrupt:
-    # print("")
-    # messages.add(CompilerMessage("Compiler was interrupted."))
-    # sys.exit(2)
+    except KeyboardInterrupt:
+        print()
+        messages.add(CompilerMessage("Compiler was interrupted."))
+        sys.exit(2)
 
 
 if __name__ == "__main__":

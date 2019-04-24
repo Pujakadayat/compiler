@@ -4,43 +4,38 @@ Intermediate Representations of the Parse Tree.
 """
 
 import json
-from src.util import unique, CompilerMessage, writeFile
+from src.util import unique, writeFile, readFile
 import src.parser.grammar as grammar
 
 
-def readJson(name):
+def readJson(filename):
     """Read in JSON file"""
 
-    try:
-        with open(name, "r") as fileIn:
-            # Read the data into a string and parse the string as JSON
-            data = fileIn.read()
-            lines = json.loads(data)
+    # Read the data into a string and parse the string as JSON
+    data = readFile(filename)
+    lines = json.loads(data)
 
-            # Setup an empty IR instance that we will populate
-            ir = IR(None, None)
+    # Setup an empty IR instance that we will populate
+    ir = IR(None, None)
 
-            for entry in lines:
-                command = entry[0]
+    for entry in lines:
+        command = entry[0]
 
-                # Start a new function and add it to the IR
-                if command.startswith("."):
-                    name = command[1:]
-                    ir.ir[name] = {}
-                    ir.ir[name]["blocks"] = []
-                    ir.ir[name]["arguments"] = entry[1]
-                    ir.ir[name]["declarations"] = entry[2]
-                    currentFunction = ir.ir[name]
-                elif command == "label":
-                    currentBlock = BasicBlock([], entry[1])
-                    currentFunction["blocks"].append(currentBlock)
-                else:
-                    currentBlock.instructions.append(entry)
+        # Start a new function and add it to the IR
+        if command.startswith("."):
+            name = command[1:]
+            ir.ir[name] = {}
+            ir.ir[name]["blocks"] = []
+            ir.ir[name]["arguments"] = entry[1]
+            ir.ir[name]["declarations"] = entry[2]
+            currentFunction = ir.ir[name]
+        elif command == "label":
+            currentBlock = BasicBlock([], entry[1])
+            currentFunction["blocks"].append(currentBlock)
+        else:
+            currentBlock.instructions.append(entry)
 
-            return ir
-
-    except FileNotFoundError:
-        raise CompilerMessage("File cannot be read.")
+    return ir
 
 
 class BasicBlock:

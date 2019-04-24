@@ -3,7 +3,13 @@ CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 
 main:
-	python3 -m src.main -ra $(CFILE)
+	python3 -m src.main -pran $(SFILE) $(CFILE)
+
+write:
+	python3 -m src.main -o $(FILE).json $(CFILE)
+
+read:
+	python3 -m src.main -i $(FILE).json -a
 
 force:
 	python3 -m src.main -sptrf $(CFILE)
