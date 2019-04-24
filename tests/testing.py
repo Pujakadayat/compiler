@@ -125,6 +125,62 @@ class BasicMathTestCase(unittest.TestCase):
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
+class BooleanExpressionTestCase(unittest.TestCase):
+    """Test case for boolean_expression.c"""
+
+    @classmethod
+    def setUpClass(cls):
+        filename = "samples/boolean_expression.c"
+        cls.compiler = Compiler({"filename": filename})
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        self.compiler.tokenize()
+        result = "[int, main, (, ), {, int, a, =, 1, &&, 1, ;, int, b, =, 1, ||, 1, ;, int, c, =, !, 1, ;, }, $]"
+        self.assertEqual(str(self.compiler.tokens), result)
+
+    def test_parser(self):
+        """Test if the tokens were parsed succesfully."""
+
+        self.compiler.parse()
+        self.assertTrue(self.compiler.parseTree)
+
+    def test_symbolTable(self):
+        """Test the result of the symbol table"""
+        self.compiler.buildSymbolTable()
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'a': 'int', 'b': 'int', 'c': 'int'}, 'labels': {}}}"
+        self.assertEqual(str(self.compiler.symbolTable), result)
+
+
+class BreakTestCase(unittest.TestCase):
+    """Test case for break.c"""
+
+    @classmethod
+    def setUpClass(cls):
+        filename = "samples/break.c"
+        cls.compiler = Compiler({"filename": filename})
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        self.compiler.tokenize()
+        result = "[int, main, (, ), {, int, i, =, 10, ;, while, (, i, >, 0, ), {, if, (, i, ==, 2, ), {, break, ;, }, i, --, ;, }, return, i, ;, }, $]"
+        self.assertEqual(str(self.compiler.tokens), result)
+
+    def test_parser(self):
+        """Test if the tokens were parsed succesfully."""
+
+        self.compiler.parse()
+        self.assertTrue(self.compiler.parseTree)
+
+    def test_symbolTable(self):
+        """Test the result of the symbol table"""
+        self.compiler.buildSymbolTable()
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int'}, 'labels': {}}}"
+        self.assertEqual(str(self.compiler.symbolTable), result)
+
+
 class CallTestCase(unittest.TestCase):
     """Test case for call.c"""
 
@@ -151,6 +207,62 @@ class CallTestCase(unittest.TestCase):
 
         self.compiler.buildSymbolTable()
         result = "{'name': 'global', 'variables': {}, 'labels': {}, 'sum': {'name': 'sum', '..': {...}, 'variables': {'x': 'int', 'y': 'int'}, 'labels': {}}, 'main': {'name': 'main', '..': {...}, 'variables': {'a': 'int', 'b': 'int', 'c': 'int'}, 'labels': {}}}"
+        self.assertEqual(str(self.compiler.symbolTable), result)
+
+
+class ComparisonTestCase(unittest.TestCase):
+    """Test case for comparison.c"""
+
+    @classmethod
+    def setUpClass(cls):
+        filename = "samples/comparison.c"
+        cls.compiler = Compiler({"filename": filename})
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        self.compiler.tokenize()
+        result = "[int, main, (, ), {, int, a, =, 0, ;, int, b, =, 1, ;, int, c, =, a, !=, b, ;, return, c, ;, }, $]"
+        self.assertEqual(str(self.compiler.tokens), result)
+
+    def test_parser(self):
+        """Test if the tokens were parsed succesfully."""
+
+        self.compiler.parse()
+        self.assertTrue(self.compiler.parseTree)
+
+    def test_symbolTable(self):
+        """Test the result of the symbol table"""
+        self.compiler.buildSymbolTable()
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'a': 'int', 'b': 'int', 'c': 'int'}, 'labels': {}}}"
+        self.assertEqual(str(self.compiler.symbolTable), result)
+
+
+class ContinueTestCase(unittest.TestCase):
+    """Test case for continue.c"""
+
+    @classmethod
+    def setUpClass(cls):
+        filename = "samples/continue.c"
+        cls.compiler = Compiler({"filename": filename})
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        self.compiler.tokenize()
+        result = "[int, main, (, ), {, int, i, =, 0, ;, int, a, =, 0, ;, while, (, i, <, 10, ), {, if, (, i, ==, 5, ), {, i, =, 11, ;, continue, ;, }, i, ++, ;, }, return, i, ;, }, $]"
+        self.assertEqual(str(self.compiler.tokens), result)
+
+    def test_parser(self):
+        """Test if the tokens were parsed succesfully."""
+
+        self.compiler.parse()
+        self.assertTrue(self.compiler.parseTree)
+
+    def test_symbolTable(self):
+        """Test the result of the symbol table"""
+        self.compiler.buildSymbolTable()
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int', 'a': 'int'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -197,6 +309,37 @@ class DuplicateFuncTestCase(unittest.TestCase):
 
         self.compiler.tokenize()
         result = "[int, foo, (, ), {, return, 0, ;, }, int, foo, (, ), {, return, 1, ;, }, $]"
+        self.assertEqual(str(self.compiler.tokens), result)
+
+    def test_parser(self):
+        """Test if the tokens were parsed succesfully."""
+
+        self.compiler.parse()
+        self.assertTrue(self.compiler.parseTree)
+
+    @unittest.expectedFailure
+    def test_symbolTable(self):
+        """Test the result of the symbol table"""
+
+        self.compiler.buildSymbolTable()
+
+
+class DuplicateLabelTestCase(unittest.TestCase):
+    """
+    Test case for duplicate_label.c"
+    Returns expected error, because of scope checking
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        filename = "samples/duplicate_label.c"
+        cls.compiler = Compiler({"filename": filename})
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        self.compiler.tokenize()
+        result = "[int, main, (, ), {, goto, label, ;, return, 0, ;, label, return, 1, ;, label, return, 1, ;, }, $]"
         self.assertEqual(str(self.compiler.tokens), result)
 
     def test_parser(self):
@@ -358,6 +501,37 @@ class FunctionTestCase(unittest.TestCase):
         """Test the result of the symbol table"""
 
         self.compiler.buildSymbolTable()
+
+
+class GotoTestCase(unittest.TestCase):
+    """
+    Test case for goto.c"
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        filename = "samples/goto.c"
+        cls.compiler = Compiler({"filename": filename})
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        self.compiler.tokenize()
+        result = "[int, main, (, ), {, int, a, =, 2, ;, if, (, a, %, 2, ==, 0, ), {, goto, even, ;, }, else, {, goto, odd, ;, }, return, 0, ;, even, return, 1, ;, odd, return, 2, ;, }, $]"
+        self.assertEqual(str(self.compiler.tokens), result)
+    def test_parser(self):
+
+        """Test if the tokens were parsed succesfully."""
+
+        self.compiler.parse()
+        self.assertTrue(self.compiler.parseTree)
+
+    def test_symbolTable(self):
+        """Test the result of the symbol table"""
+
+        self.compiler.buildSymbolTable()
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'a': 'int'}, 'labels': {'even': True, 'odd': True}}}"
+        self.assertEqual(str(self.compiler.symbolTable), result)
 
 
 class HelloWorldTestCase(unittest.TestCase):
@@ -562,6 +736,35 @@ class MathTestCase(unittest.TestCase):
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
+class ModuloTestCase(unittest.TestCase):
+    """Test case for modulo.c"""
+
+    @classmethod
+    def setUpClass(cls):
+        filename = "samples/modulo.c"
+        cls.compiler = Compiler({"filename": filename})
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        self.compiler.tokenize()
+        result = "[int, main, (, ), {, int, i, =, 32, %, 3, ;, return, i, ;, }, $]"
+        self.assertEqual(str(self.compiler.tokens), result)
+
+    def test_parser(self):
+        """Test if the tokens were parsed succesfully."""
+
+        self.compiler.parse()
+        self.assertTrue(self.compiler.parseTree)
+
+    def test_symbolTable(self):
+        """Test the result of the symbol table"""
+
+        self.compiler.buildSymbolTable()
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int'}, 'labels': {}}}"
+        self.assertEqual(str(self.compiler.symbolTable), result)
+
+
 class MultiLineCommentTestCase(unittest.TestCase):
     """Test case for multi_line_comment.c"""
 
@@ -646,6 +849,35 @@ class MultiStatementsTestCase(unittest.TestCase):
 
         self.compiler.buildSymbolTable()
         result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'x': 'int', 'y': 'int', 'z': 'int'}, 'labels': {}}, 'foo': {'name': 'foo', '..': {...}, 'variables': {}, 'labels': {}}, 'bar': {'name': 'bar', '..': {...}, 'variables': {}, 'labels': {}}}"
+        self.assertEqual(str(self.compiler.symbolTable), result)
+
+
+class NegativeNumberTestCase(unittest.TestCase):
+    """Test case for negative_number.c"""
+
+    @classmethod
+    def setUpClass(cls):
+        filename = "samples/negative_number.c"
+        cls.compiler = Compiler({"filename": filename})
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        self.compiler.tokenize()
+        result = "[int, main, (, ), {, int, i, =, 1, -, 1, ;, i, =, 1, -, -1, ;, int, a, =, -2341, ;, }, $]"
+        self.assertEqual(str(self.compiler.tokens), result)
+
+    def test_parser(self):
+        """Test if the tokens were parsed succesfully."""
+
+        self.compiler.parse()
+        self.assertTrue(self.compiler.parseTree)
+
+    def test_symbolTable(self):
+        """Test the result of the symbol table"""
+
+        self.compiler.buildSymbolTable()
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int', 'a': 'int'}, 'labels': {}}}"
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
@@ -736,6 +968,92 @@ class PlainTestCase(unittest.TestCase):
         self.assertEqual(str(self.compiler.symbolTable), result)
 
 
+class PrintTestCase(unittest.TestCase):
+    """Test case for print.c"""
+
+    @classmethod
+    def setUpClass(cls):
+        filename = "samples/print.c"
+        cls.compiler = Compiler({"filename": filename})
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        self.compiler.tokenize()
+        result = "[stdio.h, int, main, (, ), {, printf, (, Hello, World, ), ;, }, $]"
+        self.assertEqual(str(self.compiler.tokens), result)
+
+    def test_parser(self):
+        """Test if the tokens were parsed succesfully."""
+
+        self.compiler.parse()
+        self.assertTrue(self.compiler.parseTree)
+
+    @unittest.expectedFailure
+    def test_symbolTable(self):
+        """Test the result of the symbol table."""
+
+        self.compiler.buildSymbolTable()
+
+
+class SimpleGotoTestCase(unittest.TestCase):
+    """Test case for simple_goto.c"""
+
+    @classmethod
+    def setUpClass(cls):
+        filename = "samples/simple_goto.c"
+        cls.compiler = Compiler({"filename": filename})
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        self.compiler.tokenize()
+        result = "[int, main, (, ), {, goto, label, ;, return, 0, ;, label, return, 1, ;, }, $]"
+        self.assertEqual(str(self.compiler.tokens), result)
+
+    def test_parser(self):
+        """Test if the tokens were parsed succesfully."""
+
+        self.compiler.parse()
+        self.assertTrue(self.compiler.parseTree)
+
+    def test_symbolTable(self):
+        """Test the result of the symbol table."""
+
+        self.compiler.buildSymbolTable()
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {}, 'labels': {'label': True}}}"
+        self.assertEqual(str(self.compiler.symbolTable), result)
+
+
+class SimpleIfTestCase(unittest.TestCase):
+    """Test case for simple_if.c"""
+
+    @classmethod
+    def setUpClass(cls):
+        filename = "samples/simple_if.c"
+        cls.compiler = Compiler({"filename": filename})
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        self.compiler.tokenize()
+        result = "[int, main, (, ), {, if, (, 0, ==, 0, ), {, return, 0, ;, }, else, {, return, 22, ;, }, }, $]"
+        self.assertEqual(str(self.compiler.tokens), result)
+
+    def test_parser(self):
+        """Test if the tokens were parsed succesfully."""
+
+        self.compiler.parse()
+        self.assertTrue(self.compiler.parseTree)
+
+    def test_symbolTable(self):
+        """Test the result of the symbol table."""
+
+        self.compiler.buildSymbolTable()
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {}, 'labels': {}}}"
+        self.assertEqual(str(self.compiler.symbolTable), result)
+
+
 class SingleLineCommentTestCase(unittest.TestCase):
     """Test case for single_line_comment.c"""
 
@@ -794,6 +1112,35 @@ class UndefinedVarTestCase(unittest.TestCase):
         """Test the result of the symbol table."""
 
         self.compiler.buildSymbolTable()
+
+
+class WhileTestCase(unittest.TestCase):
+    """Test case for while.c"""
+
+    @classmethod
+    def setUpClass(cls):
+        filename = "samples/while.c"
+        cls.compiler = Compiler({"filename": filename})
+
+    def test_lexer(self):
+        """Test the result of the lexer."""
+
+        self.compiler.tokenize()
+        result = "[int, main, (, ), {, int, i, =, 5, ;, while, (, i, !=, 0, ), {, i, -=, 1, ;, }, return, 0, ;, }, $]"
+        self.assertEqual(str(self.compiler.tokens), result)
+
+    def test_parser(self):
+        """Test if the tokens were parsed succesfully."""
+
+        self.compiler.parse()
+        self.assertTrue(self.compiler.parseTree)
+
+    def test_symbolTable(self):
+        """Test the result of the symbol table."""
+
+        self.compiler.buildSymbolTable()
+        result = "{'name': 'global', 'variables': {}, 'labels': {}, 'main': {'name': 'main', '..': {...}, 'variables': {'i': 'int'}, 'labels': {}}}"
+        self.assertEqual(str(self.compiler.symbolTable), result)
 
 
 if __name__ == "__main__":
