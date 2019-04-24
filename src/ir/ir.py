@@ -148,8 +148,13 @@ class IR:
                 else:
                     elseLabel = f"_L{unique.get('_L') + 1}"
 
+                # The condition will be the block after the condition specified by savedLabel
+                # But savedLabel is not relational to the current function, whereas self.ir is
+                firstLabel = int(self.ir[self.current]["blocks"][0].instructions[0][1][2:])
+                index = node.savedLabel - firstLabel + 1
+
                 # Replace the placeholder of the if condition with the else label
-                x = self.ir[self.current]["blocks"][node.savedLabel].instructions
+                x = self.ir[self.current]["blocks"][index].instructions
                 for index, ins in enumerate(x):
                     if ins[0] == "REPLACEME":
                         ins[-1] = elseLabel
@@ -183,15 +188,20 @@ class IR:
                 # breakLabel is the basic block that comes after the while statement
                 breakLabel = f"_L{unique.get('_L') - node.savedLabel + 2}"
 
+                # The condition will be the block after the condition specified by savedLabel
+                # But savedLabel is not relational to the current function, whereas self.ir is
+                firstLabel = int(self.ir[self.current]["blocks"][0].instructions[0][1][2:])
+                index = node.savedLabel - firstLabel + 1
+
                 # Replace the placeholder of the while condition with break label
-                x = self.ir[self.current]["blocks"][node.savedLabel].instructions
+                x = self.ir[self.current]["blocks"][index].instructions
                 for index, ins in enumerate(x):
                     if ins[0] == "REPLACEME":
                         ins[-1] = breakLabel
                         x[index] = ins[1:]
 
                 # Replace any break statements with a goto to the breakLabel
-                for block in self.ir[self.current]["blocks"][node.savedLabel :]:
+                for block in self.ir[self.current]["blocks"][index + 1:]:
                     for index, ins in enumerate(block.instructions):
                         if ins == ["break"]:
                             block.instructions[index] = ["goto", breakLabel]
