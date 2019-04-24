@@ -185,13 +185,13 @@ class IR:
                 self.stack.append(["goto", f"_L{node.savedLabel + 1}"])
                 self.closeBlock()
 
-                # breakLabel is the basic block that comes after the while statement
-                breakLabel = f"_L{unique.get('_L') - node.savedLabel + 2}"
-
                 # The condition will be the block after the condition specified by savedLabel
                 # But savedLabel is not relational to the current function, whereas self.ir is
                 firstLabel = int(self.ir[self.current]["blocks"][0].instructions[0][1][2:])
                 index = node.savedLabel - firstLabel + 1
+
+                # breakLabel is the basic block that comes after the while statement
+                breakLabel = f"_L{unique.get('_L') + 1}"
 
                 # Replace the placeholder of the while condition with break label
                 x = self.ir[self.current]["blocks"][index].instructions
