@@ -133,9 +133,6 @@ class IR:
             if isinstance(node, grammar.FunctionDeclaration):
                 self.ir[node.name]["arguments"] = node.arguments.value
                 self.closeBlock()
-            elif isinstance(node, grammar.ReturnStatement):
-                self.stack.append(node.ir())
-                self.closeBlock()
             elif isinstance(node, grammar.IfBody):
                 if node.hasElse:
                     self.stack.append(["goto", f"_L{unique.get('_L') + 3}"])
@@ -150,7 +147,9 @@ class IR:
 
                 # The condition will be the block after the condition specified by savedLabel
                 # But savedLabel is not relational to the current function, whereas self.ir is
-                firstLabel = int(self.ir[self.current]["blocks"][0].instructions[0][1][2:])
+                firstLabel = int(
+                    self.ir[self.current]["blocks"][0].instructions[0][1][2:]
+                )
                 index = node.savedLabel - firstLabel + 1
 
                 # Replace the placeholder of the if condition with the else label
@@ -187,7 +186,9 @@ class IR:
 
                 # The condition will be the block after the condition specified by savedLabel
                 # But savedLabel is not relational to the current function, whereas self.ir is
-                firstLabel = int(self.ir[self.current]["blocks"][0].instructions[0][1][2:])
+                firstLabel = int(
+                    self.ir[self.current]["blocks"][0].instructions[0][1][2:]
+                )
                 index = node.savedLabel - firstLabel + 1
 
                 # breakLabel is the basic block that comes after the while statement
@@ -201,12 +202,15 @@ class IR:
                         x[index] = ins[1:]
 
                 # Replace any break statements with a goto to the breakLabel
-                for block in self.ir[self.current]["blocks"][index + 1:]:
+                for block in self.ir[self.current]["blocks"][index + 1 :]:
                     for index, ins in enumerate(block.instructions):
                         if ins == ["break"]:
                             block.instructions[index] = ["goto", breakLabel]
                         elif ins == ["continue"]:
-                            block.instructions[index] = ["goto", f"_L{node.savedLabel + 1}"]
+                            block.instructions[index] = [
+                                "goto",
+                                f"_L{node.savedLabel + 1}",
+                            ]
 
             elif isinstance(node, grammar.WhileCondition):
                 self.stack.append(

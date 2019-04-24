@@ -14,6 +14,18 @@ int sum(int a, int b) {
 	return c;
 }
 
+int mult2(int a, int b) {
+	int sum = 0;
+	int add = a;
+
+	while (b > 0) {
+		sum += add;
+		b--;
+	}
+
+	return sum;
+}
+
 int div(int a, int b) {
 	return a / b;
 }
@@ -36,5 +48,14 @@ int main() {
 		c--;
 	}
 
-	return d;
+	int e = mult2(d, 2);
+
+	if (e == 206) {
+		goto cleanup;
+	}
+
+	return 2;
+
+	cleanup:
+		return 11;
 }
