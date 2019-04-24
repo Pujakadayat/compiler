@@ -101,7 +101,7 @@ class Compiler:
         # Change [Program] to Program
         self.parseTree = self.parseTree[0]
 
-        messages.add(CompilerMessage("Succesfully parsed the tokens.", "success"))
+        messages.add(CompilerMessage("Successfully parsed the tokens.", "success"))
 
         # Flatten the parse tree
         for reduce in [
@@ -134,7 +134,7 @@ class Compiler:
             messages.add(CompilerMessage("Failed to build the symbol table."))
             return None
 
-        messages.add(CompilerMessage("Succesfully built the symbol table.", "success"))
+        messages.add(CompilerMessage("Successfully built the symbol table.", "success"))
 
         # Print the symbol table if flag is present
         if "-t" in self.flags:
@@ -172,7 +172,7 @@ class Compiler:
                 messages.add(CompilerMessage("Failed to generate an IR."))
                 return None
 
-            messages.add(CompilerMessage("Succesfully generated an IR.", "success"))
+            messages.add(CompilerMessage("Successfully generated an IR.", "success"))
 
         if "-r" in self.flags:
             messages.add(CompilerMessage("Intermediate Representation:", "important"))
@@ -207,12 +207,6 @@ class Compiler:
 
         if "-n" in self.flags:
             assembler.write(self.asmOutput)
-            messages.add(
-                CompilerMessage(
-                    f"Succesfully wrote ASM the to the file '{self.asmOutput}'.",
-                    "success",
-                )
-            )
 
         return 0
 
@@ -345,19 +339,26 @@ def main():
     """Run the compiler from the command line."""
 
     filename, grammar, flags, output, inputFile, asmOutput = parseArguments()
-    options = {
-        "filename": filename,
-        "grammar": grammar,
-        "flags": flags,
-        "output": output,
-        "input": inputFile,
-        "asmOutput": asmOutput,
-    }
-    compiler = Compiler(options)
 
     # Define levels for each step of the compiler
     # Run up to max level
     level = 0
+    if not flags:
+        messages.add(
+            CompilerMessage(
+                "No flags found! Running the compiler to the ASM stage.", "warning"
+            )
+        )
+
+        # By default the compiler should output a .s file
+        # much like running `gcc -O0 -S <filename>`
+        # The output file is the name of the input file
+        # with .c replaced with .s in the current working directory.
+        flags.append("-n")
+        basename = os.path.basename(filename)
+        noExtension = basename.rsplit(".", 1)[0]
+        asmOutput = f"{noExtension}.s"
+
     if "-s" in flags:
         level = 1
     if "-p" in flags:
@@ -372,6 +373,16 @@ def main():
         level = 5
     if "-n" in flags:
         level = 5
+
+    options = {
+        "filename": filename,
+        "grammar": grammar,
+        "flags": flags,
+        "output": output,
+        "input": inputFile,
+        "asmOutput": asmOutput,
+    }
+    compiler = Compiler(options)
 
     try:
         # Start a log if verbose flag
