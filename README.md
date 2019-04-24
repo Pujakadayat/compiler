@@ -181,9 +181,10 @@ Our compiler can skip all of the above steps and start from an already generated
 - Good separation of concepts into modularized files
 - Able to iterate quickly on all aspects of the compiler
 
-## Scanner Specification
-
-Tokens that we currently recognize:
+| Scanner Specification | Required Features |
+| --- | --- |
+| Identifiers | X |
+| Numbers (ints, floats) | X |
 
 - [X] Identifiers
 - [X] Numbers (ints, floats)
