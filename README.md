@@ -201,7 +201,7 @@ Our compiler can skip all of the above steps and start from an already generated
 
 |     Optional Features     | Scanner | Parser | IR | ASM |
 |---------------------------|:-------:|:------:|:--:|:---:|
-| Types other than Integers |    ✔️    |    ✔️   |  ✔️ |     |
+| Floats 										|    ✔️    |    ✔️   |  ✔️ |     |
 |   ++, --, -=, +=, *=, /=  |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
 |         For Loops         |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
 |      Binary Operators     |    ✔️    |    ✔️   |  ✔️ |     |
@@ -211,10 +211,10 @@ Our compiler can skip all of the above steps and start from an already generated
 |--------------------------|:-------:|:------:|:--:|:---:|
 |         Pointers         |         |        |    |     |
 |          Arrays          |         |        |    |     |
-|          Strings         |         |        |    |     |
-|  Preprocessor Statements |         |        |    |     |
-|          Struct          |         |        |    |     |
-|           Enum           |         |        |    |     |
+|          Strings         |   ✔️   |    ✔️  |    |     |
+|  Include Statements      |    ✔️   |      ✔️  |    |     |
+|          Struct          |    ✔️     |        |    |     |
+|           Enum           |     ✔️    |        |    |     |
 |          Casting         |         |        |    |     |
 |      Type Promotion      |         |        |    |     |
 |        Type Specs        |         |        |    |     |
