@@ -181,84 +181,43 @@ Our compiler can skip all of the above steps and start from an already generated
 - Good separation of concepts into modularized files
 - Able to iterate quickly on all aspects of the compiler
 
-| Scanner Specification | Required Features |
-| --- | --- |
-| Identifiers | ✅ |
-| Numbers (ints, floats) | ✅ |
-| Block Symbols `(, ), {, }, [, ]` | ✅ |
-| Unary Operators `&, |, ^, ~` | ✅ |
-| Equality Operators `<, >, <=, >=, ==, !=` | ✅ |
-| Assignment Operators | `=, +=, -=, *=, /=, ++, --` | ✅ |
-| Strings | `"", ''` | ✅ |
-| Misc Tokens | `,, ., ;, \\, ->, #` | ✅ |
-| Sum Operators | `+, -` | ✅ |
-| Multiplication Operators | `*, /, %` | ✅ |
-| Boolean Operators | `&&, ||, !, <<, >>' | ✅ |
-| Number Type Keywords | `int, long, double, short, signed, unsigned, float` | ✅ |
-| Data type keywords | `struct, enum, union, record` | ✅ |
-| Flow control keywords | `if, else, while, for, break, continue, return` | ✅ |
-| Boolean keywords | `true, false` | ✅ |
-| Misc keywords | `static, sizeof, typedef, const, extern, auto` | ✅ |
-
 ## Grammar Specification
 
-High level AST nodes that we currently recognize:
+|    Required Features   | Scanner | Parser | IR | ASM |
+|:----------------------:|:-------:|:------:|:--:|:---:|
+|       Identifiers      |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+|        Variables       |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+|        Functions       |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+|        Keywords        |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+| Arithmetic Expressions |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+|       Assignment       |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+|   Boolean Expressions  |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+|     Goto Statements    |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+|  If/Else Control Flow  |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+|     Unary Operators    |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+|    Return Statements   |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+|    Break Statements    |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+|       While Loops      |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
 
-- [X] Program
-- [X] Function Declaration
-- [X] Type Specifier: int, float
-- [X] Return Statement
-- [X] Number Constant: int, float
-- [X] Identifiers
-- [X] Variable Declaration
-- [X] If/Else Control Flow
-- [X] For Statements
-- [X] Expressions
-- [X] Assignments (+=, -=, +=, --, etc)
-- [X] While Loops
-- [X] Function Calls
+|     Optional Features     | Scanner | Parser | IR | ASM |
+|:-------------------------:|:-------:|:------:|:--:|:---:|
+| Types other than Integers |    ✔️    |    ✔️   |  ✔️ |     |
+|   ++, --, -=, +=, *=, /=  |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+|         For Loops         |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+|      Binary Operators     |    ✔️    |    ✔️   |  ✔️ |     |
+|     Switch Statements     |         |        |    |     |
 
-## Class-defined Specifications
-
-Features required in our implementation.
-
-- Functions
-- Return
-- Break
-- Variables
-- Arithmetic (+, -, *,)
-- Assignment
-- Boolean Expressions
-- Goto
-- If
-- While
-- Unary Operators
-- Integers (default, signed, syslen)
-
-### Extra Features
-
-Extra features for bonus points.
-
-- `char`, `float`
-- For
-- Switch
-- Binary Operators (&, |, ^)
-- Assignment Helpers (+=, -=, *=, /=, ++, --)
-
-### Out of Bound Features
-
-Extremely extra features.
-
-- Pointers
-- Arrays
-- Compiler Preprocessing (macros, #include)
-- Struct
-- Enum
-- Library Calls
-- Casting
-- Promotion
-- Strings
-- Type Specs
+| Extremely Extra Features | Scanner | Parser | IR | ASM |
+|:------------------------:|:-------:|:------:|:--:|:---:|
+|         Pointers         |         |        |    |     |
+|          Arrays          |         |        |    |     |
+|          Strings         |         |        |    |     |
+|  Preprocessor Statements |         |        |    |     |
+|          Struct          |         |        |    |     |
+|           Enum           |         |        |    |     |
+|          Casting         |         |        |    |     |
+|      Type Promotion      |         |        |    |     |
+|        Type Specs        |         |        |    |     |
 
 ## Code Style
 
