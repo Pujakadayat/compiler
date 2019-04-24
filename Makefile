@@ -1,4 +1,4 @@
-FILE=continue
+FILE=complex
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 

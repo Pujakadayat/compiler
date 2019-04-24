@@ -2,16 +2,20 @@ int mult(int a, int b) {
 	return a * b;
 }
 
+int sub(int a, int b) {
+	return a - b;
+}
+
 int sum(int a, int b) {
-	return a + b;
+	b = mult(-1, b);
+	b = mult(b, -1);
+	b = mult(-1, b);
+	int c = sub(a, b);
+	return c;
 }
 
 int div(int a, int b) {
 	return a / b;
-}
-
-int sub(int a, int b) {
-	return a - b;
 }
 
 int main() {
