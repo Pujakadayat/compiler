@@ -184,7 +184,7 @@ Our compiler can skip all of the above steps and start from an already generated
 ## Grammar Specification
 
 |    Required Features   | Scanner | Parser | IR | ASM |
-|:----------------------:|:-------:|:------:|:--:|:---:|
+|------------------------|:-------:|:------:|:--:|:---:|
 |       Identifiers      |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
 |        Variables       |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
 |        Functions       |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
@@ -200,7 +200,7 @@ Our compiler can skip all of the above steps and start from an already generated
 |       While Loops      |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
 
 |     Optional Features     | Scanner | Parser | IR | ASM |
-|:-------------------------:|:-------:|:------:|:--:|:---:|
+|---------------------------|:-------:|:------:|:--:|:---:|
 | Types other than Integers |    ✔️    |    ✔️   |  ✔️ |     |
 |   ++, --, -=, +=, *=, /=  |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
 |         For Loops         |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
@@ -208,7 +208,7 @@ Our compiler can skip all of the above steps and start from an already generated
 |     Switch Statements     |         |        |    |     |
 
 | Extremely Extra Features | Scanner | Parser | IR | ASM |
-|:------------------------:|:-------:|:------:|:--:|:---:|
+|--------------------------|:-------:|:------:|:--:|:---:|
 |         Pointers         |         |        |    |     |
 |          Arrays          |         |        |    |     |
 |          Strings         |         |        |    |     |
