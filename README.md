@@ -183,41 +183,43 @@ Our compiler can skip all of the above steps and start from an already generated
 
 ## Grammar Specification
 
-|    Required Features   | Scanner | Parser | IR | ASM |
-|------------------------|:-------:|:------:|:--:|:---:|
-|       Identifiers      |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
-|        Variables       |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
-|        Functions       |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
-|        Keywords        |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
-| Arithmetic Expressions |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
-|       Assignment       |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
-|   Boolean Expressions  |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
-|     Goto Statements    |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
-|  If/Else Control Flow  |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
-|     Unary Operators    |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
-|    Return Statements   |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
-|    Break Statements    |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
-|       While Loops      |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
+| Required Features      | Scanner | Parser | IR  | ASM |
+|------------------------|---------|--------|-----|-----|
+| Identifiers            | ✔       | ✔      | ✔   | ✔   |
+| Variables              | ✔       | ✔      | ✔   | ✔   |
+| Functions              | ✔       | ✔      | ✔   | ✔   |
+| Keywords               | ✔       | ✔      | ✔   | ✔   |
+| Arithmetic Expressions | ✔       | ✔      | ✔   | ✔   |
+| Assignment             | ✔       | ✔      | ✔   | ✔   |
+| Boolean Expressions    | ✔       | ✔      | ✔   | ✔   |
+| Goto Statements        | ✔       | ✔      | ✔   | ✔   |
+| If/Else Control Flow   | ✔       | ✔      | ✔   | ✔   |
+| Unary Operators        | ✔       | ✔      | ✔   | ✔   |
+| Return Statements      | ✔       | ✔      | ✔   | ✔   |
+| Break Statements       | ✔       | ✔      | ✔   | ✔   |
+| While Loops            | ✔       | ✔      | ✔   | ✔   |
 
-|     Optional Features     | Scanner | Parser | IR | ASM |
-|---------------------------|:-------:|:------:|:--:|:---:|
-| Floats 										|    ✔️    |    ✔️   |  ✔️ |     |
-|   ++, --, -=, +=, *=, /=  |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
-|         For Loops         |    ✔️    |    ✔️   |  ✔️ |  ✔️  |
-|      Binary Operators     |    ✔️    |    ✔️   |  ✔️ |     |
-|     Switch Statements     |         |        |    |     |
+| Optional Features      | Scanner | Parser | IR  | ASM |
+|------------------------|---------|--------|-----|-----|
+| Floats                 | ✔       | ✔      | ✔   |     |
+| ++, --, -=, +=, *=, /= | ✔       | ✔      | ✔   | ✔   |
+| For Loops              | ✔       | ✔      | ✔   | ✔   |
+| Binary Operators       | ✔       | ✔      | ✔   |     |
+| Switch Statements      |         |        |     |     |
 
-| Extremely Extra Features | Scanner | Parser | IR | ASM |
-|--------------------------|:-------:|:------:|:--:|:---:|
-|         Pointers         |         |        |    |     |
-|          Arrays          |         |        |    |     |
-|          Strings         |   ✔️   |    ✔️  |    |     |
-|  Include Statements      |    ✔️   |      ✔️  |    |     |
-|          Struct          |    ✔️     |        |    |     |
-|           Enum           |     ✔️    |        |    |     |
-|          Casting         |         |        |    |     |
-|      Type Promotion      |         |        |    |     |
-|        Type Specs        |         |        |    |     |
+| Extra Features         | Scanner | Parser | IR  | ASM |
+|------------------------|---------|--------|-----|-----|
+| Pointers               |         |        |     |     |
+| Arrays                 |         |        |     |     |
+| Strings                | ✔       | ✔      |     |     |
+| Include Statements     | ✔       | ✔      |     |     |
+| Struct                 | ✔       |        |     |     |
+| Enum                   | ✔       |        |     |     |
+| Casting                |         |        |     |     |
+| Type Promotion         |         |        |     |     |
+| Type Specs             |         |        |     |     |
+
+
 
 ## Code Style
 
