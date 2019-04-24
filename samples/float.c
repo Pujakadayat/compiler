@@ -1,5 +1,9 @@
-int main() {
-	float x = 2.5;
+int sum(float a, float b) {
+	return a + b;
+}
 
-	return x;
+int main() {
+	float x = sum(2.0, 3.0);
+
+	return 0;
 }

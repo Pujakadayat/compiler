@@ -300,20 +300,25 @@ def parseFloats(l):
 
     # Copy the tokens as they change while we iterate
     tokensWithFloats = l.copy()
+    index = 0
 
-    for index, token in enumerate(l):
+    while index < len(tokensWithFloats):
+        token = tokensWithFloats[index]
+
         if (
             token.kind == tokens.number
-            and l[index + 1].kind == tokens.period
-            and l[index + 2].kind == tokens.number
+            and tokensWithFloats[index + 1].kind == tokens.period
+            and tokensWithFloats[index + 2].kind == tokens.number
         ):
-            floatValue = f"{token.content}.{l[index + 2].content}"
+            floatValue = f"{token.content}.{tokensWithFloats[index + 2].content}"
             tokensWithFloats[index] = Token(tokens.number, floatValue)
 
             # We delete at the same index here because the
             # list will have shifted after first deletion
             del tokensWithFloats[index + 1]
             del tokensWithFloats[index + 1]
+
+        index += 1
 
     return tokensWithFloats
 
