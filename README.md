@@ -183,25 +183,22 @@ Our compiler can skip all of the above steps and start from an already generated
 
 | Scanner Specification | Required Features |
 | --- | --- |
-| Identifiers | X |
-| Numbers (ints, floats) | X |
-
-- [X] Identifiers
-- [X] Numbers (ints, floats)
-- [X] Block symbols `(, ), {, }, [, ]`
-- [X] Unary operators `&, |, ^, ~`
-- [X] Equality operators `<, >, <=, >=, ==, !=`
-- [X] Assignment operators `=, +=, -=, *=, /=, ++, --`
-- [X] Strings `"", ''`
-- [X] Misc tokens `,, ., ;, \\, ->, #`
-- [X] Sum operators `+, -`
-- [X] Multiplication operators `*, /, %`
-- [X] Boolean operators `&&, ||, !, <<, >>`
-- [X] Number type keywords `int, long, double, short, signed, unsigned, float`
-- [X] Data type keywords `struct, enum, union, record`
-- [X] Flow control keywords `if, else, while, for, break, continue, return`
-- [X] Boolean keywords `true, false`
-- [X] Misc keywords `static, sizeof, typedef, const, extern, auto`
+| Identifiers | ✅ |
+| Numbers (ints, floats) | ✅ |
+| Block Symbols `(, ), {, }, [, ]` | ✅ |
+| Unary Operators `&, |, ^, ~` | ✅ |
+| Equality Operators `<, >, <=, >=, ==, !=` | ✅ |
+| Assignment Operators | `=, +=, -=, *=, /=, ++, --` | ✅ |
+| Strings | `"", ''` | ✅ |
+| Misc Tokens | `,, ., ;, \\, ->, #` | ✅ |
+| Sum Operators | `+, -` | ✅ |
+| Multiplication Operators | `*, /, %` | ✅ |
+| Boolean Operators | `&&, ||, !, <<, >>' | ✅ |
+| Number Type Keywords | `int, long, double, short, signed, unsigned, float` | ✅ |
+| Data type keywords | `struct, enum, union, record` | ✅ |
+| Flow control keywords | `if, else, while, for, break, continue, return` | ✅ |
+| Boolean keywords | `true, false` | ✅ |
+| Misc keywords | `static, sizeof, typedef, const, extern, auto` | ✅ |
 
 ## Grammar Specification
 
