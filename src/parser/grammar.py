@@ -461,6 +461,28 @@ class ElseStatement(Node):
     pass
 
 
+class SwitchStatement(Node):
+    def prepare(self):
+        self.value = self.children[0].value
+
+        for case in self.children[1].children:
+            case.operator = self.value
+
+
+class SwitchCaseList(Node):
+    pass
+
+
+class SwitchCase(Node):
+    def prepare(self):
+        self.value = self.children[0].value
+
+
+class SwitchCondition(Node):
+    def prepare(self):
+        self.value = self.children[0].value
+
+
 # A dictionary of all the parse tree nodes we recognize
 # Key: string of the grammar rule
 # Value: the associated class
@@ -518,6 +540,10 @@ nodes = {
     "eExpr": EqualExpression,
     "breakStatement": BreakStatement,
     "continueStatement": ContinueStatement,
+    "switchStatement": SwitchStatement,
+    "caseList": SwitchCaseList,
+    "switchCase": SwitchCase,
+    "switchCondition": SwitchCondition,
 }
 
 # Terminal Nodes

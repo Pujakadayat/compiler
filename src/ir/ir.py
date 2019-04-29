@@ -111,6 +111,11 @@ class IR:
             node.savedLabel = unique.get("_L")
         elif isinstance(node, grammar.WhileCondition):
             self.closeBlock()
+        elif isinstance(node, grammar.SwitchCondition):
+            self.closeBlock()
+        elif isinstance(node, grammar.SwitchStatement):
+            self.closeBlock()
+            node.savedLabel = unique.get("_L")
 
         # Slide to the left, slide to the right
         # Recurse recurse, recurse recurse!
@@ -221,6 +226,45 @@ class IR:
                     ]
                 )
                 self.closeBlock()
+            elif isinstance(node, grammar.SwitchCondition):
+                self.closeBlock()
+            elif isinstance(node, grammar.SwitchCase):
+                condition = unique.new()
+                self.stack.insert(0, [condition, "=", node.operator, "==", node.value])
+                self.stack.insert(
+                    1,
+                    [
+                        "if",
+                        condition,
+                        "GOTO",
+                        f"_L{unique.get('_L') + 2}",
+                        "else",
+                        "GOTO",
+                        f"_L{unique.get('_L') + 2}",
+                    ],
+                )
+                self.closeBlock()
+            elif isinstance(node, grammar.SwitchStatement):
+                self.closeBlock()
+
+                firstLabel = int(
+                    self.ir[self.current]["blocks"][0].instructions[0][1][2:]
+                )
+                index = node.savedLabel - firstLabel
+
+                breakLabel = f"_L{unique.get('_L') + 1}"
+
+                # Replace any break statements with a goto to the breakLabel
+                for block in self.ir[self.current]["blocks"][index + 1 :]:
+                    for index, ins in enumerate(block.instructions):
+                        if ins == ["break"]:
+                            block.instructions[index] = ["goto", breakLabel]
+                        elif ins == ["continue"]:
+                            block.instructions[index] = [
+                                "goto",
+                                f"_L{node.savedLabel + 1}",
+                            ]
+
             else:
                 i = node.ir()
                 if i is not None:

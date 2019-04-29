@@ -2,9 +2,6 @@ FILE=switch
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 
-scan:
-	python3 -m src.main -s $(CFILE)
-
 main:
 	python3 -m src.main -p -r -a -n $(SFILE) $(CFILE)
 
