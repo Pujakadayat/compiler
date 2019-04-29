@@ -117,10 +117,10 @@ class LRParser:
             rule = line.split(" ")
             # Check to see if valid format
             if rule[1] == "->":
-                # seperate the "|" out of the rule
+                # seperate the "\" out of the rule
                 last = 2
                 for i, r in enumerate(rule):
-                    if r == "|":
+                    if r == "\\":
                         # if lhs of rule is in self.rules, append rhs of rule to the list
                         if rule[0] in self.rules.keys():
                             self.rules[rule[0]].append(rule[last:i])

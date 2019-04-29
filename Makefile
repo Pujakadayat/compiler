@@ -1,4 +1,4 @@
-FILE=switch
+FILE=binary_ops
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 

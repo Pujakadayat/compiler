@@ -1,13 +1,13 @@
 # General
 
 program -> declarationList
-declarationList -> declarationList declaration | declaration
-declaration -> varDec | functionDeclaration | includeStatement
+declarationList -> declarationList declaration \ declaration
+declaration -> varDec \ functionDeclaration \ includeStatement
 
 # Variable Declarations
 
-varDec -> typeSpecifier ID = expression ; | typeSpecifier ID ;
-assignment -> exprAssignment | incEqualAssignment | decEqualAssignment | incAssignment | decAssignment | multEqualAssignment | divEqualAssignment
+varDec -> typeSpecifier ID = expression ; \ typeSpecifier ID ;
+assignment -> exprAssignment \ incEqualAssignment \ decEqualAssignment \ incAssignment \ decAssignment \ multEqualAssignment \ divEqualAssignment
 exprAssignment -> ID = expression ;
 incEqualAssignment -> ID += expression ;
 decEqualAssignment -> ID -= expression ;
@@ -19,36 +19,36 @@ decAssignment -> ID -- ;
 # Function Declarations
 
 functionDeclaration -> typeSpecifier ID ( argList ) { statementList }
-argList -> argList , arg | arg | EMPTY
-arg -> typeSpecifier ID | typeSpecifier
+argList -> argList , arg \ arg \ EMPTY
+arg -> typeSpecifier ID \ typeSpecifier
 
 # Other Declarations
 
 labelDeclaration -> label statementListNew
-statementListNew -> statementListNew statementNew | statementNew
-statementNew -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | whileStatement | callStatement ; | gotoStatement | breakStatement | continueStatement
+statementListNew -> statementListNew statementNew \ statementNew
+statementNew -> varDec \ returnStatement \ ifStatement \ assignment \ includeStatement \ forStatement \ whileStatement \ callStatement ; \ gotoStatement \ breakStatement \ continueStatement
 
 # Statements
 
-statementList -> statementList statement | statement
-statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | whileStatement | callStatement ; | gotoStatement | labelDeclaration | breakStatement | continueStatement | switchStatement
+statementList -> statementList statement \ statement
+statement -> varDec \ returnStatement \ ifStatement \ assignment \ includeStatement \ forStatement \ whileStatement \ callStatement ; \ gotoStatement \ labelDeclaration \ breakStatement \ continueStatement \ switchStatement
 breakStatement -> break ;
 continueStatement -> continue ;
 returnStatement -> return expression ;
 includeStatement -> fileName
 callStatement -> ID ( paramList )
 gotoStatement -> goto ID ;
-paramList -> paramList , param | param | EMPTY
-param -> constNum | ID | str
+paramList -> paramList , param \ param \ EMPTY
+param -> constNum \ ID \ str
 
 switchStatement -> switch ( switchCondition ) { caseList }
 switchCondition -> expression
-caseList -> caseList switchCase | switchCase | EMPTY
+caseList -> caseList switchCase \ switchCase \ EMPTY
 switchCase -> case constNum : { statementList }
 
 # Control Flow
 
-ifStatement -> if ( condition ) { ifBody } | if ( condition ) { ifBody } elseStatement
+ifStatement -> if ( condition ) { ifBody } \ if ( condition ) { ifBody } elseStatement
 ifBody -> statementList
 condition -> expression
 elseStatement -> else { statementList }
@@ -61,16 +61,16 @@ whileCondition -> expression
 expression -> a
 
 # Boolean operations
-a -> boolAnd | boolOr | c
+a -> boolAnd \ boolOr \ c
 
 boolAnd -> c && a
 boolOr -> c || a
 
-c -> boolNot | d
+c -> boolNot \ d
 boolNot -> ! d
 
 # Comparisons
-d -> lteExpr | gteExpr | ltExpr | gtExpr | neExpr | eExpr | e
+d -> lteExpr \ gteExpr \ ltExpr \ gtExpr \ neExpr \ eExpr \ e
 lteExpr -> e <= d
 gteExpr -> e >= d
 ltExpr -> e < d
@@ -79,15 +79,23 @@ neExpr -> e != d
 eExpr -> e == d
 
 # Multiplication and addition
-e -> addExpr | subExpr | f
+e -> addExpr \ subExpr \ f
 addExpr -> f + e
 subExpr -> f - e
 
-f -> multExpr | divExpr | modExpr | g
+f -> multExpr \ divExpr \ modExpr \ g
 multExpr -> g * f
 divExpr -> g / f
 modExpr -> g % f
 
+g -> bitAnd \ bitOr  bitXor \ bitNot \ leftShift \ rightShift \ h
+bitAnd -> h & g
+bitOr -> h | g
+bitXor -> h ^ g
+bitNot -> ~ h
+leftShift -> h << g
+rightShift -> h >> g
+
 # Immutables
-g -> constNum | ID | str | callStatement | nestedExpr
+h -> constNum \ ID \ str \ callStatement \ nestedExpr
 nestedExpr -> ( expression )
