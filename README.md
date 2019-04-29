@@ -225,7 +225,7 @@ As an example, the IR instruction `i = 10 / 2` would be translated into the asse
 | ++, --, -=, +=, *=, /= | ✔       | ✔      | ✔   | ✔   |
 | For Loops              | ✔       | ✔      | ✔   | ✔   |
 | Binary Operators       | ✔       | ✔      | ✔   |     |
-| Switch Statements      |         |        |     |     |
+| Switch Statements      | ✔       | ✔      | ✔   | ✔   |
 
 | Extra Features         | Scanner | Parser | IR  | ASM |
 |------------------------|---------|--------|-----|-----|

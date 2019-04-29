@@ -16,6 +16,7 @@ from src.parser.grammar import (
     Arguments,
     Parameters,
     StatementListNew,
+    SwitchCaseList,
 )
 from src.ir.ir import IR, readJson
 from src.symbolTable.symbolTable import buildSymbolTable, flattenTree
@@ -110,6 +111,7 @@ class Compiler:
             DeclarationList,
             StatementList,
             StatementListNew,
+            SwitchCaseList,
         ]:
             flattenTree(self.parseTree, reducer=reduce)
 
