@@ -31,7 +31,7 @@ statementNew -> varDec | returnStatement | ifStatement | assignment | includeSta
 # Statements
 
 statementList -> statementList statement | statement
-statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | whileStatement | callStatement ; | gotoStatement | labelDeclaration | breakStatement | continueStatement
+statement -> varDec | returnStatement | ifStatement | assignment | includeStatement | forStatement | whileStatement | callStatement ; | gotoStatement | labelDeclaration | breakStatement | continueStatement | switchStatement
 breakStatement -> break ;
 continueStatement -> continue ;
 returnStatement -> return expression ;
@@ -41,9 +41,10 @@ gotoStatement -> goto ID ;
 paramList -> paramList , param | param | EMPTY
 param -> constNum | ID | str
 
-switchStatement -> switch ( expression ) { caseList }
+switchStatement -> switch ( switchCondition ) { caseList }
+switchCondition -> expression
 caseList -> caseList switchCase | switchCase | EMPTY
-switchCase -> case constNum : statementList
+switchCase -> case constNum : { statementList }
 
 # Control Flow
 
