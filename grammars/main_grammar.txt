@@ -7,10 +7,12 @@ declaration -> varDec | functionDeclaration | includeStatement
 # Variable Declarations
 
 varDec -> typeSpecifier ID = expression ; | typeSpecifier ID ;
-assignment -> exprAssignment | incEqualAssignment | decEqualAssignment | incAssignment | decAssignment
+assignment -> exprAssignment | incEqualAssignment | decEqualAssignment | incAssignment | decAssignment | multEqualAssignment | divEqualAssignment
 exprAssignment -> ID = expression ;
 incEqualAssignment -> ID += expression ;
 decEqualAssignment -> ID -= expression ;
+multEqualAssignment -> ID *= expression ;
+divEqualAssignment -> ID /= expression ;
 incAssignment -> ID ++ ;
 decAssignment -> ID -- ;
 

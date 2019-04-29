@@ -242,6 +242,28 @@ class MinusEqualAssignment(Node):
         return [self.value, "=", self.name, "-", self.expr.value]
 
 
+class MultEqualAssignment(Node):
+    def __init__(self, children):
+        self.children = children
+        self.name = self.children[0].value
+        self.expr = self.children[1]
+
+    def ir(self):
+        self.value = unique.new()
+        return [self.value, "=", self.name, "*", self.expr.value]
+
+
+class DivEqualAssignment(Node):
+    def __init__(self, children):
+        self.children = children
+        self.name = self.children[0].value
+        self.expr = self.children[1]
+
+    def ir(self):
+        self.value = unique.new()
+        return [self.value, "=", self.name, "/", self.expr.value]
+
+
 class CallAssignment(Node):
     def __init__(self, children):
         self.children = children
@@ -455,6 +477,8 @@ nodes = {
     "decAssignment": DecrementAssignment,
     "incEqualAssignment": PlusEqualAssignment,
     "decEqualAssignment": MinusEqualAssignment,
+    "multEqualAssignment": MultEqualAssignment,
+    "divEqualAssignment": DivEqualAssignment,
     "functionDeclaration": FunctionDeclaration,
     "labelDeclaration": LabelDeclaration,
     "argList": Arguments,

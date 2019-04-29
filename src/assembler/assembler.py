@@ -301,8 +301,9 @@ class Function:
         self.comment(f"Division expression {lhs} / {rhs}")
 
         self.move(lhs, "%eax")
+        self.move(rhs, "%ecx")
         self.asm.append("cltd")
-        self.asm.append(f"idivl {rhs}")
+        self.asm.append("idivl %ecx")
         self.move("%eax", dest)
 
     def label(self, ins):
