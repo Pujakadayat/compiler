@@ -210,15 +210,8 @@ class Function:
         dest = self.get(operand)
 
         if ins[2] == "!":
-            # Not expression i.e. i = !1
-            result = eval(f"not {ins[3]}")
-            if result is True:
-                result = 1
-            else:
-                result = 0
-
-            self.comment(f"Not expression !{ins[3]}")
-            self.move(result, dest)
+            rhs = ins[3]
+            self.notExpression(dest, rhs)
         elif len(ins) > 3:
             # Expression assignment i.e. i = 2 + 2
             lhs = ins[2]
@@ -385,6 +378,26 @@ class Function:
 
         self.comment("Saving the return value")
         self.move("%eax", self.resolve(dest))
+
+    def notExpression(self, dest, rhs):
+        self.comment(f"Not expression !{rhs}")
+
+        if isNumber(rhs):
+            result = eval(f"not {rhs}")
+            if result is True:
+                result = 1
+            else:
+                result = 0
+
+            self.move(result, dest)
+        else:
+            rhs = self.resolve(rhs)
+            self.asm.append(f"cmpl $0, {rhs}")
+            self.asm.append("setne %al")
+            self.asm.append("xorb $-1, %al")
+            self.asm.append("andb $1, %al")
+            self.asm.append("movzbl %al, %ecx")
+            self.move("%ecx", dest)
 
     def shift(self, dest, lhs, rhs):
         pass
