@@ -41,6 +41,10 @@ gotoStatement -> goto ID ;
 paramList -> paramList , param | param | EMPTY
 param -> constNum | ID | str
 
+switchStatement -> switch ( expression ) { caseList }
+caseList -> caseList switchCase | switchCase | EMPTY
+switchCase -> case constNum : statementList
+
 # Control Flow
 
 ifStatement -> if ( condition ) { ifBody } | if ( condition ) { ifBody } elseStatement
