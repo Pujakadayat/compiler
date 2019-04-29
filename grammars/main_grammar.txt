@@ -88,7 +88,7 @@ multExpr -> g * f
 divExpr -> g / f
 modExpr -> g % f
 
-g -> bitAnd \ bitOr  bitXor \ bitNot \ leftShift \ rightShift \ h
+g -> bitAnd \ bitOr \ bitXor \ bitNot \ leftShift \ rightShift \ h
 bitAnd -> h & g
 bitOr -> h | g
 bitXor -> h ^ g

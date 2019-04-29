@@ -482,6 +482,30 @@ class SwitchCondition(Node):
     def prepare(self):
         self.value = self.children[0].value
 
+class BitAnd(MathExpression):
+    def ir(self):
+        return [self.value, "=", self.a, "&", self.b]
+
+class BitOr(MathExpression):
+    def ir(self):
+        return [self.value, "=", self.a, "|", self.b]
+
+class BitXor(MathExpression):
+    def ir(self):
+        return [self.value, "=", self.a, "^", self.b]
+
+class BitNot(MathExpression):
+    def ir(self):
+        return [self.value, "=", "~", self.a]
+
+class LeftShift(MathExpression):
+    def ir(self):
+        return [self.value, "=", self.a, "<<", self.b]
+
+class RightShift(MathExpression):
+    def ir(self):
+        return [self.value, "=", self.a, ">>", self.b]
+
 
 # A dictionary of all the parse tree nodes we recognize
 # Key: string of the grammar rule
@@ -544,6 +568,12 @@ nodes = {
     "caseList": SwitchCaseList,
     "switchCase": SwitchCase,
     "switchCondition": SwitchCondition,
+    "bitAnd": BitAnd,
+    "bitOr": BitOr,
+    "bitXor": BitXor,
+    "bitNot": BitNot,
+    "leftShift": LeftShift,
+    "rightShift": RightShift
 }
 
 # Terminal Nodes

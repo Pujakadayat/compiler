@@ -270,12 +270,22 @@ class Function:
             self.division(dest, lhs, rhs)
             return
 
+        if op in ["<<", ">>"]:
+            self.shift(dest, lhs, rhs)
+            return
+
         if op == "+":
             op = "addl"
         elif op == "-":
             op = "subl"
         elif op == "*":
             op = "imull"
+        elif op == "&":
+            op = "andl"
+        elif op == "|":
+            op = "orl"
+        elif op == "^":
+            op = "xorl"
 
         lhs = self.resolve(lhs)
         rhs = self.resolve(rhs)
@@ -375,3 +385,6 @@ class Function:
 
         self.comment("Saving the return value")
         self.move("%eax", self.resolve(dest))
+
+    def shift(self, dest, lhs, rhs):
+        pass
