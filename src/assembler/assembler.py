@@ -217,6 +217,7 @@ class Function:
             else:
                 result = 0
 
+            self.comment(f"Not expression !{ins[3]}")
             self.move(result, dest)
         elif len(ins) > 3:
             # Expression assignment i.e. i = 2 + 2
@@ -235,6 +236,7 @@ class Function:
                     result = int(eval(f"{lhs} {op} {rhs}"))
                 except ZeroDivisionError:
                     raise CompilerMessage(f"Cannot divide by zero: {lhs} {op} {rhs}")
+                self.comment(f"Precalculated {lhs} {op} {rhs} = {result}")
                 self.move(result, dest)
             else:
                 # Otherwise there needs to be assembly logic
@@ -277,6 +279,8 @@ class Function:
 
         lhs = self.resolve(lhs)
         rhs = self.resolve(rhs)
+
+        self.comment(f"Math expression {lhs} {op} {rhs}")
 
         self.move(lhs, "%eax")
         self.asm.append(f"{op} {rhs}, %eax")
