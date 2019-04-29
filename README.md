@@ -219,13 +219,13 @@ As an example, the IR instruction `i = 10 / 2` would be translated into the asse
 | Break Statements       | ✔       | ✔      | ✔   | ✔   |
 | While Loops            | ✔       | ✔      | ✔   | ✔   |
 
-| Optional Features      | Scanner | Parser | IR  | ASM |
-|------------------------|---------|--------|-----|-----|
-| Floats                 | ✔       | ✔      | ✔   |     |
-| ++, --, -=, +=, *=, /= | ✔       | ✔      | ✔   | ✔   |
-| For Loops              | ✔       | ✔      | ✔   | ✔   |
-| Binary Operators       | ✔       | ✔      | ✔   |     |
-| Switch Statements      | ✔       | ✔      | ✔   | ✔   |
+| Optional Features        | Scanner | Parser | IR  | ASM |
+|--------------------------|---------|--------|-----|-----|
+| Floats                   | ✔       | ✔      | ✔   |     |
+| `++, --, -=, +=, *=, /=` | ✔       | ✔      | ✔   | ✔   |
+| For Loops                | ✔       | ✔      | ✔   | ✔   |
+| Binary Operators         | ✔       | ✔      | ✔   |     |
+| Switch Statements        | ✔       | ✔      | ✔   | ✔   |
 
 | Extra Features         | Scanner | Parser | IR  | ASM |
 |------------------------|---------|--------|-----|-----|
