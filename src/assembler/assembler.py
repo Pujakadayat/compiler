@@ -264,8 +264,10 @@ class Function:
             return
 
         if op in ["<<", ">>"]:
-            self.shift(dest, lhs, rhs)
+            self.shift(dest, lhs, op, rhs)
             return
+
+        self.comment(f"Math expression {lhs} {op} {rhs}")
 
         if op == "+":
             op = "addl"
@@ -282,8 +284,6 @@ class Function:
 
         lhs = self.resolve(lhs)
         rhs = self.resolve(rhs)
-
-        self.comment(f"Math expression {lhs} {op} {rhs}")
 
         self.move(lhs, "%eax")
         self.asm.append(f"{op} {rhs}, %eax")
@@ -399,5 +399,18 @@ class Function:
             self.asm.append("movzbl %al, %ecx")
             self.move("%ecx", dest)
 
-    def shift(self, dest, lhs, rhs):
-        pass
+    def shift(self, dest, lhs, op, rhs):
+        self.comment(f"Shift operation {lhs} {op} {rhs}")
+
+        lhs = self.resolve(lhs)
+        rhs = self.resolve(rhs)
+
+        if op == "<<":
+            op = "shll"
+        else:
+            op = "sarl"
+
+        self.move(lhs, "%eax")
+        self.move(rhs, "%ecx")
+        self.asm.append(f"{op} %cl, %eax")
+        self.move("%eax", dest)
