@@ -212,6 +212,9 @@ class Function:
         if ins[2] == "!":
             rhs = ins[3]
             self.notExpression(dest, rhs)
+        elif ins[2] == "~":
+            rhs = ins[3]
+            self.binaryNotExpression(dest, rhs)
         elif len(ins) > 3:
             # Expression assignment i.e. i = 2 + 2
             lhs = ins[2]
@@ -413,4 +416,13 @@ class Function:
         self.move(lhs, "%eax")
         self.move(rhs, "%ecx")
         self.asm.append(f"{op} %cl, %eax")
+        self.move("%eax", dest)
+
+    def binaryNotExpression(self, dest, rhs):
+        self.comment(f"Binary not operation  ~{rhs}")
+
+        rhs = self.resolve(rhs)
+
+        self.move(rhs, "%eax")
+        self.asm.append("xorl $-1, %eax")
         self.move("%eax", dest)

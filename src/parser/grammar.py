@@ -494,9 +494,10 @@ class BitXor(MathExpression):
     def ir(self):
         return [self.value, "=", self.a, "^", self.b]
 
-class BitNot(MathExpression):
+class BitNot(Node):
     def ir(self):
-        return [self.value, "=", "~", self.a]
+        self.value = unique.new()
+        return [self.value, "=", "~", self.children[0].value]
 
 class LeftShift(MathExpression):
     def ir(self):
