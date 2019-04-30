@@ -234,8 +234,8 @@ As an example, the IR instruction `i = 10 / 2` would be translated into the asse
 | Arrays                 |         |        |     |     |
 | Strings                | ✔       | ✔      |     |     |
 | Include Statements     | ✔       | ✔      |     |     |
-| Struct                 | ✔       |        |     |     |
-| Enum                   | ✔       |        |     |     |
+| Struct                 | ✔       | ✔      |     |     |
+| Enum                   | ✔       | ✔      |     |     |
 | Casting                |         |        |     |     |
 | Type Promotion         |         |        |     |     |
 | Type Specs             |         |        |     |     |

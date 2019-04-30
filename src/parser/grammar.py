@@ -507,6 +507,25 @@ class RightShift(MathExpression):
     def ir(self):
         return [self.value, "=", self.a, ">>", self.b]
 
+class EnumStatement(Node):
+    pass
+
+class EnumList(Node):
+    pass
+
+class StructStatement(Node):
+    pass
+
+class StructList(Node):
+    pass
+
+class StructDec(Node):
+    pass
+
+class VarList(Node):
+    pass
+
+
 
 # A dictionary of all the parse tree nodes we recognize
 # Key: string of the grammar rule
@@ -574,7 +593,13 @@ nodes = {
     "bitXor": BitXor,
     "bitNot": BitNot,
     "leftShift": LeftShift,
-    "rightShift": RightShift
+    "rightShift": RightShift,
+    "enumStatement": EnumStatement,
+    "enumList": EnumList,
+    "structStatement": StructStatement,
+    "structList": StructList,
+    "structDec": StructDec,
+    "varList": VarList,
 }
 
 # Terminal Nodes

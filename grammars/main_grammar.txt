@@ -31,7 +31,7 @@ statementNew -> varDec \ returnStatement \ ifStatement \ assignment \ includeSta
 # Statements
 
 statementList -> statementList statement \ statement
-statement -> varDec \ returnStatement \ ifStatement \ assignment \ includeStatement \ forStatement \ whileStatement \ callStatement ; \ gotoStatement \ labelDeclaration \ breakStatement \ continueStatement \ switchStatement
+statement -> varDec \ returnStatement \ ifStatement \ assignment \ includeStatement \ forStatement \ whileStatement \ callStatement ; \ gotoStatement \ labelDeclaration \ breakStatement \ continueStatement \ switchStatement \ enumStatement \ structStatement
 breakStatement -> break ;
 continueStatement -> continue ;
 returnStatement -> return expression ;
@@ -40,6 +40,12 @@ callStatement -> ID ( paramList )
 gotoStatement -> goto ID ;
 paramList -> paramList , param \ param \ EMPTY
 param -> constNum \ ID \ str
+enumStatement -> specialTypeSpecifier ID { enumList } ; \ specialTypeSpecifier ID ID ;
+enumList -> enumList , ID \ ID
+structStatement -> specialTypeSpecifier ID { structList } ;
+structList -> structList , structDec \ structDec
+structDec -> typeSpecifier varList
+varList -> varList , ID \ ID
 
 switchStatement -> switch ( switchCondition ) { caseList }
 switchCondition -> expression
