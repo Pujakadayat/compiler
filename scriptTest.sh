@@ -7,8 +7,9 @@ do
     SFILE=assembly/$FILE.s
 
     gcc -O0 -S $CFILE -o gcc/$FILE.s
-    gcc $FILE.s -o $FILE
+    gcc gcc/$FILE.s -o gcc/$FILE
     gccoutput=./$FILE; echo $?
-
     echo "$gccoutput"
+    python3 -m src.main $CFILE
+    compileroutput=./$FILE
 done
