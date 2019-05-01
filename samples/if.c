@@ -5,5 +5,5 @@ int main() {
 		number = 99;
 	}
 
-	return 0;
+	return number;
 }

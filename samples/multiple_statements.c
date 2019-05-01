@@ -8,6 +8,8 @@ int main() {
 	z = 2;
 
 	x = 2 + 2;
+
+	return x;
 }
 
 int foo() {

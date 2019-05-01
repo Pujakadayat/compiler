@@ -5,4 +5,6 @@ int main() {
 	int z = y;
 
 	x = y;
+
+	return x;
 }
