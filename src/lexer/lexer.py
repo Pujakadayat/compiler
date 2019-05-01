@@ -161,6 +161,12 @@ def tokenizeLine(line, isComment):
 
             continue
 
+        if symbol == tokens.colon:
+            if matchNumber(line[start:end]) is None:
+                lineTokens.append(Token(tokens.label, line[start:end]))
+                start = end + 1
+                end = start
+
         # If next character is a symbol
         if symbol is not None:
             # Tokenize whatever we found up to this point
@@ -241,6 +247,7 @@ def tokenizeChunk(text):
     if label is not None:
         if debug is True:
             logging.debug("Found label: %s", text)
+        print(f"Found label: {text}")
         return Token(tokens.label, text[:-1])
 
     # If it is none of the above, we do not recognize this type

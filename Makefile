@@ -1,4 +1,4 @@
-FILE=binary_ops
+FILE=simple_goto
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 
@@ -22,9 +22,9 @@ asm:
 	./assembly/$(FILE); echo $$?
 
 gcc:
-	gcc -O0 -S $(CFILE)
-	gcc $(FILE).s -o $(FILE)
-	./$(FILE); echo $$?
+	gcc -O0 -S $(CFILE) -o gcc/$(FILE).s
+	gcc gcc/$(FILE).s -o gcc/$(FILE)
+	./gcc/$(FILE); echo $$?
 
 test:
 	python3 -m tests.testing -v
@@ -43,3 +43,5 @@ lint:
 
 clean:
 	rm -f *.o logs/* tables/*
+
+.PHONY: gcc

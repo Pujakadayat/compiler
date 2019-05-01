@@ -24,9 +24,9 @@ arg -> typeSpecifier ID \ typeSpecifier
 
 # Other Declarations
 
-labelDeclaration -> label statementListNew
+labelDeclaration -> label : statementListNew
 statementListNew -> statementListNew statementNew \ statementNew
-statementNew -> varDec \ returnStatement \ ifStatement \ assignment \ includeStatement \ forStatement \ whileStatement \ callStatement ; \ gotoStatement \ breakStatement \ continueStatement
+statementNew -> varDec \ returnStatement \ ifStatement \ assignment \ includeStatement \ forStatement \ whileStatement \ callStatement ; \ gotoStatement \ breakStatement \ continueStatement \ switchStatement \ enumStatement \ structStatement
 
 # Statements
 

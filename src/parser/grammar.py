@@ -482,49 +482,60 @@ class SwitchCondition(Node):
     def prepare(self):
         self.value = self.children[0].value
 
+
 class BitAnd(MathExpression):
     def ir(self):
         return [self.value, "=", self.a, "&", self.b]
+
 
 class BitOr(MathExpression):
     def ir(self):
         return [self.value, "=", self.a, "|", self.b]
 
+
 class BitXor(MathExpression):
     def ir(self):
         return [self.value, "=", self.a, "^", self.b]
+
 
 class BitNot(Node):
     def ir(self):
         self.value = unique.new()
         return [self.value, "=", "~", self.children[0].value]
 
+
 class LeftShift(MathExpression):
     def ir(self):
         return [self.value, "=", self.a, "<<", self.b]
+
 
 class RightShift(MathExpression):
     def ir(self):
         return [self.value, "=", self.a, ">>", self.b]
 
+
 class EnumStatement(Node):
     pass
+
 
 class EnumList(Node):
     pass
 
+
 class StructStatement(Node):
     pass
+
 
 class StructList(Node):
     pass
 
+
 class StructDec(Node):
     pass
 
+
 class VarList(Node):
     pass
-
 
 
 # A dictionary of all the parse tree nodes we recognize

@@ -81,6 +81,9 @@ class Function:
                 self.parse(instruction)
         self.teardown()
 
+        if self.align:
+            self.asm[4] = f"subq ${self.memory}, %rsp"
+
     def parse(self, ins):
         """Parse an IR instruction."""
 
@@ -121,10 +124,10 @@ class Function:
         """Instructions that appear at the end of every function."""
 
         # If there was no return statement in the function
-        # we automatically append one.
+        # we automatically return 0.
         if self.asm[-1] != "retq":
-            if self.align:
-                self.asm.append(f"addq ${self.align}, %rsp")
+            self.move("$0", "%eax")
+            self.asm.append(f"addq ${self.memory}, %rsp")
             self.asm.append("popq %rbp")
             self.asm.append("retq")
 
@@ -200,7 +203,7 @@ class Function:
             self.move(self.get(ins[1]), "%eax")
 
         if self.align:
-            self.asm.append(f"addq ${self.align}, %rsp")
+            self.asm.append(f"addq ${self.memory}, %rsp")
 
         self.asm.append("popq %rbp")
         self.asm.append("retq")
