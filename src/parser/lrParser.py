@@ -596,7 +596,7 @@ class LRParser:
                             )
                         )
                         messages.add(CompilerMessage(self.actions[state]))
-                        messages.add(CompilerMessage(stack))
+                        messages.add(CompilerMessage(f"Stack: {stack}"))
                         return None
 
             except KeyError:
