@@ -1,4 +1,4 @@
-FILE=simple_goto
+FILE=recursive_function
 CFILE=samples/$(FILE).c
 SFILE=assembly/$(FILE).s
 

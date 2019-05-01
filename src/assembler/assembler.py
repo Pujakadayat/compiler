@@ -81,6 +81,11 @@ class Function:
                 self.parse(instruction)
         self.teardown()
 
+        # Replace temporary instructions with the correct number of bytes
+        for index, ins in enumerate(self.asm):
+            if ins == "REPLACEME ADDQ":
+                self.asm[index] = f"addq ${self.memory}, %rsp"
+
         if self.align:
             self.asm[4] = f"subq ${self.memory}, %rsp"
 
@@ -203,7 +208,7 @@ class Function:
             self.move(self.get(ins[1]), "%eax")
 
         if self.align:
-            self.asm.append(f"addq ${self.memory}, %rsp")
+            self.asm.append("REPLACEME ADDQ")
 
         self.asm.append("popq %rbp")
         self.asm.append("retq")

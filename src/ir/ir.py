@@ -70,16 +70,12 @@ class IR:
         self.parseTree.visit()
         self.visit(self.parseTree)
 
-        # This ensures there is always a final basic block in the program
-        bb = BasicBlock(self.stack, unique.new("_L"))
-        self.ir[self.current]["blocks"].append(bb)
-
         return self.ir
 
-    def closeBlock(self):
+    def closeBlock(self, force=False):
         """Save the stack as a block and start a new block."""
 
-        if self.stack:
+        if self.stack or force is True:
             bb = BasicBlock(self.stack, unique.new("_L"))
             self.ir[self.current]["blocks"].append(bb)
 
@@ -133,6 +129,9 @@ class IR:
             if isinstance(node, grammar.FunctionDeclaration):
                 self.ir[node.name]["arguments"] = node.arguments.value
                 self.closeBlock()
+
+                # Add an extra basic block to ensure if jumps work correctly
+                self.closeBlock(force=True)
             elif isinstance(node, grammar.IfBody):
                 if node.hasElse:
                     self.stack.append(["goto", f"_L{unique.get('_L') + 3}"])
