@@ -10,4 +10,7 @@ do
 	gccoutput="$(./gcc/$FILE && echo $?)"
 
 	echo "$gccoutput"
+
+	python3 -m src.main $CFILE
+	compileroutput=./$FILE
 done
