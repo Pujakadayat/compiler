@@ -79,13 +79,10 @@ class Function:
         for block in blocks:
             for instruction in block.instructions:
                 self.parse(instruction)
-
-        if not self.asm[-1].startswith("_L"):
-            self.teardown()
+        self.teardown()
 
         if self.align:
             self.asm[4] = f"subq ${self.memory}, %rsp"
-            print(f"MEMORY AT END: {self.memory}")
 
     def parse(self, ins):
         """Parse an IR instruction."""
@@ -127,8 +124,9 @@ class Function:
         """Instructions that appear at the end of every function."""
 
         # If there was no return statement in the function
-        # we automatically append one.
+        # we automatically return 0.
         if self.asm[-1] != "retq":
+            self.move("$0", "%eax")
             self.asm.append(f"addq ${self.memory}, %rsp")
             self.asm.append("popq %rbp")
             self.asm.append("retq")
