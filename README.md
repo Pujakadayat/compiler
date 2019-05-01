@@ -201,6 +201,13 @@ As an example, the IR instruction `i = 10 / 2` would be translated into the asse
 - Good separation of concepts into modularized files
 - Able to iterate quickly on all aspects of the compiler
 
+## Limitations
+
+- Does not support function calls with more than 8 parameters
+- Cannot nest function calls i.e. `sum(sum(2, 3), 5)`
+- Switch cases must be wrapped in curly braces `{}`
+- Math expressions must be parenthesized to be evaluated correctly
+
 ## Grammar Specification
 
 | Required Features      | Scanner | Parser | IR  | ASM |
@@ -223,8 +230,8 @@ As an example, the IR instruction `i = 10 / 2` would be translated into the asse
 |--------------------------|---------|--------|-----|-----|
 | Floats                   | ✔       | ✔      | ✔   |     |
 | `++, --, -=, +=, *=, /=` | ✔       | ✔      | ✔   | ✔   |
-| For Loops                | ✔       | ✔      | ✔   | ✔   |
-| `&, \|, ^` Operators      | ✔       | ✔      | ✔   | ✔   |
+| For Loops                | ✔       | ✔      | ✔   |     |
+| `&, \|, ^` Operators     | ✔       | ✔      | ✔   | ✔   |
 | `<<, >>, ~` Operators    | ✔       | ✔      | ✔   | ✔   |
 | Switch Statements        | ✔       | ✔      | ✔   | ✔   |
 
