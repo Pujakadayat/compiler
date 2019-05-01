@@ -207,6 +207,7 @@ As an example, the IR instruction `i = 10 / 2` would be translated into the asse
 - Cannot nest function calls i.e. `sum(sum(2, 3), 5)`
 - Switch cases must be wrapped in curly braces `{}`
 - Math expressions must be parenthesized to be evaluated correctly
+- Grammar does not support chained variable declarations like `int i, j`
 
 ## Grammar Specification
 
