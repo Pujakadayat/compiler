@@ -29,6 +29,9 @@ gcc:
 test:
 	python3 -m tests.testing -v
 
+e2e:
+	sh ./tests/e2e.sh
+
 install:
 	pip3 install -r requirements.txt
 

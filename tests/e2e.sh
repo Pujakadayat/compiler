@@ -27,19 +27,10 @@ do
 		for)
 			continue
 			;;
-		function)
-			continue
-			;;
-		hello_world)
-			continue
-			;;
 		include)
 			continue
 			;;
 		linebreak)
-			continue
-			;;
-		print)
 			continue
 			;;
 		struct)
@@ -64,5 +55,7 @@ do
 	if [ $gccoutput != $compileroutput ]
 	then
 		echo "$FILE: $gccoutput (GCC) did not match $compileroutput (compiler)"
+	else
+		echo "$FILE: ✔"
 	fi
 done
