@@ -4,6 +4,14 @@ Contains the Symbol Table class.
 
 import src.parser.grammar as grammar
 from src.util import CompilerMessage
+class FunctionSymbol:
+    def __init__(self, name, returnType, parameters):
+        self.name = name
+        self.returnType = returnType
+        self.parameters = parameters
+
+    def __str__(self):
+        return f"Function(name={self.name}, returnType={self.returnType}, parameters={self.parameters})"
 
 
 class SymbolTable:
@@ -14,6 +22,7 @@ class SymbolTable:
         self.table["name"] = "global"
         self.table["variables"] = {}
         self.table["labels"] = {}
+        self.table["functions"] = {}
         self.current = self.table
         self.level = 0
 
@@ -60,7 +69,7 @@ class SymbolTable:
             raise CompilerMessage(f"Label with name '{name}' already exists.")
 
         self.current["labels"][name] = True
-
+    
     def endScope(self):
         """Finalize a scope and return it's parent scope."""
 
@@ -205,12 +214,15 @@ def flattenTree(root, reducer, seen=False):
     # Just return it to be appended as a child
     return root
 
+def addStandardFunctions(symbolTable):
+    symbolTable.functions["printf"] = FunctionSymbol("printf", returnType="int", parameters=["char*"])
 
 def buildSymbolTable(parseTree):
     """Given the parse tree, build a symbol table."""
 
     # Build the symbol table
     st = SymbolTable()
+    addStandardFunctions(st)
     visitChildren(parseTree, st)
 
     # Verify all labels are valid

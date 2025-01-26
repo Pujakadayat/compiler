@@ -4,7 +4,6 @@ Reads in the grammar and generated action and goto tables.
 Parses the list of tokens using the action and goto tables.
 """
 
-
 import logging
 import os
 import json
