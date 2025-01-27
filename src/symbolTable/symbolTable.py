@@ -19,13 +19,16 @@ class SymbolTable:
 
     def __init__(self):
         self.table = {}
+        self.functions = {}
+        self.variables = {}
         self.table["name"] = "global"
         self.table["variables"] = {}
         self.table["labels"] = {}
         self.table["functions"] = {}
         self.current = self.table
         self.level = 0
-
+    def addFunction(self, functionSymbol):
+        self.functions[functionSymbol.name] = functionSymbol
     def startScope(self, name, level):
         """Initialize a new scope."""
 
@@ -107,7 +110,22 @@ class SymbolTable:
 
         # Not found in any scope, return False
         return None
-
+    def verifyLabels(self, c=None):
+        """Check for used but undeclared labels."""
+        if c is None:
+            c = self.table
+        
+        # Check labels in current scope
+        if "labels" in c:
+            for label_name, label_status in c["labels"].items():
+                if label_status is False:
+                    raise CompilerMessage(f"The label {label_name} was used but never declared.")
+        
+        # Check nested scopes
+        for key in c:
+            if key not in ["name", "variables", "..", "labels", "functions"]:
+                if isinstance(c[key], dict):
+                    self.verifyLabels(c[key])
     def print(self, node=None, level=0):
         """Pretty print the symbol table."""
 
@@ -124,21 +142,58 @@ class SymbolTable:
     def __str__(self):
         return str(self.table)
 
-    def verifyLabels(self, c=None):
-        """Check for used but undeclared labels."""
+    # def verifyLabels(self, c=None):
+    #     """Check for used but undeclared labels."""
 
-        if c is None:
-            c = self.table
+    #     if c is None:
+    #         c = self.table
 
-        if c["labels"] is not False:
-            for l in c["labels"]:
-                if c["labels"][l] is False:
-                    raise CompilerMessage(f"The label {l} was used but never declared.")
+    #     if c["labels"] is not False:
+    #         for l in c["labels"]:
+    #             if c["labels"][l] is False:
+    #                 raise CompilerMessage(f"The label {l} was used but never declared.")
 
-        for key in c:
-            if key not in ["name", "variables", "..", "labels"]:
-                self.verifyLabels(c[key])
+    #     for key in c:
+    #         if key not in ["name", "variables", "..", "labels"]:
+    #             self.verifyLabels(c[key])
+# def verifyLabels(self, c=None):
+#     """Check for used but undeclared labels."""
+    
+#     if c is None:
+#         c = self.table
+    
+#     # Check if 'labels' exists in current scope
+#     if "labels" in c:
+#         # Check each label in the current scope
+#         for label_name, label_status in c["labels"].items():
+#             if label_status is False:
+#                 raise CompilerMessage(f"The label {label_name} was used but never declared.")
+    
+#     # Recursively check all nested scopes
+#     for key in c:
+#         if key not in ["name", "variables", "..", "labels", "functions"]:
+#             if isinstance(c[key], dict):
+#                 self.verifyLabels(c[key])
 
+def buildSymbolTable(parseTree):
+    """Given the parse tree, build a symbol table."""
+    
+    # Build the symbol table
+    st = SymbolTable()
+    
+    # Add standard functions first
+    addStandardFunctions(st)
+    
+    # Visit all nodes in parse tree
+    visitChildren(parseTree, st)
+    
+    try:
+        # Verify all labels are valid
+        st.verifyLabels()
+    except CompilerMessage as e:
+        print(f"Warning: Label verification failed: {e}")
+    
+    return st
 
 def flattenTree(root, reducer, seen=False):
     """
@@ -214,7 +269,20 @@ def flattenTree(root, reducer, seen=False):
     # Just return it to be appended as a child
     return root
 
+# def addStandardFunctions(symbolTable):
+#     symbolTable.functions["printf"] = FunctionSymbol("printf", returnType="int", parameters=["char*"])
+# def addStandardFunctions(symbolTable):
+#     # Ensure symbolTable has a 'functions' attribute
+#     if not hasattr(symbolTable, 'functions'):
+#         symbolTable.functions = {}
+#     symbolTable.functions["printf"] = FunctionSymbol("printf", returnType="int", parameters=["char*"])
+#     # Add printf function manually if not added by default
+#     if "printf" not in symbolTable.functions:
+#       symbolTable.functions["printf"] = FunctionSymbol("printf", returnType="int", parameters=["char*"])
+
 def addStandardFunctions(symbolTable):
+    if not hasattr(symbolTable, 'functions'):
+        symbolTable.functions = {}
     symbolTable.functions["printf"] = FunctionSymbol("printf", returnType="int", parameters=["char*"])
 
 def buildSymbolTable(parseTree):
@@ -245,6 +313,24 @@ def visitChildren(node, st, level=0):
             visitChildren(child, st, level + 1)
 
 
+# def updateSymbolTable(node, st, level=0):
+#     """Check if symbol table should be updated based on node."""
+
+#     if isinstance(node, grammar.FunctionDeclaration):
+#         if st.level == level:
+#             st.endScope()
+#         st.startScope(node.name, level)
+#     elif isinstance(node, grammar.VariableDeclaration):
+#         st.declareVariable(node.type, node.name)
+#     elif isinstance(node, grammar.Argument):
+#         st.declareVariable(node.type, node.name)
+#     elif isinstance(node, grammar.GotoStatement):
+#         st.useLabel(node.children[0].value)
+#     elif isinstance(node, grammar.LabelDeclaration):
+#         st.declareLabel(node.children[0].value)
+#     elif isinstance(node, grammar.Identifier):
+#         if st.find(node.value) is None:
+#             raise CompilerMessage(f"Identifier {node.value} is undefined.")
 def updateSymbolTable(node, st, level=0):
     """Check if symbol table should be updated based on node."""
 
@@ -252,6 +338,9 @@ def updateSymbolTable(node, st, level=0):
         if st.level == level:
             st.endScope()
         st.startScope(node.name, level)
+        # Add the function to the symbol table
+        func_symbol = FunctionSymbol(node.name, node.type, [])  # You might need to extract parameters
+        st.addFunction(func_symbol)
     elif isinstance(node, grammar.VariableDeclaration):
         st.declareVariable(node.type, node.name)
     elif isinstance(node, grammar.Argument):
@@ -261,5 +350,19 @@ def updateSymbolTable(node, st, level=0):
     elif isinstance(node, grammar.LabelDeclaration):
         st.declareLabel(node.children[0].value)
     elif isinstance(node, grammar.Identifier):
+        # First check if it's a function
+        if node.value in st.table["functions"]:
+            return
+        # Then check for other identifiers
         if st.find(node.value) is None:
             raise CompilerMessage(f"Identifier {node.value} is undefined.")
+
+def addStandardFunctions(symbolTable):
+    """Add standard library functions to the symbol table."""
+    # Add printf to the global scope's functions
+    printf = FunctionSymbol("printf", "int", ["char*"])
+    symbolTable.table["functions"]["printf"] = printf
+    
+    # Add other standard functions as needed
+    # scanf = FunctionSymbol("scanf", "int", ["char*"])
+    # symbolTable.table["functions"]["scanf"] = scanf
